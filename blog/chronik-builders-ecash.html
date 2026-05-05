@@ -1,134 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chronik y el futuro de los Builders | eCash México</title>
-  <meta name="description" content="Explicación de Chronik como infraestructura de indexación para eCash y su importancia para wallets, exploradores, pagos, Teyolia y builders." />
-  <link rel="stylesheet" href="articulos.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chronik y el futuro de los Builders | eCash México</title>
+    <meta name="description" content="Guía técnica sobre Chronik: la infraestructura de indexación soberana para eCash México. Importancia para Tonalli Wallet, Teyolia y builders independientes." />
+
+    <meta property="og:title" content="Chronik y el futuro de los Builders | eCash México" />
+    <meta property="og:description" content="Descubre cómo la indexación abierta permite construir soberanía financiera sobre XEC." />
+    <meta property="og:image" content="https://i.imgur.com/UaAx4EK.png" />
+
+    <link rel="stylesheet" href="articulos.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
+        body { font-family: 'Lexend', sans-serif; scroll-behavior: smooth; }
+        .hero-gradient { background: linear-gradient(135deg, #001e62 0%, #004a99 100%); }
+        .article-card { transition: all 0.3s ease; border-left: 4px solid #00abe7; }
+        .article-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .toc-link:hover { color: #00abe7; padding-left: 5px; }
+        pre { background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+    </style>
 </head>
-<body>
-  <header class="site-header">
-    <nav class="navbar">
-      <a class="brand" href="index.html"><span class="brand-mark">e</span> eCash México</a>
-      <div class="nav-links">
-        <a href="index.html">Inicio</a>
-        <a href="blog.html">Blog</a>
-        <a href="que-es-ecash.html">¿Qué es eCash?</a>
-        <a class="button-link" href="https://cartera.xolosarmy.xyz" target="_blank" rel="noopener">Tonalli Wallet</a>
-      </div>
+<body class="bg-slate-50 text-slate-900 leading-relaxed">
+
+    <nav class="p-5 max-w-7xl mx-auto flex justify-between items-center border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
+        <a href="../index.html" class="flex items-center gap-3">
+            <img src="https://i.imgur.com/UaAx4EK.png" alt="Logo eCash México" class="h-10 w-auto rounded-full border border-slate-100">
+            <div class="flex items-center gap-2 text-xl font-bold text-[#001e62]">
+                <span>eCash</span><span class="text-[#00abe7]">México</span>
+            </div>
+        </a>
+        <div class="hidden md:flex space-x-6 text-sm font-semibold uppercase tracking-wider">
+            <a href="../index.html" class="hover:text-[#00abe7] transition">Inicio</a>
+            <a href="../index.html#blog" class="hover:text-[#00abe7] transition">Blog</a>
+            <a href="https://cartera.xolosarmy.xyz" target="_blank" class="bg-[#00abe7] text-white px-4 py-2 rounded-lg hover:bg-[#001e62] transition shadow-md">Tonalli Wallet</a>
+        </div>
     </nav>
-  </header>
 
-  <main>
-    <section class="article-hero">
-      <div class="article-shell">
-        <div class="eyebrow-row">
-          <span class="badge badge-gold">Técnico</span>
-          <span class="date">Mayo 2026</span>
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        <header class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter">Infraestructura Técnica</span>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Mayo 2026</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#001e62] mb-6 tracking-tight leading-tight italic">
+                Chronik y el futuro de los Builders
+            </h1>
+            <p class="text-xl text-slate-600 italic">
+                Cómo la indexación abierta permite construir soberanía tecnológica sobre la red eCash.
+            </p>
+        </header>
+
+        <div class="grid md:grid-cols-3 gap-8 mb-16">
+            <div class="md:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-lg text-slate-700 leading-relaxed">
+                    <strong>Chronik</strong> no es solo un software; es el puente que permite a las aplicaciones "hablar" con la blockchain de eCash. Para los builders mexicanos, es la herramienta clave para crear productos útiles sin depender de servicios centralizados.
+                </p>
+            </div>
+            <aside class="bg-slate-100 p-6 rounded-2xl border border-slate-200">
+                <h2 class="font-bold text-[#001e62] uppercase text-xs tracking-widest mb-4">En esta guía</h2>
+                <nav class="flex flex-col gap-3 text-sm font-medium text-slate-600">
+                    <a href="#problema" class="toc-link transition-all flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-[#00abe7]"></i> El problema</a>
+                    <a href="#chronik" class="toc-link transition-all flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-[#00abe7]"></i> Qué es Chronik</a>
+                    <a href="#builders" class="toc-link transition-all flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-[#00abe7]"></i> Por qué importa</a>
+                </nav>
+            </aside>
         </div>
-        <h1 class="article-title">Chronik y el futuro de los Builders</h1>
-        <p class="article-subtitle">Explicación sobre la indexación técnica y cómo construir herramientas abiertas en la red eCash.</p>
 
-        <div class="hero-card">
-          <div class="summary-card">
-            <p><strong>Chronik</strong> es una pieza de infraestructura que permite consultar información de la blockchain de eCash de manera más útil para aplicaciones, wallets, exploradores y herramientas comunitarias.</p>
-            <p>Para los builders, Chronik funciona como un puente entre la red y las interfaces que usan las personas.</p>
-          </div>
-          <aside class="toc-card">
-            <h2>En esta guía</h2>
-            <ol>
-              <li><a href="#problema">El problema</a></li>
-              <li><a href="#chronik">Qué es Chronik</a></li>
-              <li><a href="#builders">Por qué importa</a></li>
-              <li><a href="#casos">Casos de uso</a></li>
-              <li><a href="#mexico">La ruta para México</a></li>
-            </ol>
-          </aside>
+        <article class="prose prose-slate max-w-none space-y-12">
+            <section id="problema">
+                <h2 class="text-2xl font-bold text-[#001e62] border-l-4 border-[#00abe7] pl-4">1. El problema: la blockchain "cruda" es difícil de leer</h2>
+                <p>
+                    Una blockchain es un registro lineal de datos. Consultar el saldo de una dirección o el historial de un <strong>eToken</strong> directamente desde un nodo básico es ineficiente para aplicaciones modernas.
+                </p>
+                <p>
+                    Para que <strong>Tonalli Wallet</strong> o <strong>Teyolia</strong> funcionen con rapidez, necesitan datos ordenados (indexados). Chronik hace este trabajo pesado, permitiendo que los builders se enfoquen en la experiencia del usuario.
+                </p>
+            </section>
+
+            <section id="chronik" class="bg-white p-8 rounded-2xl border border-slate-200">
+                <h2 class="text-2xl font-bold text-[#001e62] mb-6">2. ¿Qué es exactamente Chronik?</h2>
+                <p class="mb-6">
+                    Es un indexador integrado directamente en el nodo de eCash. A diferencia de soluciones externas, Chronik es parte de la infraestructura abierta, garantizando que la información sea veraz y accesible.
+                </p>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="article-card p-4 bg-slate-50">
+                        <h3 class="font-bold text-sm uppercase text-[#00abe7] mb-2 italic">Consultas Rápidas</h3>
+                        <p class="text-sm">Obtén historiales de direcciones y UTXOs en milisegundos.</p>
+                    </div>
+                    <div class="article-card p-4 bg-slate-50">
+                        <h3 class="font-bold text-sm uppercase text-[#00abe7] mb-2 italic">Soporte eTokens</h3>
+                        <p class="text-sm">Indispensable para gestionar colecciones comunitarias y linajes.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="builders">
+                <h2 class="text-2xl font-bold text-[#001e62] border-l-4 border-[#00abe7] pl-4">3. Soberanía para Builders</h2>
+                <p>
+                    La visión de <strong>eCash México</strong> es clara: <em>"Sin infraestructura no hay soberanía"</em>. Chronik permite que cualquier grupo de desarrolladores en México corra su propio endpoint público (como el nuestro en <code>chronik.xolosarmy.xyz</code>) y brinde servicio a miles de usuarios sin depender de corporaciones externas.
+                </p>
+            </section>
+
+            <div class="bg-[#001e62] text-white p-8 rounded-3xl shadow-xl italic relative overflow-hidden">
+                <div class="relative z-10">
+                    <h3 class="text-xl font-bold mb-2">Visión Técnica</h3>
+                    <p class="text-blue-100 italic">"No buscamos adaptar XEC al sistema financiero tradicional. Buscamos fortalecer su utilidad nativa mediante infraestructura propia."</p>
+                </div>
+                <i class="fas fa-code absolute -right-10 -bottom-10 text-9xl opacity-10"></i>
+            </div>
+        </article>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-16 px-6 mt-20 italic">
+        <div class="max-w-4xl mx-auto text-center">
+            <img src="https://i.imgur.com/UaAx4EK.png" alt="Logo" class="h-12 mx-auto mb-6 rounded-full opacity-80 border border-slate-700">
+            <h2 class="text-2xl font-bold text-white mb-4 italic tracking-tight uppercase">Construir también es adoptar</h2>
+            <p class="text-sm leading-relaxed mb-8 max-w-2xl mx-auto">
+                La adopción real ocurre cuando una comunidad crea sus propias herramientas y documentación. eCash México es el brazo educativo y técnico de esta evolución.
+            </p>
+            <a href="../index.html" class="inline-flex items-center text-[#00abe7] font-bold hover:text-white transition">
+                <i class="fas fa-arrow-left mr-2"></i> Volver a eCash México
+            </a>
+
+            <div class="mt-12 pt-8 border-t border-slate-800">
+                <p class="text-[10px] uppercase tracking-widest leading-loose">
+                    Iniciativa Independiente impulsada por xolosArmy Network.<br>
+                    Contenido educativo bajo Licencia MIT. No es asesoría financiera.
+                </p>
+            </div>
         </div>
-      </div>
-    </section>
-
-    <article class="article-content">
-      <div class="article-shell">
-        <section id="problema">
-          <h2>1. El problema: una blockchain no se vuelve útil sola</h2>
-          <p>Una red puede tener bloques, transacciones y reglas de consenso, pero los usuarios no interactúan directamente con esa complejidad. Para que una blockchain sea útil, alguien tiene que construir wallets, exploradores, paneles, APIs, sistemas de pago y herramientas que traduzcan los datos técnicos en experiencias entendibles.</p>
-          <p>Ahí aparece la indexación. Indexar significa ordenar y hacer consultable la información de la red para que una aplicación pueda responder preguntas como: ¿cuál es el saldo de esta dirección?, ¿qué transacciones recibió?, ¿qué tokens se movieron?, ¿qué historial tiene un pago?</p>
-        </section>
-
-        <section id="chronik">
-          <h2>2. ¿Qué es Chronik?</h2>
-          <p>Chronik es una herramienta de infraestructura para consultar datos de eCash. En lugar de obligar a cada aplicación a leer y procesar todo desde cero, Chronik permite obtener información estructurada de la red para construir productos más rápido.</p>
-          <div class="grid-2">
-            <div class="article-card">
-              <h3>Direcciones</h3>
-              <p>Consultar historial, actividad y movimientos relacionados con una dirección.</p>
-            </div>
-            <div class="article-card">
-              <h3>Transacciones</h3>
-              <p>Buscar detalles de pagos, entradas, salidas y estado de una operación.</p>
-            </div>
-            <div class="article-card">
-              <h3>Tokens</h3>
-              <p>Crear herramientas que entiendan actividad de eTokens y colecciones dentro del ecosistema.</p>
-            </div>
-            <div class="article-card">
-              <h3>Aplicaciones</h3>
-              <p>Conectar wallets, dashboards, crowdfunding, exploradores y servicios comunitarios.</p>
-            </div>
-          </div>
-          <div class="callout gold">
-            <p><strong>Idea simple:</strong> si eCash es la red, Chronik es una de las capas que permite leerla y construir encima de ella.</p>
-          </div>
-        </section>
-
-        <section id="builders">
-          <h2>3. Por qué Chronik importa para los builders</h2>
-          <p>Los builders necesitan herramientas estables para experimentar. Sin APIs e indexación, cada proyecto tendría que resolver desde cero problemas que ya pertenecen a la infraestructura base.</p>
-          <p>Chronik permite que un desarrollador se concentre en la experiencia del usuario: una wallet más simple, un sistema de pagos más claro, una campaña de crowdfunding más transparente o un explorador más educativo.</p>
-          <div class="steps">
-            <div class="step"><strong>Menos fricción.</strong> Los proyectos pueden leer datos de la red sin reconstruir toda la indexación.</div>
-            <div class="step"><strong>Más productos.</strong> Se vuelve más fácil crear herramientas para usuarios, negocios y comunidades.</div>
-            <div class="step"><strong>Más soberanía.</strong> Una comunidad puede correr infraestructura propia y no depender solo de servicios externos.</div>
-          </div>
-        </section>
-
-        <section id="casos">
-          <h2>4. Casos de uso para eCash México</h2>
-          <p>En el contexto de eCash México, Chronik puede ser una pieza estratégica para conectar educación con productos reales.</p>
-          <ul>
-            <li><strong>Tonalli Wallet:</strong> consultar saldos, transacciones e historial de usuario.</li>
-            <li><strong>Teyolia:</strong> mostrar campañas, contribuciones, estados de fondeo y transparencia comunitaria.</li>
-            <li><strong>Pagos con XEC:</strong> verificar pagos de negocios, órdenes, donaciones o propinas.</li>
-            <li><strong>Exploradores educativos:</strong> enseñar a nuevos usuarios cómo se ve una transacción real en la red.</li>
-            <li><strong>NFTs y eTokens:</strong> visualizar actividad, metadata y movimientos de colecciones comunitarias.</li>
-          </ul>
-        </section>
-
-        <section id="mexico">
-          <h2>5. La ruta: builders mexicanos construyendo infraestructura abierta</h2>
-          <p>eCash México no debe limitarse a publicar explicaciones. Debe formar usuarios y builders capaces de probar, documentar y extender XEC desde México. Chronik es parte de esa ruta porque permite pasar de la teoría a las herramientas.</p>
-          <p>El futuro de eCash en México no depende solo de comprar XEC. Depende de que existan wallets, nodos, APIs, guías, negocios, campañas, exploradores y comunidades capaces de usar la red con independencia.</p>
-          <div class="callout">
-            <p><strong>Visión:</strong> eCash México como portal educativo, comunitario y técnico para que cualquier persona pueda aprender, usar y construir con XEC.</p>
-          </div>
-        </section>
-      </div>
-    </article>
-  </main>
-
-  <footer class="article-footer">
-    <div class="article-shell">
-      <div class="footer-box">
-        <div>
-          <h2>Construir también es adoptar</h2>
-          <p>La adopción real no ocurre solo cuando alguien compra una moneda. Ocurre cuando una comunidad crea herramientas, documentación e infraestructura propia.</p>
-        </div>
-        <a class="cta-button" href="index.html">Volver a eCash México →</a>
-      </div>
-      <p class="disclaimer">eCash México es una iniciativa comunitaria independiente. Este contenido es educativo y no constituye asesoría técnica, financiera ni legal.</p>
-    </div>
-  </footer>
+    </footer>
 </body>
 </html>
