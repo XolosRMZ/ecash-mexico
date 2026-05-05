@@ -1,143 +1,150 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comprar XEC en México de forma segura | eCash México</title>
-  <meta name="description" content="Guía paso a paso para comprar eCash/XEC en México, moverlo a autocustodia y usarlo de forma responsable con una wallet propia." />
-  <link rel="stylesheet" href="articulos.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comprar XEC en México de forma segura | eCash México</title>
+    <meta name="description" content="Guía paso a paso para comprar eCash/XEC en México, moverlo a autocustodia con Tonalli Wallet y usarlo de forma soberana." />
+
+    <meta property="og:title" content="Comprar XEC en México de forma segura | eCash México" />
+    <meta property="og:description" content="Aprende a adquirir eCash y proteger tus activos con autocustodia real." />
+    <meta property="og:image" content="https://i.imgur.com/UaAx4EK.png" />
+
+    <link rel="stylesheet" href="articulos.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
+        body { font-family: 'Lexend', sans-serif; scroll-behavior: smooth; }
+        .step-number { background: #00abe7; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+        .warning-box { border-left: 4px solid #ef4444; background: #fef2f2; }
+        .success-box { border-left: 4px solid #22c55e; background: #f0fdf4; }
+    </style>
 </head>
-<body>
-  <header class="site-header">
-    <nav class="navbar">
-      <a class="brand" href="index.html"><span class="brand-mark">e</span> eCash México</a>
-      <div class="nav-links">
-        <a href="index.html">Inicio</a>
-        <a href="blog.html">Blog</a>
-        <a href="que-es-ecash.html">¿Qué es eCash?</a>
-        <a class="button-link" href="https://cartera.xolosarmy.xyz" target="_blank" rel="noopener">Tonalli Wallet</a>
-      </div>
+<body class="bg-slate-50 text-slate-900 leading-relaxed">
+
+    <nav class="p-5 max-w-7xl mx-auto flex justify-between items-center border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
+        <a href="../index.html" class="flex items-center gap-3">
+            <img src="https://i.imgur.com/UaAx4EK.png" alt="Logo eCash México" class="h-10 w-auto rounded-full border border-slate-100" />
+            <div class="flex items-center gap-2 text-xl font-bold text-[#001e62]">
+                <span>eCash</span><span class="text-[#00abe7]">México</span>
+            </div>
+        </a>
+        <div class="hidden md:flex space-x-6 text-sm font-semibold uppercase tracking-wider">
+            <a href="../index.html" class="hover:text-[#00abe7] transition">Inicio</a>
+            <a href="../index.html#blog" class="hover:text-[#00abe7] transition">Blog</a>
+            <a href="https://cartera.xolosarmy.xyz" target="_blank" rel="noopener" class="bg-[#00abe7] text-white px-4 py-2 rounded-lg hover:bg-[#001e62] transition shadow-md">Tonalli Wallet</a>
+        </div>
     </nav>
-  </header>
 
-  <main>
-    <section class="article-hero">
-      <div class="article-shell">
-        <div class="eyebrow-row">
-          <span class="badge badge-green">Tutorial</span>
-          <span class="date">Mayo 2026</span>
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        <header class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter">Tutorial de Adopción</span>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Mayo 2026</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#001e62] mb-6 tracking-tight leading-tight italic text-balance">
+                Comprar XEC en México de forma segura
+            </h1>
+            <p class="text-xl text-slate-600 italic">
+                Rutas de adquisición, hábitos de seguridad y el paso vital a la autocustodia.
+            </p>
+        </header>
+
+        <div class="grid md:grid-cols-3 gap-8 mb-16 italic">
+            <div class="md:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-lg text-slate-700 leading-relaxed mb-4">
+                    Comprar eCash (XEC) es solo el primer paso. El objetivo real de <strong>eCash México</strong> es que seas dueño absoluto de tus activos mediante la autocustodia.
+                </p>
+                <div class="success-box p-4 rounded-lg text-sm text-green-800">
+                    <strong>Regla de Oro:</strong> Primero aprende, luego prueba con montos pequeños, y finalmente construye tu soberanía.
+                </div>
+            </div>
+            <aside class="bg-slate-100 p-6 rounded-2xl border border-slate-200 self-start">
+                <h2 class="font-bold text-[#001e62] uppercase text-xs tracking-widest mb-4">Ruta de aprendizaje</h2>
+                <nav class="flex flex-col gap-3 text-sm font-medium text-slate-600">
+                    <a href="#antes" class="hover:text-[#00abe7] transition flex items-center gap-2"><i class="fas fa-info-circle text-[10px]"></i> Mentalidad inicial</a>
+                    <a href="#wallet" class="hover:text-[#00abe7] transition flex items-center gap-2"><i class="fas fa-wallet text-[10px]"></i> Prepara tu wallet</a>
+                    <a href="#proceso" class="hover:text-[#00abe7] transition flex items-center gap-2"><i class="fas fa-exchange-alt text-[10px]"></i> Proceso de compra</a>
+                    <a href="#seguridad" class="hover:text-[#00abe7] transition flex items-center gap-2"><i class="fas fa-shield-alt text-[10px]"></i> Seguridad básica</a>
+                </nav>
+            </aside>
         </div>
-        <h1 class="article-title">Comprar XEC en México de forma segura</h1>
-        <p class="article-subtitle">Guía paso a paso para adquirir eCash, moverlo a autocustodia y evitar errores comunes al comenzar.</p>
 
-        <div class="hero-card">
-          <div class="summary-card">
-            <p><strong>Objetivo:</strong> que una persona en México pueda entender el proceso general para comprar XEC, retirarlo a una wallet propia y usarlo con responsabilidad.</p>
-            <p>La regla principal es simple: primero aprende, luego prueba con poco, después construye tu propio hábito de seguridad.</p>
-          </div>
-          <aside class="toc-card">
-            <h2>En esta guía</h2>
-            <ol>
-              <li><a href="#antes">Antes de comprar</a></li>
-              <li><a href="#wallet">Prepara tu wallet</a></li>
-              <li><a href="#exchange">Compra en una plataforma</a></li>
-              <li><a href="#retiro">Retira a autocustodia</a></li>
-              <li><a href="#seguridad">Seguridad básica</a></li>
-            </ol>
-          </aside>
+        <article class="prose prose-slate max-w-none space-y-12 italic">
+
+            <section id="antes">
+                <h2 class="text-2xl font-bold text-[#001e62] border-l-4 border-[#00abe7] pl-4">1. Mentalidad: No es una tarjeta, es efectivo digital</h2>
+                <p>
+                    A diferencia del enfoque fintech tradicional que busca tarjetas y rails bancarios, nuestra visión apuesta por la <strong>utilidad nativa</strong>. Comprar XEC significa adquirir una herramienta de libertad que no depende de intermediarios centralizados.
+                </p>
+            </section>
+
+            <section id="wallet" class="bg-white p-8 rounded-2xl border border-slate-200">
+                <h2 class="text-2xl font-bold text-[#001e62] mb-6 italic">2. Prepara tu Wallet de Autocustodia</h2>
+                <p class="mb-6 text-slate-600">Nunca compres XEC sin tener un lugar seguro donde recibirlo. El exchange es solo una tienda, no un banco seguro a largo plazo.</p>
+
+                <div class="space-y-4">
+                    <div class="flex gap-4 items-start">
+                        <div class="step-number">A</div>
+                        <div>
+                            <p class="font-bold text-[#001e62] mb-1 italic">Descarga Tonalli Wallet</p>
+                            <p class="text-sm text-slate-600 italic leading-relaxed">Nuestra herramienta recomendada para el ecosistema mexicano. Es simple, abierta y soberana.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 items-start">
+                        <div class="step-number">B</div>
+                        <div>
+                            <p class="font-bold text-[#001e62] mb-1 italic">Resguarda tu Frase Semilla</p>
+                            <p class="text-sm text-slate-600 italic leading-relaxed">Escribe tus 12 palabras en papel. Si pierdes esto, pierdes tu dinero. Si alguien más lo tiene, tiene tu dinero.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="proceso">
+                <h2 class="text-2xl font-bold text-[#001e62] border-l-4 border-[#00abe7] pl-4 italic">3. El Proceso de Compra</h2>
+                <p>Para usuarios en México, existen varias rutas según el nivel de experiencia:</p>
+                <ul class="list-disc pl-6 space-y-2 text-slate-700">
+                    <li><strong>Plataformas Globales:</strong> Exchanges que listan XEC y permiten depósitos vía P2P o tarjetas internacionales.</li>
+                    <li><strong>Swaps Nativos:</strong> Adquirir una moneda base (como USDT o BCH) localmente y usar protocolos descentralizados o la integración futura con <strong>THORChain</strong> para obtener XEC nativo.</li>
+                    <li><strong>Intercambio Comunitario:</strong> Obtener XEC directamente de otros miembros de la comunidad <strong>xolosArmy</strong>.</li>
+                </ul>
+            </section>
+
+            <section id="seguridad" class="warning-box p-8 rounded-2xl italic">
+                <h2 class="text-2xl font-bold text-red-800 mb-6 flex items-center gap-3">
+                    <i class="fas fa-user-shield"></i> Decálogo de Seguridad
+                </h2>
+                <div class="grid sm:grid-cols-2 gap-6 text-sm text-red-900 leading-relaxed">
+                    <p><strong>Cero Confianza:</strong> No creas en "regalos" o duplicadores de XEC en redes sociales.</p>
+                    <p><strong>Prueba Pequeña:</strong> Antes de retirar una fortuna, envía un monto mínimo para verificar tu wallet.</p>
+                    <p><strong>Privacidad:</strong> No compartas cuánto XEC tienes ni en qué direcciones lo guardas.</p>
+                    <p><strong>Fuentes Oficiales:</strong> Solo usa enlaces verificados desde <code>ecash.mx</code> o el sitio global <code>e.cash</code>.</p>
+                </div>
+            </section>
+
+        </article>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-16 px-6 mt-20 italic">
+        <div class="max-w-4xl mx-auto text-center">
+            <img src="https://i.imgur.com/UaAx4EK.png" alt="Logo" class="h-12 mx-auto mb-6 rounded-full opacity-80 border border-slate-700" />
+            <h2 class="text-2xl font-bold text-white mb-4 italic tracking-tight uppercase tracking-widest">Siguiente paso: La Infraestructura</h2>
+            <p class="text-sm leading-relaxed mb-8 max-w-2xl mx-auto">
+                ¿Ya tienes tus primeros XEC? Ahora aprende cómo se indexan esos datos y cómo puedes construir tus propias herramientas con Chronik.
+            </p>
+            <a href="chronik-builders-ecash.html" class="bg-[#00abe7] text-white px-8 py-3 rounded-xl font-bold hover:bg-white hover:text-[#001e62] transition shadow-lg inline-flex items-center">
+                Ver guía de Chronik <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+
+            <div class="mt-12 pt-8 border-t border-slate-800">
+                <p class="text-[10px] uppercase tracking-widest leading-loose">
+                    Iniciativa Independiente impulsada por xolosArmy Network.<br />
+                    Contenido educativo bajo Licencia MIT. No es asesoría financiera.
+                </p>
+            </div>
         </div>
-      </div>
-    </section>
-
-    <article class="article-content">
-      <div class="article-shell">
-        <section id="antes">
-          <h2>1. Antes de comprar: entiende qué estás haciendo</h2>
-          <p>Comprar XEC no debe empezar por la emoción del mercado. Debe empezar por entender que estás entrando a una red de dinero digital donde tú puedes tomar control directo de tus fondos.</p>
-          <p>En la práctica, existen dos momentos distintos: comprar XEC en una plataforma y después moverlo a una wallet de autocustodia. El segundo paso es el que realmente te convierte en usuario de la red.</p>
-          <div class="callout green">
-            <p><strong>Regla de oro:</strong> no compres más de lo que puedes entender, mover y custodiar con seguridad. Primero haz una prueba pequeña.</p>
-          </div>
-        </section>
-
-        <section id="wallet">
-          <h2>2. Prepara una wallet de autocustodia</h2>
-          <p>Antes de comprar, prepara una wallet compatible con eCash. Una wallet de autocustodia te permite generar una dirección para recibir XEC y mantener control sobre tus llaves.</p>
-          <div class="steps">
-            <div class="step"><strong>Crea tu wallet.</strong> Abre una wallet compatible con XEC. En el ecosistema eCash México impulsamos Tonalli Wallet como herramienta de onboarding.</div>
-            <div class="step"><strong>Guarda tu frase de recuperación.</strong> Escríbela en papel. No la compartas, no la fotografíes y no la guardes en servicios en la nube.</div>
-            <div class="step"><strong>Copia tu dirección eCash.</strong> Verifica que la dirección sea de la red correcta antes de retirar fondos.</div>
-          </div>
-        </section>
-
-        <section id="exchange">
-          <h2>3. Compra XEC en una plataforma disponible para México</h2>
-          <p>Dependiendo de la disponibilidad en tu país, puedes adquirir XEC usando una plataforma de intercambio que permita comprar, vender o convertir desde otra criptomoneda. La disponibilidad cambia con el tiempo, por eso conviene revisar comisiones, métodos de depósito, límites y soporte para retiros.</p>
-          <p>El proceso general suele ser:</p>
-          <ol>
-            <li>Crear cuenta en una plataforma que liste XEC.</li>
-            <li>Completar sus verificaciones si son requeridas.</li>
-            <li>Depositar pesos mexicanos u otra criptomoneda compatible.</li>
-            <li>Convertir o comprar XEC.</li>
-            <li>Verificar que la plataforma permita retirar XEC a una dirección propia.</li>
-          </ol>
-          <div class="callout gold">
-            <p><strong>Importante:</strong> una plataforma puede servir para comprar, pero no debe ser tu única forma de interactuar con eCash. La autocustodia es parte central del aprendizaje.</p>
-          </div>
-        </section>
-
-        <section id="retiro">
-          <h2>4. Retira tus XEC a autocustodia</h2>
-          <p>Una vez que tengas XEC en la plataforma, realiza un retiro hacia tu wallet. Para reducir riesgos, haz primero una transacción pequeña de prueba.</p>
-          <div class="grid-2">
-            <div class="article-card">
-              <h3>Primera prueba</h3>
-              <p>Envía una cantidad mínima para confirmar que copiaste bien la dirección y que la wallet recibe correctamente.</p>
-            </div>
-            <div class="article-card">
-              <h3>Confirmación</h3>
-              <p>Espera a que el saldo aparezca en tu wallet antes de mover cantidades mayores.</p>
-            </div>
-            <div class="article-card">
-              <h3>Segundo retiro</h3>
-              <p>Cuando la prueba funcione, retira el resto según tu plan y nivel de confianza.</p>
-            </div>
-            <div class="article-card">
-              <h3>Registro personal</h3>
-              <p>Lleva nota de fecha, plataforma, monto y dirección usada. Esto ayuda a ordenar tu operación.</p>
-            </div>
-          </div>
-        </section>
-
-        <section id="seguridad">
-          <h2>5. Seguridad básica para usuarios nuevos</h2>
-          <p>La mayoría de errores al comenzar no vienen de la tecnología, sino de malos hábitos: compartir la seed, caer en enlaces falsos, copiar direcciones sin revisar o confiar en promesas de ganancias.</p>
-          <ul class="warning-list">
-            <li>No compartas tu frase de recuperación con nadie.</li>
-            <li>No respondas mensajes privados que prometan duplicar tus XEC.</li>
-            <li>No conectes tu wallet a sitios que no entiendes.</li>
-            <li>No hagas retiros grandes sin una prueba pequeña primero.</li>
-            <li>No confundas educación con asesoría financiera.</li>
-          </ul>
-          <div class="callout">
-            <p><strong>Meta de eCash México:</strong> formar usuarios capaces de comprar, recibir, mover y usar XEC con claridad, seguridad y autocustodia.</p>
-          </div>
-        </section>
-      </div>
-    </article>
-  </main>
-
-  <footer class="article-footer">
-    <div class="article-shell">
-      <div class="footer-box">
-        <div>
-          <h2>Siguiente paso: conoce Chronik</h2>
-          <p>Después de aprender a comprar y custodiar XEC, puedes explorar la infraestructura que permite crear aplicaciones y herramientas abiertas.</p>
-        </div>
-        <a class="cta-button" href="chronik-builders-ecash.html">Leer guía técnica →</a>
-      </div>
-      <p class="disclaimer">eCash México es una iniciativa comunitaria independiente. Este contenido es educativo y no constituye asesoría financiera.</p>
-    </div>
-  </footer>
+    </footer>
 </body>
 </html>
