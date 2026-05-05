@@ -1,0 +1,43 @@
+/* Paleta de Colores Oficial eCash México */
+:root {
+  --color-primary: #001e62;
+  --color-accent: #00abe7;
+  --color-warning: #ffedd5;
+  --color-text-slate: #475569;
+}
+
+body {
+  background-color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.025em;
+  color: var(--color-primary);
+}
+
+.article-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border-left: 4px solid var(--color-accent);
+}
+
+.callout {
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background-color: var(--color-warning);
+  border: 1px solid #fed7aa;
+}
+
+.article-footer {
+  background-color: var(--color-primary);
+  color: #cbd5e1;
+  padding: 4rem 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .article-title {
+    font-size: 2.25rem;
+  }
+}
