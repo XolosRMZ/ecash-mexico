@@ -21,7 +21,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://ecash.mx/blog/chronik-ecash.html</loc>
+    <loc>https://ecash.mx/blog/tutorial-tonalli-wallet.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/pagos-con-ecash.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -29,5 +34,25 @@
     <loc>https://ecash.mx/blog/teyolia-crowdfunding-xec.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/chronik-builders-ecash.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/avalanche-pre-consensus.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/integracion-ecash-thorchain.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/mensajes-onchain-tonalli-wallet.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
