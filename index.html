@@ -83,69 +83,63 @@
 
     <section id="blog" class="py-20 px-6 bg-slate-100 border-y border-slate-200">
         <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-12">
+            <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-12">
                 <div>
-                    <h2 class="text-3xl font-bold text-[#001e62]">Educación y Cultura</h2>
-                    <p class="text-slate-600 mt-2">Guías, tutoriales y visión estratégica del ecosistema.</p>
+                    <span class="text-[#00abe7] font-bold text-xs uppercase tracking-widest">Primeros Pasos en México</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-[#001e62] mt-2 italic">Tu ruta para usar XEC con soberanía</h2>
+                    <p class="text-slate-600 mt-3 max-w-2xl">Empieza por los fundamentos, avanza hacia autocustodia y explora herramientas comunitarias para pagos, coordinación e infraestructura abierta.</p>
                 </div>
-                <a href="blog/index.html" class="text-[#00abe7] font-bold text-sm uppercase tracking-widest hover:underline hidden md:block">Ver todos los artículos →</a>
+                <a href="blog/index.html" class="text-[#00abe7] font-bold text-sm uppercase tracking-widest hover:underline md:text-right">Ver todos los artículos →</a>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 italic">
-
-                <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] transition-colors">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="bg-cyan-100 text-cyan-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter">Interactivo</span>
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Mayo 2026</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 italic">
+                <a href="blog/que-es-ecash.html" class="group bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-100 text-[#00abe7] flex items-center justify-center mb-5 group-hover:bg-[#00abe7] group-hover:text-white transition-colors">
+                        <i class="fas fa-circle-question"></i>
                     </div>
-                    <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                        <a href="blog/teyolia-crowdfunding-xec.html" class="hover:text-[#00abe7]">Teyolia: crowdfunding no custodial con XEC</a>
-                    </h2>
-                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-                        Simula una campaña comunitaria y entiende cómo aportar con soberanía sin entregar tus XEC a intermediarios.
-                    </p>
-                    <a href="blog/teyolia-crowdfunding-xec.html" class="text-[#00abe7] font-bold text-sm hover:underline">Leer artículo →</a>
-                </article>
-                <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] transition-colors">
-    <div class="flex items-center gap-2 mb-3">
-        <span class="bg-blue-100 text-blue-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter">Fundamentos</span>
-        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Mayo 2026</span>
-    </div>
-    <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-        <a href="blog/que-es-ecash.html" class="hover:text-[#00abe7]">¿Qué es eCash y qué es XEC?</a>
-    </h2>
-    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-        Una introducción profunda a la idea de dinero electrónico, pagos rápidos y la visión de eCash México.
-    </p>
-    <a href="blog/que-es-ecash.html" class="text-[#00abe7] font-bold text-sm hover:underline">Leer artículo →</a>
-</article>
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-3 group-hover:text-[#00abe7] transition-colors">¿Qué es XEC?</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Entiende qué es eCash, qué es XEC y por qué importa el efectivo electrónico.</p>
+                </a>
 
-               <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] transition-colors">
-    <div class="flex items-center gap-2 mb-3">
-        <span class="bg-green-100 text-green-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter">Tutorial</span>
-        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Mayo 2026</span>
-    </div>
-    <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-        <a href="blog/comprar-xec-en-mexico.html" class="hover:text-[#00abe7]">Comprar XEC en México de forma segura</a>
-    </h2>
-    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-        Guía paso a paso para adquirir eCash, moverlo a autocustodia y evitar errores comunes al comenzar.
-    </p>
-    <a href="blog/comprar-xec-en-mexico.html" class="text-[#00abe7] font-bold text-sm hover:underline">Leer artículo →</a>
-</article>
-                <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] transition-colors">
-    <div class="flex items-center gap-2 mb-3">
-        <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-tighter">Técnico</span>
-        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Mayo 2026</span>
-    </div>
-    <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-        <a href="blog/chronik-builders-ecash.html" class="hover:text-[#00abe7]">Chronik y el futuro de los Builders</a>
-    </h2>
-    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
-        Explicación sobre la indexación técnica y cómo construir herramientas abiertas en la red eCash.
-    </p>
-    <a href="blog/chronik-builders-ecash.html" class="text-[#00abe7] font-bold text-sm hover:underline">Leer artículo →</a>
-</article>
+                <a href="blog/comprar-xec-en-mexico.html" class="group bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-[#00abe7] flex items-center justify-center mb-5 group-hover:bg-[#00abe7] group-hover:text-white transition-colors">
+                        <i class="fas fa-cart-shopping"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-3 group-hover:text-[#00abe7] transition-colors">Compra XEC en México</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Aprende rutas seguras para adquirir eCash desde México y usar autocustodia.</p>
+                </a>
+
+                <a href="blog/tutorial-tonalli-wallet.html" class="group bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-[#00abe7] flex items-center justify-center mb-5 group-hover:bg-[#00abe7] group-hover:text-white transition-colors">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-3 group-hover:text-[#00abe7] transition-colors">Crea tu Tonalli Wallet</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Configura tu wallet, guarda tu seed y toma control de tus llaves privadas.</p>
+                </a>
+
+                <a href="blog/pagos-con-ecash.html" class="group bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-green-100 text-[#00abe7] flex items-center justify-center mb-5 group-hover:bg-[#00abe7] group-hover:text-white transition-colors">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-3 group-hover:text-[#00abe7] transition-colors">Pagos con eCash</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Aprende a enviar, recibir y cobrar con XEC usando pagos rápidos y de bajo costo.</p>
+                </a>
+
+                <a href="blog/teyolia-crowdfunding-xec.html" class="group bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-100 text-[#00abe7] flex items-center justify-center mb-5 group-hover:bg-[#00abe7] group-hover:text-white transition-colors">
+                        <i class="fas fa-people-carry-box"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-3 group-hover:text-[#00abe7] transition-colors">Teyolia Crowdfunding</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Conoce la coordinación comunitaria y el crowdfunding no custodial con XEC.</p>
+                </a>
+
+                <a href="blog/chronik-builders-ecash.html" class="group bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 rounded-2xl bg-orange-100 text-[#00abe7] flex items-center justify-center mb-5 group-hover:bg-[#00abe7] group-hover:text-white transition-colors">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-3 group-hover:text-[#00abe7] transition-colors">Infraestructura</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">Explora Chronik y las herramientas abiertas para builders y usuarios avanzados.</p>
+                </a>
             </div>
         </div>
     </section>
