@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Artículo interactivo de eCash México para entender cómo funcionan los Mensajes Tonalli mediante OP_RETURN.">
+    <title>Mensajes Tonalli: Comunicación Incensurable | Guía Interactiva eCash México</title>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0C5SHBHW2P');
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="articulos.css" />
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
+        body { font-family: 'Lexend', sans-serif; scroll-behavior: smooth; }
+        .step-panel { display: none; }
+        .step-panel.active { display: block; animation: slideIn 0.4s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .tonalli-gradient { background: linear-gradient(135deg, #001e62 0%, #00abe7 100%); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 leading-relaxed italic">
+
+    <nav class="p-5 max-w-7xl mx-auto flex justify-between items-center bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <a href="../index.html" class="flex items-center gap-3">
+            <img src="https://i.imgur.com/UaAx4EK.png" alt="Logo eCash México" class="h-10 w-auto rounded-full border border-slate-100">
+            <div class="flex items-center gap-2 text-xl font-bold text-[#001e62]">
+                <span>eCash</span><span class="text-[#00abe7]">México</span>
+            </div>
+        </a>
+        <a href="index.html" class="text-sm font-bold text-slate-500 hover:text-[#00abe7] transition">← Volver al Blog</a>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        <header class="text-center mb-12">
+            <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">App Interactiva</span>
+            <h1 class="text-4xl font-extrabold text-[#001e62] mt-4 mb-4 italic tracking-tight">Mensajes Tonalli: Comunicación on-chain</h1>
+            <p class="text-slate-600 max-w-2xl mx-auto">Descubre cómo enviar mensajes incensurables y eternos usando OP_RETURN en la red eCash.</p>
+        </header>
+
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden max-w-2xl mx-auto">
+            <div class="tonalli-gradient p-8 text-white relative">
+                <div class="flex items-center gap-4 mb-2">
+                    <i class="fas fa-comment-code text-4xl text-white opacity-80"></i>
+                    <div>
+                        <h2 class="text-2xl font-bold italic">Simulador de Mensajes</h2>
+                        <p class="text-blue-100 text-xs uppercase tracking-widest font-semibold">OP_RETURN Interactivo</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 min-h-[400px] flex flex-col justify-between">
+                
+                <div id="step-1" class="step-panel active">
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-4 italic">¿Qué es un Mensaje Tonalli?</h3>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
+                        En la blockchain de eCash, puedes adjuntar pequeños textos a tus transacciones usando una instrucción especial llamada <code>OP_RETURN</code>. 
+                    </p>
+                    <p class="text-slate-600 mb-6 leading-relaxed">
+                        Para diferenciar los mensajes comunes de los mensajes de nuestra comunidad, Tonalli Wallet inserta un prefijo hexadecimal especial: <strong class="text-[#00abe7]">6d02</strong>. Así sabemos que el mensaje fue enviado desde el ecosistema xolosArmy.
+                    </p>
+                </div>
+
+                <div id="step-2" class="step-panel">
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-4 italic">Escribe tu Mensaje</h3>
+                    <p class="text-slate-600 mb-6">Escribe un mensaje corto. Recuerda que quedará grabado en piedra digital para siempre.</p>
+                    <textarea 
+                        id="user-message" 
+                        class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-[#00abe7] focus:outline-none mb-4" 
+                        rows="3" 
+                        placeholder="Ej: Viva el eCash y la soberanía tecnológica..."
+                        maxlength="140"
+                    ></textarea>
+                    <p class="text-xs text-slate-500 text-right"><span id="char-count">0</span> / 140</p>
+                </div>
+
+                <div id="step-3" class="step-panel">
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-4 italic text-pretty">Firmando la Transacción</h3>
+                    <p class="text-slate-600 mb-6">La billetera convierte tu texto a código hexadecimal y le añade el prefijo de la comunidad.</p>
+                    
+                    <div class="bg-slate-900 p-4 rounded-xl text-green-400 font-mono text-xs break-all mb-6">
+                        <span class="text-slate-500">// Hexadecimal generado:</span><br>
+                        <span class="text-yellow-400">6a</span> <span class="text-blue-400">6d02</span><span id="hex-output" class="text-green-400">...</span>
+                    </div>
+
+                    <div class="flex flex-col items-center py-4">
+                        <button type="button" onclick="simulateBroadcast()" class="bg-[#00abe7] text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-[#001e62] transition-all">
+                            Transmitir a la Red
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step-4" class="step-panel text-center">
+                    <i class="fas fa-check-circle text-6xl text-green-500 mb-4 drop-shadow-md"></i>
+                    <h3 class="text-2xl font-bold text-[#001e62] mb-2 italic">Mensaje Inmortalizado</h3>
+                    <p class="text-slate-600 mb-6 italic text-sm">
+                        Tu mensaje ha sido transmitido. Ahora vivirá para siempre en el explorador de bloques, libre de censura.
+                    </p>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 text-sm text-blue-900 mb-6 text-left">
+                        <strong>Tu mensaje:</strong> <span id="final-message" class="italic"></span>
+                    </div>
+                    <a href="https://cartera.xolosarmy.xyz" target="_blank" rel="noopener" class="block bg-[#001e62] text-white py-4 rounded-2xl font-bold hover:bg-[#00abe7] transition shadow-xl uppercase tracking-widest text-xs">Enviar un Mensaje Real</a>
+                </div>
+
+                <div class="mt-8 flex justify-between items-center">
+                    <button id="prev-btn" type="button" onclick="prevStep()" class="text-slate-400 font-bold text-sm hover:text-[#001e62] opacity-0 pointer-events-none transition">Atrás</button>
+                    <button id="next-btn" type="button" onclick="nextStep()" class="bg-[#00abe7] text-white px-8 py-3 rounded-xl font-bold shadow-md flex items-center gap-2 transition hover:bg-[#001e62]">
+                        <span>Siguiente</span> <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <section class="mt-20 border-t border-slate-200 pt-12 italic">
+            <h2 class="text-2xl font-bold text-[#001e62] mb-8 italic uppercase tracking-tighter border-l-4 border-[#00abe7] pl-4">Casos de Uso</h2>
+            <div class="grid md:grid-cols-3 gap-6 text-sm">
+                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                    <h4 class="font-bold mb-2 text-[#00abe7] uppercase tracking-widest text-[10px]">Prueba de Existencia</h4>
+                    <p class="text-slate-500">Demuestra que una información existía en un momento exacto del tiempo usando el timestamp de la blockchain.</p>
+                </div>
+                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                    <h4 class="font-bold mb-2 text-[#00abe7] uppercase tracking-widest text-[10px]">Libertad de Expresión</h4>
+                    <p class="text-slate-500">Los mensajes en eCash no pueden ser borrados ni alterados por gobiernos o corporaciones tecnológicas.</p>
+                </div>
+                <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                    <h4 class="font-bold mb-2 text-[#00abe7] uppercase tracking-widest text-[10px]">Linaje Comunitario</h4>
+                    <p class="text-slate-500">Con el prefijo Tonalli, los exploradores de la comunidad pueden filtrar e indexar estos mensajes específicos.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-500 py-16 px-6 mt-20 italic text-center">
+        <img src="https://i.imgur.com/UaAx4EK.png" alt="Xolo" class="h-10 mx-auto mb-4 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all cursor-pointer">
+        <p class="text-[10px] uppercase tracking-widest mb-4">eCash México | Tonalli Wallet | OP_RETURN</p>
+        <p class="text-xs max-w-lg mx-auto leading-loose opacity-60 uppercase">
+            Iniciativa independiente impulsada por xolosArmy Network. Contenido educativo bajo Licencia MIT.
+        </p>
+    </footer>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const textarea = document.getElementById('user-message');
+        const charCount = document.getElementById('char-count');
+        const hexOutput = document.getElementById('hex-output');
+        const finalMessage = document.getElementById('final-message');
+
+        // Convertir string a hex
+        function stringToHex(str) {
+            let hex = '';
+            for(let i=0; i<str.length; i++) {
+                hex += '' + str.charCodeAt(i).toString(16);
+            }
+            return hex;
+        }
+
+        textarea.addEventListener('input', function() {
+            charCount.innerText = this.value.length;
+            const hex = stringToHex(this.value);
+            hexOutput.innerText = hex.substring(0, 40) + (hex.length > 40 ? '...' : '');
+        });
+
+        function nextStep() {
+            if (currentStep === 2 && textarea.value.trim() === '') {
+                alert('Escribe un mensaje antes de continuar.');
+                return;
+            }
+
+            if (currentStep < totalSteps) {
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                currentStep++;
+                document.getElementById(`step-${currentStep}`).classList.add('active');
+                updateNav();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById(`step-${currentStep}`).classList.remove('active');
+                currentStep--;
+                document.getElementById(`step-${currentStep}`).classList.add('active');
+                updateNav();
+            }
+        }
+
+        function updateNav() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            if (currentStep === 1) {
+                prevBtn.classList.add('opacity-0', 'pointer-events-none');
+            } else {
+                prevBtn.classList.remove('opacity-0', 'pointer-events-none');
+            }
+
+            if (currentStep >= 3) {
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'flex';
+            }
+        }
+
+        function simulateBroadcast() {
+            const btn = event.target;
+            btn.innerText = "Transmitiendo...";
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            setTimeout(() => {
+                finalMessage.innerText = textarea.value;
+                nextStep();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
