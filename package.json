@@ -1,0 +1,25 @@
+{
+  "name": "ecash-mexico",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/tailwind.css -o ./assets/css/tailwind.css --minify",
+    "build:sitemap": "node ./scripts/generate-sitemap.mjs",
+    "build": "npm run build:css && npm run build:sitemap",
+    "lint:html": "htmlhint \"./**/*.html\" --config .htmlhintrc",
+    "format:check": "prettier --check \"**/*.{html,css,js,mjs,json,yml,md}\"",
+    "test:seo": "node ./scripts/validate-seo.mjs",
+    "lint": "npm run lint:html && npm run format:check && npm run test:seo",
+    "serve": "npx http-server -p 8080 -c-1",
+    "lighthouse": "lhci autorun --config=./lighthouserc.json"
+  },
+  "devDependencies": {
+    "@lhci/cli": "^0.14.0",
+    "glob": "^11.0.0",
+    "htmlhint": "^1.6.3",
+    "http-server": "^14.1.1",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.13"
+  }
+}

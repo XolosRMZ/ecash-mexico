@@ -1,432 +1,675 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eCash México Sovereign Mining - Phase 1</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <head>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-0C5SHBHW2P");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minería Soberana y Membresías RMZ - Fase 1 | eCash México</title>
+    <meta
+      name="description"
+      content="Dashboard técnico e interactivo de minería en eCash México. Verificación de identidad con Tonalli, membresía on-chain RMZ mediante endpoints Chronik."
+    />
+    <link
+      rel="canonical"
+      href="https://ecash.mx/blog/mineria-ecash-mexico.html"
+    />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="eCash México" />
+    <meta
+      property="og:title"
+      content="Minería Soberana y Membresías RMZ - Fase 1"
+    />
+    <meta
+      property="og:description"
+      content="Dashboard técnico e interactivo de minería en eCash México. Verificación de identidad con Tonalli, membresía on-chain RMZ mediante endpoints Chronik."
+    />
+    <meta
+      property="og:url"
+      content="https://ecash.mx/blog/mineria-ecash-mexico.html"
+    />
+    <meta
+      property="og:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Minería Soberana y Membresías RMZ - Fase 1"
+    />
+    <meta
+      name="twitter:description"
+      content="Dashboard técnico e interactivo de minería en eCash México. Verificación de identidad con Tonalli, membresía on-chain RMZ mediante endpoints Chronik."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Chosen Palette: Warm Neutrals with Amber/Copper Accents (stone-50 background, stone-800 text, amber-600 accents for a mining/tech feel) -->
     <!-- Application Structure Plan: Dashboard layout with side navigation. Divided into 4 thematic sections: 1. Arquitectura (Executive summary & interactive architecture flow), 2. Evolución (The 7 prototypes timeline), 3. Economía RMZ (Business model chart), 4. Roadmap (Next actions and production prep). This structure converts a linear report into an explorable command center, allowing stakeholders to easily grasp the technical achievement, the journey, the economics, and the future plan. -->
     <!-- Visualization & Content Choices: 1. Architecture Flow: Interactive HTML/Tailwind flex layout. Goal: Inform/Organize. Justification: Clearly separates control and data planes without needing external libraries. 2. Evolución: Interactive timeline (HTML/JS). Goal: Organize. Justification: Shows progression and reveals technical JSON proofs on click. 3. Economía: Chart.js Bar chart. Goal: Compare. Justification: Best for comparing categorical tier requirements. 4. Roadmap: Interactive grid cards. Goal: Organize/Inform. Justification: Makes next steps readable and task-oriented. NO SVG/Mermaid used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 50vh;
+        max-height: 400px;
+      }
+      @media (min-width: 768px) {
         .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 50vh;
-            max-height: 400px;
+          height: 60vh;
+          max-height: 500px;
         }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 60vh;
-                max-height: 500px;
-            }
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .nav-active {
-            background-color: #fef3c7;
-            color: #d97706;
-            border-right: 4px solid #d97706;
-        }
-        .arch-node:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-color: #d97706;
-        }
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .nav-active {
+        background-color: #fef3c7;
+        color: #d97706;
+        border-right: 4px solid #d97706;
+      }
+      .arch-node:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: #d97706;
+      }
     </style>
-</head>
-<body class="bg-stone-50 text-stone-800 overflow-hidden">
-
+  </head>
+  <body class="bg-stone-50 text-stone-800 overflow-hidden">
     <div class="flex h-screen w-full">
-        
-        <aside class="w-64 bg-white border-r border-stone-200 flex flex-col justify-between shadow-sm hidden md:flex z-10">
-            <div>
-                <div class="p-6 border-b border-stone-200">
-                    <h1 class="text-xl font-bold text-stone-900 leading-tight">eCash México</h1>
-                    <p class="text-xs text-amber-600 font-semibold mt-1 uppercase tracking-wider">Phase 1 Dashboard</p>
-                </div>
-                <nav class="mt-6 flex flex-col" id="desktop-nav">
-                    <button data-target="view-arquitectura" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors nav-active">
-                        <span class="mr-2">⚙️</span> Arquitectura Base
-                    </button>
-                    <button data-target="view-prototipos" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors">
-                        <span class="mr-2">🚀</span> Evolución (Prototipos)
-                    </button>
-                    <button data-target="view-economia" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors">
-                        <span class="mr-2">📊</span> Economía RMZ
-                    </button>
-                    <button data-target="view-roadmap" class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors">
-                        <span class="mr-2">🗺️</span> Roadmap & Producción
-                    </button>
-                </nav>
-            </div>
-            <div class="p-6 bg-stone-100 border-t border-stone-200">
-                <p class="text-xs text-stone-500">Status: <span class="font-bold text-green-600">Prototipo Demostrado</span></p>
-            </div>
-        </aside>
-
-        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
-            
-            <header class="md:hidden bg-white border-b border-stone-200 p-4 flex justify-between items-center z-20 shadow-sm">
-                <div>
-                    <h1 class="text-lg font-bold text-stone-900">eCash México</h1>
-                    <p class="text-[10px] text-amber-600 font-semibold uppercase">Phase 1</p>
-                </div>
-                <select id="mobile-nav" class="bg-stone-100 border border-stone-300 text-stone-800 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block p-2">
-                    <option value="view-arquitectura">⚙️ Arquitectura</option>
-                    <option value="view-prototipos">🚀 Evolución</option>
-                    <option value="view-economia">📊 Economía RMZ</option>
-                    <option value="view-roadmap">🗺️ Roadmap</option>
-                </select>
-            </header>
-
-            <main class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 hide-scrollbar">
-                
-                <section id="view-arquitectura" class="view-section block animate-fade-in">
-                    <div class="max-w-5xl mx-auto">
-                        <div class="mb-8">
-                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Arquitectura Soberana Funcional</h2>
-                            <p class="text-stone-600 text-lg leading-relaxed">
-                                Esta sección presenta el núcleo del logro de la Fase 1. El objetivo aquí es demostrar el flujo técnico comprobado donde la membresía minera se controla desde un "Plano de Control" inteligente, sin recargar el "Plano de Datos" de minería. Interactúa con los nodos del diagrama para entender el ciclo de vida de la sesión minera.
-                            </p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-8">
-                            <h3 class="text-xl font-bold mb-6 text-center text-stone-800">Flujo de Autorización y Revocación (Interactivo)</h3>
-                            
-                            <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-2 mb-8">
-                                
-                                <div class="arch-node w-full md:w-40 p-4 bg-stone-50 border-2 border-stone-200 rounded-lg text-center cursor-pointer transition-all duration-300" data-info="Identidad digital del minero. Firma un 'Canonical Challenge' para solicitar acceso.">
-                                    <div class="text-2xl mb-2">👛</div>
-                                    <div class="font-bold text-sm text-stone-800">Tonalli Wallet</div>
-                                    <div class="text-[10px] text-stone-500 mt-1">Identidad</div>
-                                </div>
-
-                                <div class="hidden md:block text-stone-400 font-bold">→</div>
-                                <div class="md:hidden text-stone-400 font-bold">↓</div>
-
-                                <div class="arch-node w-full md:w-40 p-4 bg-amber-50 border-2 border-amber-200 rounded-lg text-center cursor-pointer transition-all duration-300" data-info="El backend central. Verifica la firma, consulta la blockchain y emite un Session Token (JWT).">
-                                    <div class="text-2xl mb-2">🛡️</div>
-                                    <div class="font-bold text-sm text-amber-900">Membership Gateway</div>
-                                    <div class="text-[10px] text-amber-700 mt-1">Plano de Control</div>
-                                </div>
-
-                                <div class="hidden md:block text-stone-400 font-bold">↔</div>
-                                <div class="md:hidden text-stone-400 font-bold">↕</div>
-
-                                <div class="flex flex-col gap-2 w-full md:w-40">
-                                    <div class="arch-node p-3 bg-blue-50 border-2 border-blue-200 rounded-lg text-center cursor-pointer transition-all duration-300" data-info="Infraestructura propia (chronik.xolosarmy.xyz). Verifica on-chain si la wallet tiene los tokens RMZ requeridos.">
-                                        <div class="text-xl mb-1">🔗</div>
-                                        <div class="font-bold text-xs text-blue-900">Chronik xolosArmy</div>
-                                        <div class="text-[10px] text-blue-700">Verificación On-chain</div>
-                                    </div>
-                                    <div class="arch-node p-3 bg-red-50 border-2 border-red-200 rounded-lg text-center cursor-pointer transition-all duration-300" data-info="Caché compartido. Guarda los tokens revocados. Conecta el Gateway con el Stratum.">
-                                        <div class="text-xl mb-1">🗄️</div>
-                                        <div class="font-bold text-xs text-red-900">Redis Cache</div>
-                                        <div class="text-[10px] text-red-700">Revocación</div>
-                                    </div>
-                                </div>
-
-                                <div class="hidden md:block text-stone-400 font-bold">↔</div>
-                                <div class="md:hidden text-stone-400 font-bold">↕</div>
-
-                                <div class="arch-node w-full md:w-40 p-4 bg-stone-800 border-2 border-stone-900 rounded-lg text-center cursor-pointer transition-all duration-300" data-info="Servidor TCP (Mock actual). Recibe el worker y password (Session Token). Consulta Redis y autoriza o rechaza (mining.authorize).">
-                                    <div class="text-2xl mb-2">⛏️</div>
-                                    <div class="font-bold text-sm text-white">Stratum Gateway</div>
-                                    <div class="text-[10px] text-stone-300 mt-1">Plano de Datos</div>
-                                </div>
-                            </div>
-
-                            <div class="bg-stone-100 p-4 rounded-lg min-h-[100px] flex items-center justify-center border border-stone-200">
-                                <p id="arch-info-text" class="text-center text-stone-600 font-medium">Pasa el cursor sobre los componentes del diagrama para ver su función.</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-green-200 border-l-4 border-l-green-500">
-                                <h4 class="font-bold text-green-800 mb-2">El Gran Logro (Tesis Comprobada)</h4>
-                                <p class="text-sm text-stone-600">
-                                    El prototipo demuestra que se puede emitir una credencial minera condicionada a la verificación de identidad (Tonalli), membresía (RMZ) y estado on-chain (Chronik), permitiendo a Stratum aceptar o rechazar un worker sin necesidad de consultar la blockchain en el "hot path" (ruta crítica de procesamiento).
-                                </p>
-                            </div>
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                                <h4 class="font-bold text-stone-800 mb-2">Reglas de Negocio Clave</h4>
-                                <ul class="text-sm text-stone-600 space-y-2">
-                                    <li><span class="font-bold text-green-600">✓ Token Válido:</span> <code class="bg-stone-100 px-1 rounded">mining.authorize = true</code></li>
-                                    <li><span class="font-bold text-red-600">✗ Token Revocado:</span> <code class="bg-stone-100 px-1 rounded">mining.authorize = false</code></li>
-                                    <li><span class="font-bold text-amber-600">⚠ Sin RMZ:</span> Acceso denegado en el Gateway.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-prototipos" class="view-section hidden animate-fade-in">
-                    <div class="max-w-5xl mx-auto">
-                        <div class="mb-8">
-                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Evolución: Los 7 Prototipos</h2>
-                            <p class="text-stone-600 text-lg leading-relaxed">
-                                Esta sección documenta el paso a paso de la construcción del sistema. Cada prototipo representó un hito técnico crucial. Selecciona un prototipo en la lista para explorar qué problema resolvió, qué implementó y ver las pruebas de salida JSON que confirmaron su funcionamiento.
-                            </p>
-                        </div>
-
-                        <div class="flex flex-col lg:flex-row gap-8">
-                            <div class="w-full lg:w-1/3">
-                                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden" id="prototype-list">
-                                    
-                                </div>
-                            </div>
-                            <div class="w-full lg:w-2/3">
-                                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 sticky top-4 h-auto min-h-[400px]" id="prototype-details">
-                                    <div class="flex flex-col items-center justify-center h-full text-stone-400">
-                                        <div class="text-4xl mb-4">👈</div>
-                                        <p class="text-lg">Selecciona un prototipo para ver los detalles</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-economia" class="view-section hidden animate-fade-in">
-                    <div class="max-w-5xl mx-auto">
-                        <div class="mb-8">
-                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Economía y Membresía (RMZ)</h2>
-                            <p class="text-stone-600 text-lg leading-relaxed">
-                                El pivote más importante del proyecto: RMZ pasó de ser opcional a ser la membresía obligatoria. Esta sección visualiza los niveles de membresía propuestos. RMZ no es simbólico; financia servidores, nodo Chronik, mantenimiento y desarrollo.
-                            </p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-8">
-                            <h3 class="text-xl font-bold mb-4 text-stone-800 text-center">Tiers de Membresía (RMZ requeridos)</h3>
-                            <div class="chart-container">
-                                <canvas id="rmzChart"></canvas>
-                            </div>
-                            <div class="mt-6 text-center text-sm text-stone-500">
-                                <p>Conversión técnica: 1 RMZ = 10,000 atoms.</p>
-                                <p>Mínimo producción inicial propuesto: 2,500 RMZ (25,000,000 atoms).</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-stone-800 text-white p-6 rounded-xl shadow-sm">
-                                <h4 class="font-bold text-amber-400 mb-2">¿Por qué este modelo?</h4>
-                                <p class="text-sm text-stone-300">
-                                    Al exigir RMZ retenido (verificado vía Chronik), la comunidad xolosArmy asegura un flujo de valor real para sostener la infraestructura. La wallet de Tonalli actúa como la llave de acceso, mientras que los RMZ en esa wallet actúan como el saldo de membresía.
-                                </p>
-                            </div>
-                            <div class="bg-amber-50 p-6 rounded-xl border border-amber-200 shadow-sm">
-                                <h4 class="font-bold text-amber-900 mb-2">Token Oficial Xolos RMZ</h4>
-                                <div class="bg-white p-3 rounded border border-amber-100 text-xs text-stone-600 break-all font-mono mb-2">
-                                    c923bd0f09c630c5e9980cf518c8d34b6353802a3cb7c3f34fa7cc85c9305908
-                                </div>
-                                <p class="text-sm text-amber-800">Este ID es validado directamente on-chain por nuestro nodo propio: <br><code>chronik.xolosarmy.xyz</code></p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-roadmap" class="view-section hidden animate-fade-in">
-                    <div class="max-w-5xl mx-auto">
-                        <div class="mb-8">
-                            <h2 class="text-3xl font-bold text-stone-900 mb-2">Roadmap & Preparación para Producción</h2>
-                            <p class="text-stone-600 text-lg leading-relaxed">
-                                Con la arquitectura base demostrada, el proyecto entra en fase de consolidación y preparación para el mundo real. Esta sección organiza las tareas inmediatas para la campaña y los hitos técnicos necesarios antes del lanzamiento en producción.
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            
-                            <div>
-                                <h3 class="text-xl font-bold mb-4 text-stone-800 border-b pb-2">Acciones Inmediatas (Campaña Teyolia)</h3>
-                                <div class="space-y-3" id="immediate-tasks">
-                                    
-                                </div>
-                            </div>
-
-                            <div>
-                                <h3 class="text-xl font-bold mb-4 text-stone-800 border-b pb-2">Hitos Hacia Producción Real</h3>
-                                <div class="space-y-4" id="prod-tasks">
-                                    
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
-
-            </main>
+      <aside
+        class="w-64 bg-white border-r border-stone-200 flex flex-col justify-between shadow-sm hidden md:flex z-10"
+      >
+        <div>
+          <div class="p-6 border-b border-stone-200">
+            <h1 class="text-xl font-bold text-stone-900 leading-tight">
+              eCash México
+            </h1>
+            <p
+              class="text-xs text-amber-600 font-semibold mt-1 uppercase tracking-wider"
+            >
+              Phase 1 Dashboard
+            </p>
+          </div>
+          <nav class="mt-6 flex flex-col" id="desktop-nav">
+            <button
+              data-target="view-arquitectura"
+              class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors nav-active"
+            >
+              <span class="mr-2">⚙️</span> Arquitectura Base
+            </button>
+            <button
+              data-target="view-prototipos"
+              class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors"
+            >
+              <span class="mr-2">🚀</span> Evolución (Prototipos)
+            </button>
+            <button
+              data-target="view-economia"
+              class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors"
+            >
+              <span class="mr-2">📊</span> Economía RMZ
+            </button>
+            <button
+              data-target="view-roadmap"
+              class="nav-btn w-full text-left px-6 py-3 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-amber-600 transition-colors"
+            >
+              <span class="mr-2">🗺️</span> Roadmap & Producción
+            </button>
+          </nav>
         </div>
+        <div class="p-6 bg-stone-100 border-t border-stone-200">
+          <p class="text-xs text-stone-500">
+            Status:
+            <span class="font-bold text-green-600">Prototipo Demostrado</span>
+          </p>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header
+          class="md:hidden bg-white border-b border-stone-200 p-4 flex justify-between items-center z-20 shadow-sm"
+        >
+          <div>
+            <h1 class="text-lg font-bold text-stone-900">eCash México</h1>
+            <p class="text-[10px] text-amber-600 font-semibold uppercase">
+              Phase 1
+            </p>
+          </div>
+          <select
+            id="mobile-nav"
+            class="bg-stone-100 border border-stone-300 text-stone-800 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 block p-2"
+          >
+            <option value="view-arquitectura">⚙️ Arquitectura</option>
+            <option value="view-prototipos">🚀 Evolución</option>
+            <option value="view-economia">📊 Economía RMZ</option>
+            <option value="view-roadmap">🗺️ Roadmap</option>
+          </select>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 hide-scrollbar">
+          <section
+            id="view-arquitectura"
+            class="view-section block animate-fade-in"
+          >
+            <div class="max-w-5xl mx-auto">
+              <div class="mb-8">
+                <h2 class="text-3xl font-bold text-stone-900 mb-2">
+                  Arquitectura Soberana Funcional
+                </h2>
+                <p class="text-stone-600 text-lg leading-relaxed">
+                  Esta sección presenta el núcleo del logro de la Fase 1. El
+                  objetivo aquí es demostrar el flujo técnico comprobado donde
+                  la membresía minera se controla desde un "Plano de Control"
+                  inteligente, sin recargar el "Plano de Datos" de minería.
+                  Interactúa con los nodos del diagrama para entender el ciclo
+                  de vida de la sesión minera.
+                </p>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-8"
+              >
+                <h3 class="text-xl font-bold mb-6 text-center text-stone-800">
+                  Flujo de Autorización y Revocación (Interactivo)
+                </h3>
+
+                <div
+                  class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-2 mb-8"
+                >
+                  <div
+                    class="arch-node w-full md:w-40 p-4 bg-stone-50 border-2 border-stone-200 rounded-lg text-center cursor-pointer transition-all duration-300"
+                    data-info="Identidad digital del minero. Firma un 'Canonical Challenge' para solicitar acceso."
+                  >
+                    <div class="text-2xl mb-2">👛</div>
+                    <div class="font-bold text-sm text-stone-800">
+                      Tonalli Wallet
+                    </div>
+                    <div class="text-[10px] text-stone-500 mt-1">Identidad</div>
+                  </div>
+
+                  <div class="hidden md:block text-stone-400 font-bold">→</div>
+                  <div class="md:hidden text-stone-400 font-bold">↓</div>
+
+                  <div
+                    class="arch-node w-full md:w-40 p-4 bg-amber-50 border-2 border-amber-200 rounded-lg text-center cursor-pointer transition-all duration-300"
+                    data-info="El backend central. Verifica la firma, consulta la blockchain y emite un Session Token (JWT)."
+                  >
+                    <div class="text-2xl mb-2">🛡️</div>
+                    <div class="font-bold text-sm text-amber-900">
+                      Membership Gateway
+                    </div>
+                    <div class="text-[10px] text-amber-700 mt-1">
+                      Plano de Control
+                    </div>
+                  </div>
+
+                  <div class="hidden md:block text-stone-400 font-bold">↔</div>
+                  <div class="md:hidden text-stone-400 font-bold">↕</div>
+
+                  <div class="flex flex-col gap-2 w-full md:w-40">
+                    <div
+                      class="arch-node p-3 bg-blue-50 border-2 border-blue-200 rounded-lg text-center cursor-pointer transition-all duration-300"
+                      data-info="Infraestructura propia (chronik.xolosarmy.xyz). Verifica on-chain si la wallet tiene los tokens RMZ requeridos."
+                    >
+                      <div class="text-xl mb-1">🔗</div>
+                      <div class="font-bold text-xs text-blue-900">
+                        Chronik xolosArmy
+                      </div>
+                      <div class="text-[10px] text-blue-700">
+                        Verificación On-chain
+                      </div>
+                    </div>
+                    <div
+                      class="arch-node p-3 bg-red-50 border-2 border-red-200 rounded-lg text-center cursor-pointer transition-all duration-300"
+                      data-info="Caché compartido. Guarda los tokens revocados. Conecta el Gateway con el Stratum."
+                    >
+                      <div class="text-xl mb-1">🗄️</div>
+                      <div class="font-bold text-xs text-red-900">
+                        Redis Cache
+                      </div>
+                      <div class="text-[10px] text-red-700">Revocación</div>
+                    </div>
+                  </div>
+
+                  <div class="hidden md:block text-stone-400 font-bold">↔</div>
+                  <div class="md:hidden text-stone-400 font-bold">↕</div>
+
+                  <div
+                    class="arch-node w-full md:w-40 p-4 bg-stone-800 border-2 border-stone-900 rounded-lg text-center cursor-pointer transition-all duration-300"
+                    data-info="Servidor TCP (Mock actual). Recibe el worker y password (Session Token). Consulta Redis y autoriza o rechaza (mining.authorize)."
+                  >
+                    <div class="text-2xl mb-2">⛏️</div>
+                    <div class="font-bold text-sm text-white">
+                      Stratum Gateway
+                    </div>
+                    <div class="text-[10px] text-stone-300 mt-1">
+                      Plano de Datos
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-stone-100 p-4 rounded-lg min-h-[100px] flex items-center justify-center border border-stone-200"
+                >
+                  <p
+                    id="arch-info-text"
+                    class="text-center text-stone-600 font-medium"
+                  >
+                    Pasa el cursor sobre los componentes del diagrama para ver
+                    su función.
+                  </p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-sm border border-green-200 border-l-4 border-l-green-500"
+                >
+                  <h4 class="font-bold text-green-800 mb-2">
+                    El Gran Logro (Tesis Comprobada)
+                  </h4>
+                  <p class="text-sm text-stone-600">
+                    El prototipo demuestra que se puede emitir una credencial
+                    minera condicionada a la verificación de identidad
+                    (Tonalli), membresía (RMZ) y estado on-chain (Chronik),
+                    permitiendo a Stratum aceptar o rechazar un worker sin
+                    necesidad de consultar la blockchain en el "hot path" (ruta
+                    crítica de procesamiento).
+                  </p>
+                </div>
+                <div
+                  class="bg-white p-6 rounded-xl shadow-sm border border-stone-200"
+                >
+                  <h4 class="font-bold text-stone-800 mb-2">
+                    Reglas de Negocio Clave
+                  </h4>
+                  <ul class="text-sm text-stone-600 space-y-2">
+                    <li>
+                      <span class="font-bold text-green-600"
+                        >✓ Token Válido:</span
+                      >
+                      <code class="bg-stone-100 px-1 rounded"
+                        >mining.authorize = true</code
+                      >
+                    </li>
+                    <li>
+                      <span class="font-bold text-red-600"
+                        >✗ Token Revocado:</span
+                      >
+                      <code class="bg-stone-100 px-1 rounded"
+                        >mining.authorize = false</code
+                      >
+                    </li>
+                    <li>
+                      <span class="font-bold text-amber-600">⚠ Sin RMZ:</span>
+                      Acceso denegado en el Gateway.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section
+            id="view-prototipos"
+            class="view-section hidden animate-fade-in"
+          >
+            <div class="max-w-5xl mx-auto">
+              <div class="mb-8">
+                <h2 class="text-3xl font-bold text-stone-900 mb-2">
+                  Evolución: Los 7 Prototipos
+                </h2>
+                <p class="text-stone-600 text-lg leading-relaxed">
+                  Esta sección documenta el paso a paso de la construcción del
+                  sistema. Cada prototipo representó un hito técnico crucial.
+                  Selecciona un prototipo en la lista para explorar qué problema
+                  resolvió, qué implementó y ver las pruebas de salida JSON que
+                  confirmaron su funcionamiento.
+                </p>
+              </div>
+
+              <div class="flex flex-col lg:flex-row gap-8">
+                <div class="w-full lg:w-1/3">
+                  <div
+                    class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden"
+                    id="prototype-list"
+                  ></div>
+                </div>
+                <div class="w-full lg:w-2/3">
+                  <div
+                    class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 sticky top-4 h-auto min-h-[400px]"
+                    id="prototype-details"
+                  >
+                    <div
+                      class="flex flex-col items-center justify-center h-full text-stone-400"
+                    >
+                      <div class="text-4xl mb-4">👈</div>
+                      <p class="text-lg">
+                        Selecciona un prototipo para ver los detalles
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section
+            id="view-economia"
+            class="view-section hidden animate-fade-in"
+          >
+            <div class="max-w-5xl mx-auto">
+              <div class="mb-8">
+                <h2 class="text-3xl font-bold text-stone-900 mb-2">
+                  Economía y Membresía (RMZ)
+                </h2>
+                <p class="text-stone-600 text-lg leading-relaxed">
+                  El pivote más importante del proyecto: RMZ pasó de ser
+                  opcional a ser la membresía obligatoria. Esta sección
+                  visualiza los niveles de membresía propuestos. RMZ no es
+                  simbólico; financia servidores, nodo Chronik, mantenimiento y
+                  desarrollo.
+                </p>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 mb-8"
+              >
+                <h3 class="text-xl font-bold mb-4 text-stone-800 text-center">
+                  Tiers de Membresía (RMZ requeridos)
+                </h3>
+                <div class="chart-container">
+                  <canvas id="rmzChart"></canvas>
+                </div>
+                <div class="mt-6 text-center text-sm text-stone-500">
+                  <p>Conversión técnica: 1 RMZ = 10,000 atoms.</p>
+                  <p>
+                    Mínimo producción inicial propuesto: 2,500 RMZ (25,000,000
+                    atoms).
+                  </p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-stone-800 text-white p-6 rounded-xl shadow-sm">
+                  <h4 class="font-bold text-amber-400 mb-2">
+                    ¿Por qué este modelo?
+                  </h4>
+                  <p class="text-sm text-stone-300">
+                    Al exigir RMZ retenido (verificado vía Chronik), la
+                    comunidad xolosArmy asegura un flujo de valor real para
+                    sostener la infraestructura. La wallet de Tonalli actúa como
+                    la llave de acceso, mientras que los RMZ en esa wallet
+                    actúan como el saldo de membresía.
+                  </p>
+                </div>
+                <div
+                  class="bg-amber-50 p-6 rounded-xl border border-amber-200 shadow-sm"
+                >
+                  <h4 class="font-bold text-amber-900 mb-2">
+                    Token Oficial Xolos RMZ
+                  </h4>
+                  <div
+                    class="bg-white p-3 rounded border border-amber-100 text-xs text-stone-600 break-all font-mono mb-2"
+                  >
+                    c923bd0f09c630c5e9980cf518c8d34b6353802a3cb7c3f34fa7cc85c9305908
+                  </div>
+                  <p class="text-sm text-amber-800">
+                    Este ID es validado directamente on-chain por nuestro nodo
+                    propio: <br /><code>chronik.xolosarmy.xyz</code>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section
+            id="view-roadmap"
+            class="view-section hidden animate-fade-in"
+          >
+            <div class="max-w-5xl mx-auto">
+              <div class="mb-8">
+                <h2 class="text-3xl font-bold text-stone-900 mb-2">
+                  Roadmap & Preparación para Producción
+                </h2>
+                <p class="text-stone-600 text-lg leading-relaxed">
+                  Con la arquitectura base demostrada, el proyecto entra en fase
+                  de consolidación y preparación para el mundo real. Esta
+                  sección organiza las tareas inmediatas para la campaña y los
+                  hitos técnicos necesarios antes del lanzamiento en producción.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h3
+                    class="text-xl font-bold mb-4 text-stone-800 border-b pb-2"
+                  >
+                    Acciones Inmediatas (Campaña Teyolia)
+                  </h3>
+                  <div class="space-y-3" id="immediate-tasks"></div>
+                </div>
+
+                <div>
+                  <h3
+                    class="text-xl font-bold mb-4 text-stone-800 border-b pb-2"
+                  >
+                    Hitos Hacia Producción Real
+                  </h3>
+                  <div class="space-y-4" id="prod-tasks"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
     </div>
 
     <script>
-        
-        const dataPrototypes = [
-            {
-                id: 1,
-                title: "Teyolia & Repositorio",
-                icon: "🌱",
-                desc: "Creación de la campaña en Teyolia bajo eCash México. Creación del repositorio github.com/xolosArmy/xec-mining-gateway haciendo la arquitectura auditable públicamente."
-            },
-            {
-                id: 2,
-                title: "Membership Gateway Backend",
-                icon: "⚙️",
-                desc: "Implementación del primer backend con endpoints de auth, emisión de tokens JWT de sesión, status y revocación. Probado localmente.",
-                code: '{"status":"ok","service":"xec-mining-gateway-membership-prototype"}'
-            },
-            {
-                id: 3,
-                title: "Membership Portal UI",
-                icon: "💻",
-                desc: "Creación de interfaz visual (React+Vite) para pedir challenge, generar firma mock, verificar, emitir token y revocar. Clave para demostración pública."
-            },
-            {
-                id: 4,
-                title: "Stratum Token Validation Mock",
-                icon: "⛏️",
-                desc: "Servidor TCP Stratum mock. Valida que el password (Session Token) enviado por el worker (username) sea un JWT válido. Primer 'aha moment'.",
-                code: '{"id":2,"result":true,"error":null}'
-            },
-            {
-                id: 5,
-                title: "Tonalli Signature Verification",
-                icon: "✍️",
-                desc: "Se define Tonalli Wallet como la única identity wallet. Se implementa verificación de un mensaje canónico determinístico para asegurar el acceso."
-            },
-            {
-                id: 6,
-                title: "Chronik RMZ Verification",
-                icon: "🔗",
-                desc: "El pivote de negocio: RMZ se vuelve obligatorio. El Gateway verifica on-chain usando chronik.xolosarmy.xyz que la wallet posea los RMZ requeridos.",
-                code: 'Wallet sin RMZ:\n{"error": "RMZ membership required"}'
-            },
-            {
-                id: 7,
-                title: "Shared Redis Revocation",
-                icon: "🗄️",
-                desc: "Cierre técnico. El backend guarda tokens revocados en Redis. Stratum revisa Redis antes de autorizar. Si está revocado, rechaza al worker.",
-                code: 'Tras revocar en UI:\n{"id":2,"result":false,"error":"Invalid, expired, or revoked session token"}'
+      const dataPrototypes = [
+        {
+          id: 1,
+          title: "Teyolia & Repositorio",
+          icon: "🌱",
+          desc: "Creación de la campaña en Teyolia bajo eCash México. Creación del repositorio github.com/xolosArmy/xec-mining-gateway haciendo la arquitectura auditable públicamente.",
+        },
+        {
+          id: 2,
+          title: "Membership Gateway Backend",
+          icon: "⚙️",
+          desc: "Implementación del primer backend con endpoints de auth, emisión de tokens JWT de sesión, status y revocación. Probado localmente.",
+          code: '{"status":"ok","service":"xec-mining-gateway-membership-prototype"}',
+        },
+        {
+          id: 3,
+          title: "Membership Portal UI",
+          icon: "💻",
+          desc: "Creación de interfaz visual (React+Vite) para pedir challenge, generar firma mock, verificar, emitir token y revocar. Clave para demostración pública.",
+        },
+        {
+          id: 4,
+          title: "Stratum Token Validation Mock",
+          icon: "⛏️",
+          desc: "Servidor TCP Stratum mock. Valida que el password (Session Token) enviado por el worker (username) sea un JWT válido. Primer 'aha moment'.",
+          code: '{"id":2,"result":true,"error":null}',
+        },
+        {
+          id: 5,
+          title: "Tonalli Signature Verification",
+          icon: "✍️",
+          desc: "Se define Tonalli Wallet como la única identity wallet. Se implementa verificación de un mensaje canónico determinístico para asegurar el acceso.",
+        },
+        {
+          id: 6,
+          title: "Chronik RMZ Verification",
+          icon: "🔗",
+          desc: "El pivote de negocio: RMZ se vuelve obligatorio. El Gateway verifica on-chain usando chronik.xolosarmy.xyz que la wallet posea los RMZ requeridos.",
+          code: 'Wallet sin RMZ:\n{"error": "RMZ membership required"}',
+        },
+        {
+          id: 7,
+          title: "Shared Redis Revocation",
+          icon: "🗄️",
+          desc: "Cierre técnico. El backend guarda tokens revocados en Redis. Stratum revisa Redis antes de autorizar. Si está revocado, rechaza al worker.",
+          code: 'Tras revocar en UI:\n{"id":2,"result":false,"error":"Invalid, expired, or revoked session token"}',
+        },
+      ];
+
+      const dataImmediateTasks = [
+        { status: "done", text: "Commit/push final del Prototype 7" },
+        {
+          status: "pending",
+          text: "Grabar demo completa (Backend, Frontend, Redis, Stratum, Wallet)",
+        },
+        {
+          status: "pending",
+          text: "Publicar Update #8 en Teyolia ('Shared Redis Revocation is live')",
+        },
+        {
+          status: "pending",
+          text: "Limpiar documentación del repo (Alinear a modelo final)",
+        },
+        { status: "pending", text: "Crear docs/full-demo-walkthrough.md" },
+      ];
+
+      const dataProdTasks = [
+        {
+          category: "1. Integración Cercana",
+          items: [
+            "Integration test automatizado",
+            "Tonalli Connect real en UI",
+            "Worker/session registry (Dashboard)",
+          ],
+        },
+        {
+          category: "2. Seguridad & Infra",
+          items: [
+            "Redis auth/TLS & Rate limiting",
+            "Validación fuerte de inputs & Logs",
+            "Servidor dedicado, firewall & CI/CD",
+          ],
+        },
+        {
+          category: "3. Stratum & Pool Engine",
+          items: [
+            "Compatibilidad ASIC real (V1/V2)",
+            "Job distribution & Share validation",
+            "Conexión a node/pool upstream",
+            "Estadísticas y contabilidad",
+          ],
+        },
+      ];
+
+      const state = {
+        activeView: "view-arquitectura",
+        chartInstance: null,
+      };
+
+      function initNavigation() {
+        const buttons = document.querySelectorAll(".nav-btn");
+        const mobileSelect = document.getElementById("mobile-nav");
+        const sections = document.querySelectorAll(".view-section");
+
+        const switchView = (targetId) => {
+          sections.forEach((sec) => {
+            sec.classList.remove("block");
+            sec.classList.add("hidden");
+          });
+
+          document.getElementById(targetId).classList.remove("hidden");
+          document.getElementById(targetId).classList.add("block");
+
+          buttons.forEach((btn) => {
+            if (btn.dataset.target === targetId) {
+              btn.classList.add("nav-active");
+              btn.classList.remove("text-stone-600");
+            } else {
+              btn.classList.remove("nav-active");
+              btn.classList.add("text-stone-600");
             }
-        ];
+          });
 
-        const dataImmediateTasks = [
-            { status: "done", text: "Commit/push final del Prototype 7" },
-            { status: "pending", text: "Grabar demo completa (Backend, Frontend, Redis, Stratum, Wallet)" },
-            { status: "pending", text: "Publicar Update #8 en Teyolia ('Shared Redis Revocation is live')" },
-            { status: "pending", text: "Limpiar documentación del repo (Alinear a modelo final)" },
-            { status: "pending", text: "Crear docs/full-demo-walkthrough.md" }
-        ];
+          mobileSelect.value = targetId;
 
-        const dataProdTasks = [
-            {
-                category: "1. Integración Cercana",
-                items: ["Integration test automatizado", "Tonalli Connect real en UI", "Worker/session registry (Dashboard)"]
-            },
-            {
-                category: "2. Seguridad & Infra",
-                items: ["Redis auth/TLS & Rate limiting", "Validación fuerte de inputs & Logs", "Servidor dedicado, firewall & CI/CD"]
-            },
-            {
-                category: "3. Stratum & Pool Engine",
-                items: ["Compatibilidad ASIC real (V1/V2)", "Job distribution & Share validation", "Conexión a node/pool upstream", "Estadísticas y contabilidad"]
-            }
-        ];
-
-        
-        const state = {
-            activeView: 'view-arquitectura',
-            chartInstance: null
+          if (targetId === "view-economia") {
+            renderChart();
+          }
         };
 
-        
-        function initNavigation() {
-            const buttons = document.querySelectorAll('.nav-btn');
-            const mobileSelect = document.getElementById('mobile-nav');
-            const sections = document.querySelectorAll('.view-section');
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            switchView(e.currentTarget.dataset.target);
+          });
+        });
 
-            const switchView = (targetId) => {
-                
-                sections.forEach(sec => {
-                    sec.classList.remove('block');
-                    sec.classList.add('hidden');
-                });
-                
-                document.getElementById(targetId).classList.remove('hidden');
-                document.getElementById(targetId).classList.add('block');
+        mobileSelect.addEventListener("change", (e) => {
+          switchView(e.target.value);
+        });
+      }
 
-                
-                buttons.forEach(btn => {
-                    if(btn.dataset.target === targetId) {
-                        btn.classList.add('nav-active');
-                        btn.classList.remove('text-stone-600');
-                    } else {
-                        btn.classList.remove('nav-active');
-                        btn.classList.add('text-stone-600');
-                    }
-                });
+      function initArchitectureHover() {
+        const nodes = document.querySelectorAll(".arch-node");
+        const infoText = document.getElementById("arch-info-text");
+        const defaultText =
+          "Pasa el cursor sobre los componentes del diagrama para ver su función.";
 
-                mobileSelect.value = targetId;
+        nodes.forEach((node) => {
+          node.addEventListener("mouseenter", () => {
+            infoText.textContent = node.dataset.info;
+            infoText.classList.add("text-amber-800");
+            infoText.classList.remove("text-stone-600");
+          });
+          node.addEventListener("mouseleave", () => {
+            infoText.textContent = defaultText;
+            infoText.classList.remove("text-amber-800");
+            infoText.classList.add("text-stone-600");
+          });
+        });
+      }
 
-                
-                if (targetId === 'view-economia') {
-                    renderChart();
-                }
-            };
+      function renderPrototypes() {
+        const listContainer = document.getElementById("prototype-list");
 
-            buttons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    switchView(e.currentTarget.dataset.target);
-                });
-            });
-
-            mobileSelect.addEventListener('change', (e) => {
-                switchView(e.target.value);
-            });
-        }
-
-        function initArchitectureHover() {
-            const nodes = document.querySelectorAll('.arch-node');
-            const infoText = document.getElementById('arch-info-text');
-            const defaultText = "Pasa el cursor sobre los componentes del diagrama para ver su función.";
-
-            nodes.forEach(node => {
-                node.addEventListener('mouseenter', () => {
-                    infoText.textContent = node.dataset.info;
-                    infoText.classList.add('text-amber-800');
-                    infoText.classList.remove('text-stone-600');
-                });
-                node.addEventListener('mouseleave', () => {
-                    infoText.textContent = defaultText;
-                    infoText.classList.remove('text-amber-800');
-                    infoText.classList.add('text-stone-600');
-                });
-            });
-        }
-
-        function renderPrototypes() {
-            const listContainer = document.getElementById('prototype-list');
-            
-            dataPrototypes.forEach((proto, index) => {
-                const item = document.createElement('div');
-                item.className = `p-4 border-b border-stone-200 cursor-pointer hover:bg-stone-50 transition-colors ${index === 0 ? 'bg-stone-50' : ''}`;
-                item.innerHTML = `
+        dataPrototypes.forEach((proto, index) => {
+          const item = document.createElement("div");
+          item.className = `p-4 border-b border-stone-200 cursor-pointer hover:bg-stone-50 transition-colors ${index === 0 ? "bg-stone-50" : ""}`;
+          item.innerHTML = `
                     <div class="flex items-center gap-3">
                         <div class="text-2xl">${proto.icon}</div>
                         <div>
@@ -435,15 +678,16 @@
                         </div>
                     </div>
                 `;
-                
-                item.addEventListener('click', () => {
-                    
-                    Array.from(listContainer.children).forEach(c => c.classList.remove('bg-stone-50'));
-                    item.classList.add('bg-stone-50');
-                    
-                    
-                    const detailsContainer = document.getElementById('prototype-details');
-                    detailsContainer.innerHTML = `
+
+          item.addEventListener("click", () => {
+            Array.from(listContainer.children).forEach((c) =>
+              c.classList.remove("bg-stone-50"),
+            );
+            item.classList.add("bg-stone-50");
+
+            const detailsContainer =
+              document.getElementById("prototype-details");
+            detailsContainer.innerHTML = `
                         <div class="animate-fade-in">
                             <div class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full mb-4">
                                 Prototipo ${proto.id}
@@ -453,131 +697,148 @@
                             </h3>
                             <p class="text-stone-600 mb-6 leading-relaxed text-lg">${proto.desc}</p>
                             
-                            ${proto.code ? `
+                            ${
+                              proto.code
+                                ? `
                                 <div class="mt-4">
                                     <p class="text-sm font-bold text-stone-700 mb-2">Resultado / Output JSON:</p>
                                     <pre class="bg-stone-900 text-green-400 p-4 rounded-lg text-sm overflow-x-auto font-mono shadow-inner border border-stone-800">${proto.code}</pre>
                                 </div>
-                            ` : ''}
+                            `
+                                : ""
+                            }
                         </div>
                     `;
-                });
-                listContainer.appendChild(item);
-            });
+          });
+          listContainer.appendChild(item);
+        });
 
-            
-            if(listContainer.firstChild) listContainer.firstChild.click();
-        }
+        if (listContainer.firstChild) listContainer.firstChild.click();
+      }
 
-        function renderChart() {
-            if (state.chartInstance) return; 
+      function renderChart() {
+        if (state.chartInstance) return;
 
-            const ctx = document.getElementById('rmzChart').getContext('2d');
-            
-            state.chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Base Miner', 'Active Miner', 'Pro Miner', 'Infra Guardian'],
-                    datasets: [{
-                        label: 'RMZ Requeridos por Mes',
-                        data: [2500, 10000, 25000, 50000],
-                        backgroundColor: [
-                            'rgba(217, 119, 6, 0.2)', 
-                            'rgba(217, 119, 6, 0.5)',
-                            'rgba(217, 119, 6, 0.8)',
-                            'rgba(217, 119, 6, 1.0)'
-                        ],
-                        borderColor: [
-                            'rgba(217, 119, 6, 1)',
-                            'rgba(217, 119, 6, 1)',
-                            'rgba(217, 119, 6, 1)',
-                            'rgba(217, 119, 6, 1)'
-                        ],
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
+        const ctx = document.getElementById("rmzChart").getContext("2d");
+
+        state.chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: [
+              "Base Miner",
+              "Active Miner",
+              "Pro Miner",
+              "Infra Guardian",
+            ],
+            datasets: [
+              {
+                label: "RMZ Requeridos por Mes",
+                data: [2500, 10000, 25000, 50000],
+                backgroundColor: [
+                  "rgba(217, 119, 6, 0.2)",
+                  "rgba(217, 119, 6, 0.5)",
+                  "rgba(217, 119, 6, 0.8)",
+                  "rgba(217, 119, 6, 1.0)",
+                ],
+                borderColor: [
+                  "rgba(217, 119, 6, 1)",
+                  "rgba(217, 119, 6, 1)",
+                  "rgba(217, 119, 6, 1)",
+                  "rgba(217, 119, 6, 1)",
+                ],
+                borderWidth: 1,
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return context.parsed.x.toLocaleString() + " RMZ";
+                  },
                 },
-                options: {
-                    indexAxis: 'y', 
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.x.toLocaleString() + ' RMZ';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: {
-                                color: '#e5e7eb'
-                            },
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString();
-                                }
-                            }
-                        },
-                        y: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                font: {
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
+              },
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                grid: {
+                  color: "#e5e7eb",
+                },
+                ticks: {
+                  callback: function (value) {
+                    return value.toLocaleString();
+                  },
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  font: {
+                    weight: "bold",
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
 
-        function renderRoadmap() {
-            const immediateContainer = document.getElementById('immediate-tasks');
-            dataImmediateTasks.forEach(task => {
-                const el = document.createElement('div');
-                el.className = "flex items-start gap-3 p-3 bg-white rounded border border-stone-200 shadow-sm";
-                const icon = task.status === 'done' ? '<span class="text-green-500 mt-0.5">✅</span>' : '<span class="text-amber-500 mt-0.5">⏳</span>';
-                el.innerHTML = `
+      function renderRoadmap() {
+        const immediateContainer = document.getElementById("immediate-tasks");
+        dataImmediateTasks.forEach((task) => {
+          const el = document.createElement("div");
+          el.className =
+            "flex items-start gap-3 p-3 bg-white rounded border border-stone-200 shadow-sm";
+          const icon =
+            task.status === "done"
+              ? '<span class="text-green-500 mt-0.5">✅</span>'
+              : '<span class="text-amber-500 mt-0.5">⏳</span>';
+          el.innerHTML = `
                     ${icon}
-                    <span class="text-sm font-medium ${task.status === 'done' ? 'text-stone-500 line-through' : 'text-stone-800'}">${task.text}</span>
+                    <span class="text-sm font-medium ${task.status === "done" ? "text-stone-500 line-through" : "text-stone-800"}">${task.text}</span>
                 `;
-                immediateContainer.appendChild(el);
-            });
+          immediateContainer.appendChild(el);
+        });
 
-            const prodContainer = document.getElementById('prod-tasks');
-            dataProdTasks.forEach(cat => {
-                const card = document.createElement('div');
-                card.className = "bg-stone-50 border border-stone-200 rounded-lg p-4";
-                
-                let itemsHtml = cat.items.map(i => `<li class="flex items-center gap-2 text-sm text-stone-600"><span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> ${i}</li>`).join('');
+        const prodContainer = document.getElementById("prod-tasks");
+        dataProdTasks.forEach((cat) => {
+          const card = document.createElement("div");
+          card.className = "bg-stone-50 border border-stone-200 rounded-lg p-4";
 
-                card.innerHTML = `
+          let itemsHtml = cat.items
+            .map(
+              (i) =>
+                `<li class="flex items-center gap-2 text-sm text-stone-600"><span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> ${i}</li>`,
+            )
+            .join("");
+
+          card.innerHTML = `
                     <h4 class="font-bold text-stone-800 mb-3">${cat.category}</h4>
                     <ul class="space-y-2">
                         ${itemsHtml}
                     </ul>
                 `;
-                prodContainer.appendChild(card);
-            });
-        }
-
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            initNavigation();
-            initArchitectureHover();
-            renderPrototypes();
-            renderRoadmap();
+          prodContainer.appendChild(card);
         });
+      }
 
+      document.addEventListener("DOMContentLoaded", () => {
+        initNavigation();
+        initArchitectureHover();
+        renderPrototypes();
+        renderRoadmap();
+      });
     </script>
-</body>
+  </body>
 </html>
