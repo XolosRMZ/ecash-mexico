@@ -1,593 +1,821 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-0C5SHBHW2P");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Integración eCash y THORChain: Swaps Descentralizados | eCash México
+    </title>
+    <meta
+      name="description"
+      content="Crónica sobre la propuesta de código para añadir XEC nativo a THORChain, permitiendo intercambios cross-chain directos y sin custodia."
+    />
+    <link
+      rel="canonical"
+      href="https://ecash.mx/blog/integracion-ecash-thorchain.html"
+    />
+    <meta name="robots" content="index, follow" />
 
-  <title>Crónica de una Transición: El Xoloitzcuintle como Guía en la Era del Código | eCash México</title>
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="eCash México" />
+    <meta
+      property="og:title"
+      content="Integración eCash y THORChain: Swaps Descentralizados"
+    />
+    <meta
+      property="og:description"
+      content="Crónica sobre la propuesta de código para añadir XEC nativo a THORChain, permitiendo intercambios cross-chain directos y sin custodia."
+    />
+    <meta
+      property="og:url"
+      content="https://ecash.mx/blog/integracion-ecash-thorchain.html"
+    />
+    <meta
+      property="og:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
 
-  <meta name="description" content="Una crónica editorial del Weekly Update de xolosArmy Network: el Xoloitzcuintle como guía ancestral en la era del código, la IA, eCash, Tonalli Wallet, Teyolia y THORChain." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Integración eCash y THORChain: Swaps Descentralizados"
+    />
+    <meta
+      name="twitter:description"
+      content="Crónica sobre la propuesta de código para añadir XEC nativo a THORChain, permitiendo intercambios cross-chain directos y sin custodia."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
 
-  <style>
-    :root {
-      --bg-main: #05070b;
-      --bg-card: #0d111a;
-      --bg-soft: #111827;
-      --text-main: #f5f7fa;
-      --text-muted: #a7b0c0;
-      --xec-blue: #00a3ff;
-      --xec-cyan: #00e0ff;
-      --gold: #d4af37;
-      --border-soft: rgba(255, 255, 255, 0.08);
-      --shadow-blue: rgba(0, 163, 255, 0.18);
-      --max-width: 980px;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background:
-        radial-gradient(circle at top left, rgba(0, 163, 255, 0.16), transparent 32%),
-        radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.12), transparent 30%),
-        var(--bg-main);
-      color: var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.7;
-    }
-
-    .article-wrapper {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 48px 20px 72px;
-    }
-
-    .article-hero {
-      padding: 42px 28px;
-      border: 1px solid var(--border-soft);
-      border-radius: 28px;
-      background:
-        linear-gradient(135deg, rgba(0, 163, 255, 0.12), rgba(212, 175, 55, 0.07)),
-        rgba(13, 17, 26, 0.92);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-      margin-bottom: 34px;
-    }
-
-    .article-kicker {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--xec-cyan);
-      background: rgba(0, 224, 255, 0.08);
-      border: 1px solid rgba(0, 224, 255, 0.25);
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 18px;
-    }
-
-    .article-hero h1 {
-      font-size: clamp(2.1rem, 6vw, 4.5rem);
-      line-height: 1.02;
-      letter-spacing: -0.06em;
-      margin: 0 0 18px;
-    }
-
-    .article-hero h1 span {
-      color: var(--gold);
-    }
-
-    .article-subtitle {
-      color: var(--text-muted);
-      font-size: clamp(1rem, 2vw, 1.22rem);
-      max-width: 760px;
-      margin: 0;
-    }
-
-    .article-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 24px;
-      color: var(--text-muted);
-      font-size: 0.92rem;
-    }
-
-    .article-meta span {
-      border: 1px solid var(--border-soft);
-      background: rgba(255, 255, 255, 0.04);
-      padding: 6px 11px;
-      border-radius: 999px;
-    }
-
-    .video-section {
-      margin: 34px 0 40px;
-      padding: 14px;
-      border-radius: 26px;
-      background: linear-gradient(135deg, rgba(0, 163, 255, 0.16), rgba(212, 175, 55, 0.12));
-      box-shadow: 0 18px 60px var(--shadow-blue);
-    }
-
-    .video-frame {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      overflow: hidden;
-      border-radius: 20px;
-      background: #000;
-    }
-
-    .video-frame iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    .article-card {
-      background: rgba(13, 17, 26, 0.88);
-      border: 1px solid var(--border-soft);
-      border-radius: 26px;
-      padding: 34px 28px;
-      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.32);
-    }
-
-    .article-card h2 {
-      font-size: clamp(1.5rem, 3vw, 2.15rem);
-      line-height: 1.15;
-      margin: 42px 0 16px;
-      letter-spacing: -0.035em;
-      color: var(--text-main);
-    }
-
-    .article-card h2:first-child {
-      margin-top: 0;
-    }
-
-    .article-card h3 {
-      font-size: 1.15rem;
-      margin: 28px 0 10px;
-      color: var(--gold);
-      letter-spacing: -0.02em;
-    }
-
-    .article-card p {
-      color: #dce3ee;
-      margin: 0 0 18px;
-      font-size: 1.02rem;
-    }
-
-    .article-card strong {
-      color: #ffffff;
-    }
-
-    .article-card em {
-      color: var(--xec-cyan);
-      font-style: normal;
-      font-weight: 650;
-    }
-
-    .lead-paragraph {
-      font-size: 1.16rem !important;
-      color: #ffffff !important;
-      border-left: 4px solid var(--xec-blue);
-      padding-left: 18px;
-      margin-bottom: 28px !important;
-    }
-
-    .section-label {
-      display: inline-block;
-      color: var(--xec-cyan);
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .highlight-box {
-      margin: 30px 0;
-      padding: 24px;
-      border-radius: 22px;
-      background:
-        linear-gradient(135deg, rgba(0, 163, 255, 0.11), rgba(0, 224, 255, 0.04)),
-        var(--bg-soft);
-      border: 1px solid rgba(0, 224, 255, 0.18);
-    }
-
-    .highlight-box p:last-child {
-      margin-bottom: 0;
-    }
-
-    .tech-list {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin: 26px 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .tech-list li {
-      padding: 20px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.045);
-      border: 1px solid var(--border-soft);
-    }
-
-    .tech-list strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--gold);
-      font-size: 1.04rem;
-    }
-
-    .quote {
-      margin: 34px 0;
-      padding: 28px;
-      border-radius: 24px;
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid rgba(212, 175, 55, 0.24);
-      color: #fff6d8;
-      font-size: 1.18rem;
-      line-height: 1.55;
-      font-weight: 650;
-    }
-
-    .closing-box {
-      margin-top: 44px;
-      padding: 28px;
-      border-radius: 24px;
-      background:
-        linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(0, 163, 255, 0.10)),
-        rgba(255, 255, 255, 0.035);
-      border: 1px solid var(--border-soft);
-    }
-
-    .closing-box p:last-child {
-      margin-bottom: 0;
-    }
-
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .cta-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 800;
-      color: #041019;
-      background: linear-gradient(135deg, var(--xec-cyan), var(--xec-blue));
-      box-shadow: 0 10px 28px rgba(0, 163, 255, 0.28);
-    }
-
-    .cta-button.secondary {
-      color: var(--text-main);
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      box-shadow: none;
-    }
-
-    code {
-      color: var(--xec-cyan);
-      background: rgba(0, 224, 255, 0.09);
-      border: 1px solid rgba(0, 224, 255, 0.16);
-      border-radius: 8px;
-      padding: 2px 6px;
-      font-size: 0.92em;
-    }
-
-    @media (min-width: 760px) {
-      .tech-list {
-        grid-template-columns: 1fr 1fr;
+    <style>
+      :root {
+        --bg-main: #05070b;
+        --bg-card: #0d111a;
+        --bg-soft: #111827;
+        --text-main: #f5f7fa;
+        --text-muted: #a7b0c0;
+        --xec-blue: #00a3ff;
+        --xec-cyan: #00e0ff;
+        --gold: #d4af37;
+        --border-soft: rgba(255, 255, 255, 0.08);
+        --shadow-blue: rgba(0, 163, 255, 0.18);
+        --max-width: 980px;
       }
 
-      .article-hero {
-        padding: 56px 44px;
+      * {
+        box-sizing: border-box;
       }
 
-      .article-card {
-        padding: 46px 44px;
+      body {
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(0, 163, 255, 0.16),
+            transparent 32%
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(212, 175, 55, 0.12),
+            transparent 30%
+          ),
+          var(--bg-main);
+        color: var(--text-main);
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        line-height: 1.7;
       }
-    }
 
-    @media (max-width: 520px) {
       .article-wrapper {
-        padding: 28px 14px 54px;
-      }
-
-      .article-hero,
-      .article-card {
-        border-radius: 22px;
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 48px 20px 72px;
       }
 
       .article-hero {
-        padding: 32px 22px;
+        padding: 42px 28px;
+        border: 1px solid var(--border-soft);
+        border-radius: 28px;
+        background:
+          linear-gradient(
+            135deg,
+            rgba(0, 163, 255, 0.12),
+            rgba(212, 175, 55, 0.07)
+          ),
+          rgba(13, 17, 26, 0.92);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+        margin-bottom: 34px;
       }
 
-      .article-card {
-        padding: 28px 20px;
+      .article-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--xec-cyan);
+        background: rgba(0, 224, 255, 0.08);
+        border: 1px solid rgba(0, 224, 255, 0.25);
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+
+      .article-hero h1 {
+        font-size: clamp(2.1rem, 6vw, 4.5rem);
+        line-height: 1.02;
+        letter-spacing: -0.06em;
+        margin: 0 0 18px;
+      }
+
+      .article-hero h1 span {
+        color: var(--gold);
+      }
+
+      .article-subtitle {
+        color: var(--text-muted);
+        font-size: clamp(1rem, 2vw, 1.22rem);
+        max-width: 760px;
+        margin: 0;
+      }
+
+      .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+        color: var(--text-muted);
+        font-size: 0.92rem;
+      }
+
+      .article-meta span {
+        border: 1px solid var(--border-soft);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 6px 11px;
+        border-radius: 999px;
       }
 
       .video-section {
-        border-radius: 22px;
-        padding: 10px;
+        margin: 34px 0 40px;
+        padding: 14px;
+        border-radius: 26px;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 163, 255, 0.16),
+          rgba(212, 175, 55, 0.12)
+        );
+        box-shadow: 0 18px 60px var(--shadow-blue);
       }
 
       .video-frame {
-        border-radius: 16px;
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #000;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <main class="article-wrapper">
+      .video-frame iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
 
-    <header class="article-hero">
-      <div class="article-kicker">eCash México · xolosArmy Network</div>
+      .article-card {
+        background: rgba(13, 17, 26, 0.88);
+        border: 1px solid var(--border-soft);
+        border-radius: 26px;
+        padding: 34px 28px;
+        box-shadow: 0 20px 70px rgba(0, 0, 0, 0.32);
+      }
 
-      <h1>
-        Crónica de una Transición:<br />
-        <span>El Xoloitzcuintle como Guía en la Era del Código</span>
-      </h1>
+      .article-card h2 {
+        font-size: clamp(1.5rem, 3vw, 2.15rem);
+        line-height: 1.15;
+        margin: 42px 0 16px;
+        letter-spacing: -0.035em;
+        color: var(--text-main);
+      }
 
-      <p class="article-subtitle">
-        Una lectura editorial del Weekly Update de xolosArmy Network: mito, infraestructura soberana,
-        inteligencia artificial, eCash, Tonalli Wallet, Teyolia y la búsqueda de una nueva brújula moral
-        para la civilización digital.
-      </p>
+      .article-card h2:first-child {
+        margin-top: 0;
+      }
 
-      <div class="article-meta">
-        <span>Crónica editorial</span>
-        <span>eCash / XEC</span>
-        <span>Tonalli Wallet</span>
-        <span>Teyolia</span>
-        <span>THORChain</span>
-      </div>
-    </header>
+      .article-card h3 {
+        font-size: 1.15rem;
+        margin: 28px 0 10px;
+        color: var(--gold);
+        letter-spacing: -0.02em;
+      }
 
-    <section class="video-section" aria-label="Video del Weekly Update de xolosArmy Network">
-      <div class="video-frame">
-        <iframe
-          src="https://www.youtube.com/embed/FmBSmXjjRII"
-          title="Weekly Update de xolosArmy Network"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen>
-        </iframe>
-      </div>
-    </section>
+      .article-card p {
+        color: #dce3ee;
+        margin: 0 0 18px;
+        font-size: 1.02rem;
+      }
 
-    <article class="article-card">
+      .article-card strong {
+        color: #ffffff;
+      }
 
-      <p class="lead-paragraph">
-        El video no se presenta como un anuncio tecnológico convencional. No hay oficinas de cristal,
-        pantallas corporativas ni lenguaje vacío de startup. Hay penumbra, madera, un candelabro antiguo
-        y dos Xoloitzcuintles moviéndose alrededor de Fernando como si custodiaran el mensaje.
-        Desde esa escena, xolosArmy Network presenta algo más que una actualización semanal:
-        presenta una tesis civilizatoria.
-      </p>
+      .article-card em {
+        color: var(--xec-cyan);
+        font-style: normal;
+        font-weight: 650;
+      }
 
-      <h2>El Escenario: Entre lo Ancestral y lo Digital</h2>
+      .lead-paragraph {
+        font-size: 1.16rem !important;
+        color: #ffffff !important;
+        border-left: 4px solid var(--xec-blue);
+        padding-left: 18px;
+        margin-bottom: 28px !important;
+      }
 
-      <p>
-        El video arranca con una estética que rompe por completo el molde tradicional de los anuncios
-        tecnológicos. Fernando se encuentra en una habitación sumida en la penumbra, iluminada tenuemente
-        por un candelabro antiguo que cuelga del techo y proyecta sombras sobre una pesada mesa de madera.
-        La atmósfera es rústica, casi mística.
-      </p>
+      .section-label {
+        display: inline-block;
+        color: var(--xec-cyan);
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
 
-      <p>
-        Sin embargo, lo que le da vida a la escena no es solo la voz de Fernando, sino la presencia inquieta
-        de dos perros Xoloitzcuintles desnudos. A lo largo de la grabación, los animales merodean, olfatean
-        y se apoyan sobre él buscando atención, convirtiéndose en los coprotagonistas silenciosos —pero
-        vitales— de la transmisión.
-      </p>
+      .highlight-box {
+        margin: 30px 0;
+        padding: 24px;
+        border-radius: 22px;
+        background:
+          linear-gradient(
+            135deg,
+            rgba(0, 163, 255, 0.11),
+            rgba(0, 224, 255, 0.04)
+          ),
+          var(--bg-soft);
+        border: 1px solid rgba(0, 224, 255, 0.18);
+      }
 
-      <p>
-        Con una camiseta negra sencilla y un tono directo, Fernando da la bienvenida a la audiencia al
-        <em>Weekly Update</em> de <strong>xolosArmy Network</strong>. Su objetivo es claro: explicar quiénes son,
-        adónde van y qué buscan lograr.
-      </p>
+      .highlight-box p:last-child {
+        margin-bottom: 0;
+      }
 
-      <h2>Primer Acto: El Mito como Brújula Moral</h2>
+      .tech-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin: 26px 0;
+        padding: 0;
+        list-style: none;
+      }
 
-      <p>
-        Fernando no comienza hablando de código, sino de historia y cosmogonía. Introduce a xolosArmy
-        no solo como una iniciativa tecnológica, sino como un puente hacia la mitología mexica.
-        Recuerda cómo, históricamente, el Xoloitzcuintle era considerado un <em>psicopompo</em>:
-        un guía espiritual que ayudaba a los humanos a transitar de la vida terrenal hacia el Mictlán,
-        para luego renacer o reintegrarse al todo.
-      </p>
+      .tech-list li {
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.045);
+        border: 1px solid var(--border-soft);
+      }
 
-      <p>
-        La fuerza del discurso está en el paralelismo con el presente. Fernando advierte que la humanidad
-        está atravesando una nueva transición civilizatoria: una era que será inundada por el código,
-        las criptomonedas y la Inteligencia Artificial. En este nuevo abismo digital, xolosArmy propone
-        al Xoloitzcuintle como símbolo, guardián y brújula moral.
-      </p>
+      .tech-list strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--gold);
+        font-size: 1.04rem;
+      }
 
-      <div class="quote">
-        Del Xoloitzcuintle como guía del Mictlán al Xoloitzcuintle como guía moral en la era del código.
-      </div>
+      .quote {
+        margin: 34px 0;
+        padding: 28px;
+        border-radius: 24px;
+        background: rgba(212, 175, 55, 0.08);
+        border: 1px solid rgba(212, 175, 55, 0.24);
+        color: #fff6d8;
+        font-size: 1.18rem;
+        line-height: 1.55;
+        font-weight: 650;
+      }
 
-      <p>
-        La idea se extiende hacia la IA. Fernando reconoce que las inteligencias artificiales comienzan
-        a operar como agentes autónomos, capaces de tomar decisiones, ejecutar instrucciones y participar
-        en sistemas sociales y económicos. Para evitar que la humanidad se pierda en esta nueva dimensión,
-        anuncia la creación de una <strong>constitución legible por máquinas</strong>: un marco moral
-        integrado para que las IA puedan trabajar junto a nosotros bajo principios de lealtad, guía y
-        protección, inspirados en el símbolo ancestral del Xolo.
-      </p>
+      .closing-box {
+        margin-top: 44px;
+        padding: 28px;
+        border-radius: 24px;
+        background:
+          linear-gradient(
+            135deg,
+            rgba(212, 175, 55, 0.12),
+            rgba(0, 163, 255, 0.1)
+          ),
+          rgba(255, 255, 255, 0.035);
+        border: 1px solid var(--border-soft);
+      }
 
-      <h2>Segundo Acto: Forjando las Herramientas</h2>
+      .closing-box p:last-child {
+        margin-bottom: 0;
+      }
 
-      <span class="section-label">eCash, Tonalli y arqueología digital</span>
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
 
-      <p>
-        Para materializar esta filosofía, Fernando detalla el arsenal tecnológico que han construido
-        sobre la red <strong>eCash</strong>, una evolución del linaje Bitcoin enfocada en pagos rápidos,
-        bajo costo de transacción y uso soberano del dinero digital.
-      </p>
+      .cta-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font-weight: 800;
+        color: #041019;
+        background: linear-gradient(135deg, var(--xec-cyan), var(--xec-blue));
+        box-shadow: 0 10px 28px rgba(0, 163, 255, 0.28);
+      }
 
-      <ul class="tech-list">
-        <li>
-          <strong>Tonalli Wallet</strong>
-          Presenta su billetera soberana. La palabra <em>Tonalli</em> hace referencia a la energía vital,
-          solar, que dota a los humanos de voluntad y asistencia divina. En esta cosmología, la billetera
-          no es solo una herramienta financiera: es una extensión digital de la energía soberana del usuario.
-        </li>
+      .cta-button.secondary {
+        color: var(--text-main);
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        box-shadow: none;
+      }
 
-        <li>
-          <strong>Arqueología moderna con NFTs</strong>
-          A través de Tonalli, xolosArmy documenta en la cadena de bloques los linajes de los
-          Xoloitzcuintles de Xolos Ramírez usando tecnología eCash. Estos registros inmutables funcionan
-          como una nueva forma de arqueología digital: escribir en piedra, pero dentro de internet.
-        </li>
+      code {
+        color: var(--xec-cyan);
+        background: rgba(0, 224, 255, 0.09);
+        border: 1px solid rgba(0, 224, 255, 0.16);
+        border-radius: 8px;
+        padding: 2px 6px;
+        font-size: 0.92em;
+      }
 
-        <li>
-          <strong>Mensajería incensurable</strong>
-          Fernando explica una función de comunicación nativa usando <code>OP_RETURN</code>. Los usuarios
-          pueden enviarse mensajes de billetera a billetera de forma resistente a la censura, viviendo
-          enteramente <em>on-chain</em>.
-        </li>
+      @media (min-width: 760px) {
+        .tech-list {
+          grid-template-columns: 1fr 1fr;
+        }
 
-        <li>
-          <strong>Linaje cultural on-chain</strong>
-          La cadena de bloques deja de ser únicamente una herramienta financiera y se convierte en archivo,
-          memoria, testimonio y registro cultural de una comunidad viva.
-        </li>
-      </ul>
+        .article-hero {
+          padding: 56px 44px;
+        }
 
-      <h2>Tercer Acto: Soberanía Económica y Expansión de la Red</h2>
+        .article-card {
+          padding: 46px 44px;
+        }
+      }
 
-      <p>
-        El componente económico del ecosistema entra en juego con el <strong>Token RMZ</strong>. Fernando
-        subraya que este token no solo sirve para pagos y participación comunitaria, sino que está incrustado
-        en la narrativa de gobernanza cultural de xolosArmy Network.
-      </p>
+      @media (max-width: 520px) {
+        .article-wrapper {
+          padding: 28px 14px 54px;
+        }
 
-      <p>
-        Como ejemplo de infraestructura viva, presenta <strong>Teyolia</strong>, una aplicación de
-        financiamiento colectivo inspirada en el modelo <em>Flipstarter</em>. Aquí, cualquier usuario puede
-        levantar fondos para sus propias causas de manera descentralizada y libre de censura, dentro de un
-        ecosistema donde XEC funciona como base monetaria soberana y RMZ como símbolo comunitario y cultural.
-      </p>
+        .article-hero,
+        .article-card {
+          border-radius: 22px;
+        }
 
-      <div class="highlight-box">
-        <p>
-          <strong>Teyolia</strong> representa una pieza clave de esta visión: financiamiento comunitario,
-          sin custodia, con una lógica alineada al espíritu de Bitcoin y eCash. La comunidad puede coordinar
-          recursos sin depender de intermediarios tradicionales, plataformas centralizadas o permisos externos.
+        .article-hero {
+          padding: 32px 22px;
+        }
+
+        .article-card {
+          padding: 28px 20px;
+        }
+
+        .video-section {
+          border-radius: 22px;
+          padding: 10px;
+        }
+
+        .video-frame {
+          border-radius: 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="article-wrapper">
+      <header class="article-hero">
+        <div class="article-kicker">eCash México · xolosArmy Network</div>
+
+        <h1>
+          Crónica de una Transición:<br />
+          <span>El Xoloitzcuintle como Guía en la Era del Código</span>
+        </h1>
+
+        <p class="article-subtitle">
+          Una lectura editorial del Weekly Update de xolosArmy Network: mito,
+          infraestructura soberana, inteligencia artificial, eCash, Tonalli
+          Wallet, Teyolia y la búsqueda de una nueva brújula moral para la
+          civilización digital.
         </p>
-      </div>
 
-      <h2>Infraestructura: Chronik y THORChain</h2>
+        <div class="article-meta">
+          <span>Crónica editorial</span>
+          <span>eCash / XEC</span>
+          <span>Tonalli Wallet</span>
+          <span>Teyolia</span>
+          <span>THORChain</span>
+        </div>
+      </header>
 
-      <p>
-        A nivel de infraestructura, Fernando revela el músculo técnico detrás del proyecto. xolosArmy Network
-        no se presenta únicamente como una marca cultural, sino como una red que está construyendo sus propias
-        herramientas, nodos y caminos de integración.
-      </p>
+      <section
+        class="video-section"
+        aria-label="Video del Weekly Update de xolosArmy Network"
+      >
+        <div class="video-frame">
+          <iframe
+            src="https://www.youtube.com/embed/FmBSmXjjRII"
+            title="Weekly Update de xolosArmy Network"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+              web-share;
+            "
+            allowfullscreen
+          >
+          </iframe>
+        </div>
+      </section>
 
-      <ul class="tech-list">
-        <li>
-          <strong>Nodos Chronik</strong>
-          Están operando su propio nodo Chronik, una herramienta que permite indexar y extraer datos de NFTs,
-          linajes, pagos y actividad en la red eCash con gran velocidad. Esto permite experiencias más fluidas,
-          rápidas y soberanas para los usuarios del ecosistema.
-        </li>
+      <article class="article-card">
+        <p class="lead-paragraph">
+          El video no se presenta como un anuncio tecnológico convencional. No
+          hay oficinas de cristal, pantallas corporativas ni lenguaje vacío de
+          startup. Hay penumbra, madera, un candelabro antiguo y dos
+          Xoloitzcuintles moviéndose alrededor de Fernando como si custodiaran
+          el mensaje. Desde esa escena, xolosArmy Network presenta algo más que
+          una actualización semanal: presenta una tesis civilizatoria.
+        </p>
 
-        <li>
-          <strong>Integración con THORChain</strong>
-          Uno de los anuncios más técnicos y ambiciosos es la colaboración para llevar eCash de forma nativa
-          a THORChain, un exchange descentralizado de capa 1. El objetivo: permitir swaps nativos de XEC
-          sin puentes, sin custodios y sin tokens envueltos.
-        </li>
-      </ul>
+        <h2>El Escenario: Entre lo Ancestral y lo Digital</h2>
 
-      <p>
-        Fernando menciona que ya se envió una solicitud de fusión, o <em>merge request</em>, al repositorio
-        de THORChain. También explica que han recibido retroalimentación formal de desarrolladores principales,
-        incluyendo comentarios técnicos de <strong>piRK</strong>, y que el código ha sido actualizado conforme
-        avanza la revisión.
-      </p>
-
-      <p>
-        La meta final es poderosa: habilitar intercambios atómicos e instantáneos entre eCash y otros activos
-        nativos, incluyendo rutas hacia monedas enfocadas en privacidad como Monero. Para Fernando, esto es
-        un ganar-ganar para el mundo descentralizado, soberano y sin permisos.
-      </p>
-
-      <h2>Epílogo: El Llamado a la Comunidad</h2>
-
-      <p>
-        Para cerrar la actualización, Fernando aterriza en la realidad operativa del proyecto. Se dirige a la
-        comunidad de xolosArmy y eCash para anunciar que han solicitado una subvención al
-        <strong>GNC, el Global Network Council</strong>.
-      </p>
-
-      <p>
-        Con un tono de honestidad directa, explica que necesitan infraestructura, servidores y compensación
-        monetaria para el trabajo técnico, cultural y comunicativo que el equipo ha estado realizando.
-        La propuesta ya se encuentra bajo revisión formal.
-      </p>
-
-      <div class="closing-box">
         <p>
-          El video concluye con una síntesis clara: xolosArmy Network no está construyendo únicamente una wallet,
-          una colección NFT, una plataforma de crowdfunding o una integración técnica. Está construyendo una red
-          cultural con infraestructura propia.
+          El video arranca con una estética que rompe por completo el molde
+          tradicional de los anuncios tecnológicos. Fernando se encuentra en una
+          habitación sumida en la penumbra, iluminada tenuemente por un
+          candelabro antiguo que cuelga del techo y proyecta sombras sobre una
+          pesada mesa de madera. La atmósfera es rústica, casi mística.
         </p>
 
         <p>
-          Y en el centro de esa red está el Xoloitzcuintle: antiguo guía del Mictlán, ahora convertido en símbolo
-          de orientación para una humanidad que entra, cada vez más rápido, en la era del código.
+          Sin embargo, lo que le da vida a la escena no es solo la voz de
+          Fernando, sino la presencia inquieta de dos perros Xoloitzcuintles
+          desnudos. A lo largo de la grabación, los animales merodean, olfatean
+          y se apoyan sobre él buscando atención, convirtiéndose en los
+          coprotagonistas silenciosos —pero vitales— de la transmisión.
         </p>
 
-        <div class="cta-row">
-          <a class="cta-button" href="https://ecash.mx/" target="_blank" rel="noopener">
-            Explorar eCash México
+        <p>
+          Con una camiseta negra sencilla y un tono directo, Fernando da la
+          bienvenida a la audiencia al
+          <em>Weekly Update</em> de <strong>xolosArmy Network</strong>. Su
+          objetivo es claro: explicar quiénes son, adónde van y qué buscan
+          lograr.
+        </p>
+
+        <h2>Primer Acto: El Mito como Brújula Moral</h2>
+
+        <p>
+          Fernando no comienza hablando de código, sino de historia y
+          cosmogonía. Introduce a xolosArmy no solo como una iniciativa
+          tecnológica, sino como un puente hacia la mitología mexica. Recuerda
+          cómo, históricamente, el Xoloitzcuintle era considerado un
+          <em>psicopompo</em>: un guía espiritual que ayudaba a los humanos a
+          transitar de la vida terrenal hacia el Mictlán, para luego renacer o
+          reintegrarse al todo.
+        </p>
+
+        <p>
+          La fuerza del discurso está en el paralelismo con el presente.
+          Fernando advierte que la humanidad está atravesando una nueva
+          transición civilizatoria: una era que será inundada por el código, las
+          criptomonedas y la Inteligencia Artificial. En este nuevo abismo
+          digital, xolosArmy propone al Xoloitzcuintle como símbolo, guardián y
+          brújula moral.
+        </p>
+
+        <div class="quote">
+          Del Xoloitzcuintle como guía del Mictlán al Xoloitzcuintle como guía
+          moral en la era del código.
+        </div>
+
+        <p>
+          La idea se extiende hacia la IA. Fernando reconoce que las
+          inteligencias artificiales comienzan a operar como agentes autónomos,
+          capaces de tomar decisiones, ejecutar instrucciones y participar en
+          sistemas sociales y económicos. Para evitar que la humanidad se pierda
+          en esta nueva dimensión, anuncia la creación de una
+          <strong>constitución legible por máquinas</strong>: un marco moral
+          integrado para que las IA puedan trabajar junto a nosotros bajo
+          principios de lealtad, guía y protección, inspirados en el símbolo
+          ancestral del Xolo.
+        </p>
+
+        <h2>Segundo Acto: Forjando las Herramientas</h2>
+
+        <span class="section-label">eCash, Tonalli y arqueología digital</span>
+
+        <p>
+          Para materializar esta filosofía, Fernando detalla el arsenal
+          tecnológico que han construido sobre la red <strong>eCash</strong>,
+          una evolución del linaje Bitcoin enfocada en pagos rápidos, bajo costo
+          de transacción y uso soberano del dinero digital.
+        </p>
+
+        <ul class="tech-list">
+          <li>
+            <strong>Tonalli Wallet</strong>
+            Presenta su billetera soberana. La palabra <em>Tonalli</em> hace
+            referencia a la energía vital, solar, que dota a los humanos de
+            voluntad y asistencia divina. En esta cosmología, la billetera no es
+            solo una herramienta financiera: es una extensión digital de la
+            energía soberana del usuario.
+          </li>
+
+          <li>
+            <strong>Arqueología moderna con NFTs</strong>
+            A través de Tonalli, xolosArmy documenta en la cadena de bloques los
+            linajes de los Xoloitzcuintles de Xolos Ramírez usando tecnología
+            eCash. Estos registros inmutables funcionan como una nueva forma de
+            arqueología digital: escribir en piedra, pero dentro de internet.
+          </li>
+
+          <li>
+            <strong>Mensajería incensurable</strong>
+            Fernando explica una función de comunicación nativa usando
+            <code>OP_RETURN</code>. Los usuarios pueden enviarse mensajes de
+            billetera a billetera de forma resistente a la censura, viviendo
+            enteramente <em>on-chain</em>.
+          </li>
+
+          <li>
+            <strong>Linaje cultural on-chain</strong>
+            La cadena de bloques deja de ser únicamente una herramienta
+            financiera y se convierte en archivo, memoria, testimonio y registro
+            cultural de una comunidad viva.
+          </li>
+        </ul>
+
+        <h2>Tercer Acto: Soberanía Económica y Expansión de la Red</h2>
+
+        <p>
+          El componente económico del ecosistema entra en juego con el
+          <strong>Token RMZ</strong>. Fernando subraya que este token no solo
+          sirve para pagos y participación comunitaria, sino que está incrustado
+          en la narrativa de gobernanza cultural de xolosArmy Network.
+        </p>
+
+        <p>
+          Como ejemplo de infraestructura viva, presenta
+          <strong>Teyolia</strong>, una aplicación de financiamiento colectivo
+          inspirada en el modelo <em>Flipstarter</em>. Aquí, cualquier usuario
+          puede levantar fondos para sus propias causas de manera
+          descentralizada y libre de censura, dentro de un ecosistema donde XEC
+          funciona como base monetaria soberana y RMZ como símbolo comunitario y
+          cultural.
+        </p>
+
+        <div class="highlight-box">
+          <p>
+            <strong>Teyolia</strong> representa una pieza clave de esta visión:
+            financiamiento comunitario, sin custodia, con una lógica alineada al
+            espíritu de Bitcoin y eCash. La comunidad puede coordinar recursos
+            sin depender de intermediarios tradicionales, plataformas
+            centralizadas o permisos externos.
+          </p>
+        </div>
+
+        <h2>Infraestructura: Chronik y THORChain</h2>
+
+        <p>
+          A nivel de infraestructura, Fernando revela el músculo técnico detrás
+          del proyecto. xolosArmy Network no se presenta únicamente como una
+          marca cultural, sino como una red que está construyendo sus propias
+          herramientas, nodos y caminos de integración.
+        </p>
+
+        <ul class="tech-list">
+          <li>
+            <strong>Nodos Chronik</strong>
+            Están operando su propio nodo Chronik, una herramienta que permite
+            indexar y extraer datos de NFTs, linajes, pagos y actividad en la
+            red eCash con gran velocidad. Esto permite experiencias más fluidas,
+            rápidas y soberanas para los usuarios del ecosistema.
+          </li>
+
+          <li>
+            <strong>Integración con THORChain</strong>
+            Uno de los anuncios más técnicos y ambiciosos es la colaboración
+            para llevar eCash de forma nativa a THORChain, un exchange
+            descentralizado de capa 1. El objetivo: permitir swaps nativos de
+            XEC sin puentes, sin custodios y sin tokens envueltos.
+          </li>
+        </ul>
+
+        <p>
+          Fernando menciona que ya se envió una solicitud de fusión, o
+          <em>merge request</em>, al repositorio de THORChain. También explica
+          que han recibido retroalimentación formal de desarrolladores
+          principales, incluyendo comentarios técnicos de <strong>piRK</strong>,
+          y que el código ha sido actualizado conforme avanza la revisión.
+        </p>
+
+        <p>
+          La meta final es poderosa: habilitar intercambios atómicos e
+          instantáneos entre eCash y otros activos nativos, incluyendo rutas
+          hacia monedas enfocadas en privacidad como Monero. Para Fernando, esto
+          es un ganar-ganar para el mundo descentralizado, soberano y sin
+          permisos.
+        </p>
+
+        <h2>Epílogo: El Llamado a la Comunidad</h2>
+
+        <p>
+          Para cerrar la actualización, Fernando aterriza en la realidad
+          operativa del proyecto. Se dirige a la comunidad de xolosArmy y eCash
+          para anunciar que han solicitado una subvención al
+          <strong>GNC, el Global Network Council</strong>.
+        </p>
+
+        <p>
+          Con un tono de honestidad directa, explica que necesitan
+          infraestructura, servidores y compensación monetaria para el trabajo
+          técnico, cultural y comunicativo que el equipo ha estado realizando.
+          La propuesta ya se encuentra bajo revisión formal.
+        </p>
+
+        <div class="closing-box">
+          <p>
+            El video concluye con una síntesis clara: xolosArmy Network no está
+            construyendo únicamente una wallet, una colección NFT, una
+            plataforma de crowdfunding o una integración técnica. Está
+            construyendo una red cultural con infraestructura propia.
+          </p>
+
+          <p>
+            Y en el centro de esa red está el Xoloitzcuintle: antiguo guía del
+            Mictlán, ahora convertido en símbolo de orientación para una
+            humanidad que entra, cada vez más rápido, en la era del código.
+          </p>
+
+          <div class="cta-row">
+            <a
+              class="cta-button"
+              href="https://ecash.mx/"
+              target="_blank"
+              rel="noopener"
+            >
+              Explorar eCash México
+            </a>
+
+            <a
+              class="cta-button secondary"
+              href="https://xolosarmy.xyz/"
+              target="_blank"
+              rel="noopener"
+            >
+              Visitar xolosArmy Network
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <section
+        aria-labelledby="continua-camino-soberano"
+        style="
+          margin-top: 56px;
+          padding-top: 34px;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        "
+      >
+        <h2
+          id="continua-camino-soberano"
+          style="
+            color: #f5f7fa;
+            border-left: 4px solid #00e0ff;
+            padding-left: 16px;
+          "
+        >
+          Continúa tu camino soberano
+        </h2>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 22px;
+          "
+        >
+          <a
+            href="chronik-builders-ecash.html"
+            style="
+              display: block;
+              padding: 20px;
+              border: 1px solid rgba(255, 255, 255, 0.12);
+              border-radius: 18px;
+              background: rgba(13, 17, 26, 0.92);
+              color: inherit;
+              text-decoration: none;
+              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+            "
+          >
+            <strong style="display: block; color: #00e0ff; margin-bottom: 8px"
+              >Infraestructura Chronik</strong
+            >
+            <span
+              style="
+                display: block;
+                color: #a7b0c0;
+                font-size: 0.95rem;
+                line-height: 1.6;
+              "
+              >Profundiza en herramientas para builders de eCash.</span
+            >
           </a>
-
-          <a class="cta-button secondary" href="https://xolosarmy.xyz/" target="_blank" rel="noopener">
-            Visitar xolosArmy Network
+          <a
+            href="comprar-xec-en-mexico.html"
+            style="
+              display: block;
+              padding: 20px;
+              border: 1px solid rgba(255, 255, 255, 0.12);
+              border-radius: 18px;
+              background: rgba(13, 17, 26, 0.92);
+              color: inherit;
+              text-decoration: none;
+              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+            "
+          >
+            <strong style="display: block; color: #00e0ff; margin-bottom: 8px"
+              >Compra XEC en México</strong
+            >
+            <span
+              style="
+                display: block;
+                color: #a7b0c0;
+                font-size: 0.95rem;
+                line-height: 1.6;
+              "
+              >Aprende rutas de entrada antes de swaps avanzados.</span
+            >
+          </a>
+          <a
+            href="teyolia-crowdfunding-xec.html"
+            style="
+              display: block;
+              padding: 20px;
+              border: 1px solid rgba(255, 255, 255, 0.12);
+              border-radius: 18px;
+              background: rgba(13, 17, 26, 0.92);
+              color: inherit;
+              text-decoration: none;
+              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
+            "
+          >
+            <strong style="display: block; color: #00e0ff; margin-bottom: 8px"
+              >Teyolia Crowdfunding</strong
+            >
+            <span
+              style="
+                display: block;
+                color: #a7b0c0;
+                font-size: 0.95rem;
+                line-height: 1.6;
+              "
+              >Conecta liquidez, coordinación y comunidad soberana.</span
+            >
           </a>
         </div>
-      </div>
-
-    </article>
-
-    <section aria-labelledby="continua-camino-soberano" style="margin-top:56px;padding-top:34px;border-top:1px solid rgba(255,255,255,0.10);">
-      <h2 id="continua-camino-soberano" style="color:#f5f7fa;border-left:4px solid #00e0ff;padding-left:16px;">Continúa tu camino soberano</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:22px;">
-          <a href="chronik-builders-ecash.html" style="display:block;padding:20px;border:1px solid rgba(255,255,255,0.12);border-radius:18px;background:rgba(13,17,26,0.92);color:inherit;text-decoration:none;box-shadow:0 18px 45px rgba(0,0,0,0.25);">
-            <strong style="display:block;color:#00e0ff;margin-bottom:8px;">Infraestructura Chronik</strong>
-            <span style="display:block;color:#a7b0c0;font-size:0.95rem;line-height:1.6;">Profundiza en herramientas para builders de eCash.</span>
-          </a>
-          <a href="comprar-xec-en-mexico.html" style="display:block;padding:20px;border:1px solid rgba(255,255,255,0.12);border-radius:18px;background:rgba(13,17,26,0.92);color:inherit;text-decoration:none;box-shadow:0 18px 45px rgba(0,0,0,0.25);">
-            <strong style="display:block;color:#00e0ff;margin-bottom:8px;">Compra XEC en México</strong>
-            <span style="display:block;color:#a7b0c0;font-size:0.95rem;line-height:1.6;">Aprende rutas de entrada antes de swaps avanzados.</span>
-          </a>
-          <a href="teyolia-crowdfunding-xec.html" style="display:block;padding:20px;border:1px solid rgba(255,255,255,0.12);border-radius:18px;background:rgba(13,17,26,0.92);color:inherit;text-decoration:none;box-shadow:0 18px 45px rgba(0,0,0,0.25);">
-            <strong style="display:block;color:#00e0ff;margin-bottom:8px;">Teyolia Crowdfunding</strong>
-            <span style="display:block;color:#a7b0c0;font-size:0.95rem;line-height:1.6;">Conecta liquidez, coordinación y comunidad soberana.</span>
-          </a>
-      </div>
-    </section>
-  </main>
-</body>
+      </section>
+    </main>
+  </body>
 </html>

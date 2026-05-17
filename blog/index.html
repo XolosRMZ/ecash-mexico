@@ -1,129 +1,289 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <head>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-0C5SHBHW2P");
+    </script>
 
-  gtag('config', 'G-0C5SHBHW2P');
-</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog de eCash México | Guías sobre XEC, wallets y pagos</title>
+    <meta
+      name="description"
+      content="Explora guías, tutoriales y artículos sobre eCash, XEC, Tonalli Wallet, pagos on-chain, autocustodia e infraestructura para builders en México."
+    />
+    <link rel="canonical" href="https://ecash.mx/blog/index.html" />
+    <meta name="robots" content="index, follow" />
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog | eCash México</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="eCash México" />
+    <meta
+      property="og:title"
+      content="Blog de eCash México | Guías sobre XEC, wallets y pagos"
+    />
+    <meta
+      property="og:description"
+      content="Explora guías, tutoriales y artículos sobre eCash, XEC, Tonalli Wallet, pagos on-chain, autocustodia e infraestructura para builders en México."
+    />
+    <meta property="og:url" content="https://ecash.mx/blog/index.html" />
+    <meta
+      property="og:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Blog de eCash México | Guías sobre XEC, wallets y pagos"
+    />
+    <meta
+      name="twitter:description"
+      content="Explora guías, tutoriales y artículos sobre eCash, XEC, Tonalli Wallet, pagos on-chain, autocustodia e infraestructura para builders en México."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
-        body { font-family: 'Lexend', sans-serif; }
+      @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap");
+      body {
+        font-family: "Lexend", sans-serif;
+      }
     </style>
-</head>
-<body class="bg-slate-50 text-slate-900">
+  </head>
+  <body class="bg-slate-50 text-slate-900">
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <nav class="p-5 max-w-7xl mx-auto flex justify-between items-center">
-            <a href="../index.html" class="text-xl font-bold text-[#001e62]">eCash <span class="text-[#00abe7]">México</span></a>
-            <div class="flex gap-6 text-sm font-semibold uppercase tracking-wider">
-                <a href="../index.html" class="hover:text-[#00abe7]">Inicio</a>
-                <a href="./index.html" class="text-[#00abe7]">Blog</a>
-            </div>
-        </nav>
+      <nav class="p-5 max-w-7xl mx-auto flex justify-between items-center">
+        <a href="../index.html" class="text-xl font-bold text-[#001e62]"
+          >eCash <span class="text-[#007ea7]">México</span></a
+        >
+        <div class="flex gap-6 text-sm font-semibold uppercase tracking-wider">
+          <a href="../index.html" class="hover:text-[#007ea7]">Inicio</a>
+          <a href="./index.html" class="text-[#007ea7]">Blog</a>
+        </div>
+      </nav>
     </header>
 
     <main class="max-w-5xl mx-auto px-6 py-16">
-        <h1 class="text-4xl font-extrabold text-[#001e62] mb-4">Artículos y Noticias</h1>
-        <p class="text-slate-600 mb-10">Bienvenido al blog de eCash México. Aquí encontrarás las últimas actualizaciones.</p>
+      <h1 class="text-4xl font-extrabold text-[#001e62] mb-4">
+        Guías de eCash y XEC para México
+      </h1>
+      <p class="text-slate-600 mb-10">
+        Bienvenido al blog de eCash México. Aquí encontrarás las últimas
+        actualizaciones.
+      </p>
 
-        <section id="articles-list" class="grid md:grid-cols-2 gap-6">
-
-
-          <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./cultura-como-consenso-ecash-mexico.html" class="hover:text-[#00abe7]">Cultura como consenso: la visión de eCash México
-
-</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Una moneda no vive solamente en los nodos, en los bloques o en los mercados. Vive en las personas que deciden usarla, defenderla, enseñarla y convertirla en parte de su vida cotidiana.  </p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>   
-          <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./mineria-ecash-mexico.html" class="hover:text-[#00abe7]">Mineria Soberana eCash México</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">El prototipo demuestra que se puede emitir una credencial minera condicionada a la verificación de identidad (Tonalli), membresía (RMZ) y estado on-chain (Chronik), permitiendo a Stratum aceptar o rechazar un worker sin necesidad de consultar la blockchain en el "hot path" (ruta crítica de procesamiento). </p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>          
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./mensajes-onchain-tonalli-wallet.html" class="hover:text-[#00abe7]">Mensajes Tonalli: Comunicación on-chain</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Descubre cómo enviar mensajes incensurables usando OP_RETURN en la red eCash.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./teyolia-crowdfunding-xec.html" class="hover:text-[#00abe7]">Teyolia: crowdfunding no custodial con XEC</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Simula una contribución comunitaria y aprende cómo Teyolia coordina campañas sin custodiar tus fondos.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./tutorial-tonalli-wallet.html" class="hover:text-[#00abe7]">Tu Primer Vuelo con Tonalli Wallet</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Sigue los pasos del guardián Xolo para crear tu wallet de autocustodia y tomar control de tus XEC.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./pagos-con-ecash.html" class="hover:text-[#00abe7]">Pagos con eCash</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Aprende a enviar, recibir y cobrar con XEC usando pagos rápidos y de bajo costo.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./chronik-builders-ecash.html" class="hover:text-[#00abe7]">Chronik y el futuro de los Builders</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Explicación sobre indexación técnica y herramientas abiertas para construir en eCash.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./avalanche-pre-consensus.html" class="hover:text-[#00abe7]">Avalanche Pre-Consensus</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Guía en desarrollo sobre la capa que fortalece pagos rápidos y confirmación en eCash.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./integracion-ecash-thorchain.html" class="hover:text-[#00abe7]">Integración eCash + THORChain</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Crónica editorial sobre liquidez nativa, swaps y cultura builder en el ecosistema eCash.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./comprar-xec-en-mexico.html" class="hover:text-[#00abe7]">Comprar XEC en México de forma segura</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Guía paso a paso para adquirir eCash, moverlo a autocustodia y evitar errores comunes.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-            <article class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#00abe7] hover:-translate-y-1 hover:shadow-lg transition-all">
-                <h2 class="text-2xl font-bold text-[#001e62] mb-2">
-                    <a href="./que-es-ecash.html" class="hover:text-[#00abe7]">¿Qué es eCash y qué es XEC?</a>
-                </h2>
-                <p class="text-slate-600 text-sm mb-3">Una introducción profunda a dinero electrónico, pagos rápidos y la visión de eCash México.</p>
-                <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
-            </article>
-        </section>
+      <section id="articles-list" class="grid md:grid-cols-2 gap-6">
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./cultura-como-consenso-ecash-mexico.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Cultura como consenso, la visión de eCash México"
+              >Cultura como consenso: la visión de eCash México
+            </a>
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Una moneda no vive solamente en los nodos, en los bloques o en los
+            mercados. Vive en las personas que deciden usarla, defenderla,
+            enseñarla y convertirla en parte de su vida cotidiana.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./mineria-ecash-mexico.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Mineria soberana eCash México"
+              >Mineria Soberana eCash México</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            El prototipo demuestra que se puede emitir una credencial minera
+            condicionada a la verificación de identidad (Tonalli), membresía
+            (RMZ) y estado on-chain (Chronik), permitiendo a Stratum aceptar o
+            rechazar un worker sin necesidad de consultar la blockchain en el
+            "hot path" (ruta crítica de procesamiento).
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./mensajes-onchain-tonalli-wallet.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Mensajes Tonalli, comunicación on-chain"
+              >Mensajes Tonalli: Comunicación on-chain</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Descubre cómo enviar mensajes incensurables usando OP_RETURN en la
+            red eCash.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./teyolia-crowdfunding-xec.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Teyolia, crowdfunding no custodial con XEC"
+              >Teyolia: crowdfunding no custodial con XEC</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Simula una contribución comunitaria y aprende cómo Teyolia coordina
+            campañas sin custodiar tus fondos.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./tutorial-tonalli-wallet.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Iniciar tutorial: Tu primer vuelo con Tonalli Wallet"
+              >Tu Primer Vuelo con Tonalli Wallet</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Sigue los pasos del guardián Xolo para crear tu wallet de
+            autocustodia y tomar control de tus XEC.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./pagos-con-ecash.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Pagos con eCash"
+              >Pagos con eCash</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Aprende a enviar, recibir y cobrar con XEC usando pagos rápidos y de
+            bajo costo.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./chronik-builders-ecash.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Chronik y el futuro de los Builders"
+              >Chronik y el futuro de los Builders</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Explicación sobre indexación técnica y herramientas abiertas para
+            construir en eCash.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./avalanche-pre-consensus.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Avalanche Pre-Consensus"
+              >Avalanche Pre-Consensus</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Guía en desarrollo sobre la capa que fortalece pagos rápidos y
+            confirmación en eCash.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./integracion-ecash-thorchain.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Integración eCash más THORChain"
+              >Integración eCash + THORChain</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Crónica editorial sobre liquidez nativa, swaps y cultura builder en
+            el ecosistema eCash.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./comprar-xec-en-mexico.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer guía: Comprar XEC en México de forma segura"
+              >Comprar XEC en México de forma segura</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Guía paso a paso para adquirir eCash, moverlo a autocustodia y
+            evitar errores comunes.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+        <article
+          class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-[#007ea7] hover:-translate-y-1 hover:shadow-lg transition-all"
+        >
+          <h2 class="text-2xl font-bold text-[#001e62] mb-2">
+            <a
+              href="./que-es-ecash.html"
+              class="hover:text-[#007ea7]"
+              aria-label="Leer artículo: Qué es eCash y qué es XEC"
+              >¿Qué es eCash y qué es XEC?</a
+            >
+          </h2>
+          <p class="text-slate-600 text-sm mb-3">
+            Una introducción profunda a dinero electrónico, pagos rápidos y la
+            visión de eCash México.
+          </p>
+          <p class="text-sm text-slate-500">Fecha: Mayo 2026</p>
+        </article>
+      </section>
     </main>
 
     <footer class="bg-slate-900 text-slate-400 py-8 px-6">
-        <div class="max-w-5xl mx-auto text-sm">
-            <p>&copy; 2026 eCash México</p>
-        </div>
+      <div class="max-w-5xl mx-auto text-sm">
+        <p>&copy; 2026 eCash México</p>
+      </div>
     </footer>
-</body>
+  </body>
 </html>

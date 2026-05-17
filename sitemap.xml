@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ecash.mx/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://ecash.mx/blog/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://ecash.mx/blog/que-es-ecash.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ecash.mx/blog/comprar-xec-en-mexico.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ecash.mx/blog/tutorial-tonalli-wallet.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ecash.mx/blog/pagos-con-ecash.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ecash.mx/blog/teyolia-crowdfunding-xec.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://ecash.mx/blog/chronik-builders-ecash.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://ecash.mx/blog/anuncio-integracion-nativa-xec-thorchain.html</loc>
+    <lastmod>2026-05-17</lastmod>
   </url>
   <url>
     <loc>https://ecash.mx/blog/avalanche-pre-consensus.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/chronik-builders-ecash.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/comprar-xec-en-mexico.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/cultura-como-consenso-ecash-mexico.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/</loc>
+    <lastmod>2026-05-17</lastmod>
   </url>
   <url>
     <loc>https://ecash.mx/blog/integracion-ecash-thorchain.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-05-17</lastmod>
   </url>
   <url>
     <loc>https://ecash.mx/blog/mensajes-onchain-tonalli-wallet.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/mineria-ecash-mexico.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/pagos-con-ecash.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/que-es-ecash.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/teyolia-crowdfunding-xec.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/blog/tutorial-tonalli-wallet.html</loc>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://ecash.mx/</loc>
+    <lastmod>2026-05-17</lastmod>
   </url>
 </urlset>

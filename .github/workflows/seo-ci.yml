@@ -1,0 +1,33 @@
+name: SEO CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  seo-build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Base
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Project Dependencies
+        run: npm ci
+
+      - name: Build Minified Tailwind CSS and Automated Sitemap
+        run: npm run build
+
+      - name: Execute HTML Hint, Code Formats and Tag Validation
+        run: npm run lint
+
+      - name: Run Lighthouse Continuous Integration Assertions
+        run: npm run lighthouse

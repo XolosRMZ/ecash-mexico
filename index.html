@@ -1,288 +1,661 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <head>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-0C5SHBHW2P");
+    </script>
 
-  gtag('config', 'G-0C5SHBHW2P');
-</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eCash México | XEC, autocustodia y pagos peer-to-peer</title>
+    <meta
+      name="description"
+      content="Aprende qué es eCash, cómo comprar XEC en México de forma segura, usar Tonalli Wallet y construir pagos peer-to-peer con autocustodia e infraestructura abierta."
+    />
+    <link rel="canonical" href="https://ecash.mx/" />
+    <meta name="robots" content="index, follow" />
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eCash México | Soberanía Cypherpunk Azteca</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="eCash México" />
+    <meta
+      property="og:title"
+      content="eCash México | XEC, autocustodia y pagos peer-to-peer"
+    />
+    <meta
+      property="og:description"
+      content="Aprende qué es eCash, cómo comprar XEC en México de forma segura, usar Tonalli Wallet y construir pagos peer-to-peer con autocustodia e infraestructura abierta."
+    />
+    <meta property="og:url" content="https://ecash.mx/" />
+    <meta
+      property="og:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="eCash México | XEC, autocustodia y pagos peer-to-peer"
+    />
+    <meta
+      name="twitter:description"
+      content="Aprende qué es eCash, cómo comprar XEC en México de forma segura, usar Tonalli Wallet y construir pagos peer-to-peer con autocustodia e infraestructura abierta."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <link rel="preload" href="/assets/css/tailwind.css" as="style" />
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap");
 
-        :root {
-            --aztec-gold: #ffcc00;
-            --cypher-neon: #00abe7;
-            --deep-obsidian: #05070a;
-            --temple-blue: #001e62;
+      :root {
+        --aztec-gold: #ffcc00;
+        --cypher-neon: #00abe7;
+        --deep-obsidian: #05070a;
+        --temple-blue: #001e62;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Lexend", sans-serif;
+        background-color: var(--deep-obsidian);
+        color: #e2e8f0;
+        overflow-x: hidden;
+      }
+
+      .space-mono {
+        font-family: "Space Mono", monospace;
+      }
+
+      .scanline {
+        width: 100%;
+        height: 100px;
+        z-index: 99;
+        background: linear-gradient(
+          0deg,
+          rgba(0, 171, 231, 0) 0%,
+          rgba(0, 171, 231, 0.1) 50%,
+          rgba(0, 171, 231, 0) 100%
+        );
+        opacity: 0.18;
+        position: fixed;
+        bottom: 100%;
+        pointer-events: none;
+        animation: scanline 8s linear infinite;
+      }
+
+      @keyframes scanline {
+        0% {
+          bottom: 100%;
         }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Lexend', sans-serif;
-            background-color: var(--deep-obsidian);
-            color: #e2e8f0;
-            overflow-x: hidden;
+        100% {
+          bottom: -100%;
         }
+      }
 
-        .space-mono { font-family: 'Space Mono', monospace; }
+      .aztec-hero {
+        background:
+          radial-gradient(
+            circle at 50% 35%,
+            rgba(0, 171, 231, 0.18) 0%,
+            rgba(0, 30, 98, 0.25) 32%,
+            rgba(5, 7, 10, 0.98) 78%
+          ),
+          linear-gradient(135deg, rgba(255, 204, 0, 0.08), transparent 35%),
+          url("https://www.transparenttextures.com/patterns/aztec.png");
+      }
 
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 99;
-            background: linear-gradient(0deg, rgba(0, 171, 231, 0) 0%, rgba(0, 171, 231, 0.1) 50%, rgba(0, 171, 231, 0) 100%);
-            opacity: 0.18;
-            position: fixed;
-            bottom: 100%;
-            pointer-events: none;
-            animation: scanline 8s linear infinite;
-        }
+      .aztec-grid {
+        background-image:
+          linear-gradient(rgba(0, 171, 231, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 171, 231, 0.08) 1px, transparent 1px);
+        background-size: 64px 64px;
+        mask-image: radial-gradient(circle at center, black, transparent 72%);
+      }
 
-        @keyframes scanline {
-            0% { bottom: 100%; }
-            100% { bottom: -100%; }
-        }
+      .neon-border {
+        border: 1px solid rgba(0, 171, 231, 0.5);
+        box-shadow:
+          0 0 10px rgba(0, 171, 231, 0.3),
+          inset 0 0 10px rgba(0, 171, 231, 0.2);
+      }
 
-        .aztec-hero {
-            background:
-                radial-gradient(circle at 50% 35%, rgba(0, 171, 231, 0.18) 0%, rgba(0, 30, 98, 0.25) 32%, rgba(5, 7, 10, 0.98) 78%),
-                linear-gradient(135deg, rgba(255, 204, 0, 0.08), transparent 35%),
-                url('https://www.transparenttextures.com/patterns/aztec.png');
-        }
+      .neon-border-gold {
+        border: 1px solid rgba(255, 204, 0, 0.45);
+        box-shadow:
+          0 0 18px rgba(255, 204, 0, 0.14),
+          inset 0 0 16px rgba(255, 204, 0, 0.08);
+      }
 
-        .aztec-grid {
-            background-image:
-                linear-gradient(rgba(0, 171, 231, 0.08) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 171, 231, 0.08) 1px, transparent 1px);
-            background-size: 64px 64px;
-            mask-image: radial-gradient(circle at center, black, transparent 72%);
-        }
+      .neon-text-gold {
+        text-shadow: 0 0 16px rgba(255, 204, 0, 0.55);
+      }
+      .neon-text-cyan {
+        text-shadow: 0 0 18px rgba(0, 171, 231, 0.6);
+      }
 
-        .neon-border {
-            border: 1px solid rgba(0, 171, 231, 0.5);
-            box-shadow: 0 0 10px rgba(0, 171, 231, 0.3), inset 0 0 10px rgba(0, 171, 231, 0.2);
-        }
+      .card-blur {
+        background: rgba(15, 23, 42, 0.62);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-        .neon-border-gold {
-            border: 1px solid rgba(255, 204, 0, 0.45);
-            box-shadow: 0 0 18px rgba(255, 204, 0, 0.14), inset 0 0 16px rgba(255, 204, 0, 0.08);
-        }
-
-        .neon-text-gold { text-shadow: 0 0 16px rgba(255, 204, 0, 0.55); }
-        .neon-text-cyan { text-shadow: 0 0 18px rgba(0, 171, 231, 0.6); }
-
-        .card-blur {
-            background: rgba(15, 23, 42, 0.62);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .glyph-divider {
-            background: repeating-linear-gradient(90deg, var(--cypher-neon) 0 12px, transparent 12px 20px, var(--aztec-gold) 20px 32px, transparent 32px 44px);
-        }
+      .glyph-divider {
+        background: repeating-linear-gradient(
+          90deg,
+          var(--cypher-neon) 0 12px,
+          transparent 12px 20px,
+          var(--aztec-gold) 20px 32px,
+          transparent 32px 44px
+        );
+      }
     </style>
-</head>
-<body>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "eCash México",
+        "url": "https://ecash.mx/",
+        "logo": "https://ecash.mx/assets/images/ecash-mexico-logo.png",
+        "sameAs": [
+          "https://xolosarmy.xyz",
+          "https://teyolia.cash",
+          "https://chronik.xolosarmy.xyz",
+          "https://explorer.xolosarmy.xyz"
+        ]
+      }
+    </script>
+  </head>
+  <body>
     <div class="scanline" aria-hidden="true"></div>
 
-    <nav class="sticky top-0 z-50 border-b border-white/10 bg-black/65 backdrop-blur-md">
-        <div class="p-5 max-w-7xl mx-auto flex justify-between items-center">
-            <a href="#" class="flex items-center gap-3 group" aria-label="Inicio eCash México">
-                <div class="relative">
-                    <div class="absolute -inset-1 bg-cyan-500 rounded-full blur opacity-25 transition group-hover:opacity-75"></div>
-                    <img src="https://i.imgur.com/UaAx4EK.png" alt="Logo eCash México" class="relative h-10 w-auto rounded-full border border-cyan-500/50">
-                </div>
-                <div class="flex items-center gap-2 text-2xl font-bold tracking-tighter italic">
-                    <span class="text-white">eCash</span><span class="text-[#00abe7] neon-text-cyan">México</span>
-                </div>
-            </a>
-            <div class="hidden md:flex space-x-8 text-xs font-bold uppercase tracking-[0.2em] space-mono">
-                <a href="#aprende" class="text-gray-400 hover:text-cyan-400 transition">Aprende</a>
-                <a href="#blog" class="text-gray-400 hover:text-cyan-400 transition">Archivo</a>
-                <a href="#construye" class="text-gray-400 hover:text-cyan-400 transition">Red</a>
-            </div>
+    <nav
+      class="sticky top-0 z-50 border-b border-white/10 bg-black/65 backdrop-blur-md"
+    >
+      <div class="p-5 max-w-7xl mx-auto flex justify-between items-center">
+        <a
+          href="#"
+          class="flex items-center gap-3 group"
+          aria-label="Inicio eCash México"
+        >
+          <div class="relative">
+            <div
+              class="absolute -inset-1 bg-cyan-500 rounded-full blur opacity-25 transition group-hover:opacity-75"
+            ></div>
+            <img
+              src="https://i.imgur.com/UaAx4EK.png"
+              alt="Logo eCash México"
+              class="relative h-10 w-auto rounded-full border border-cyan-500/50"
+            />
+          </div>
+          <div
+            class="flex items-center gap-2 text-2xl font-bold tracking-tighter italic"
+          >
+            <span class="text-white">eCash</span
+            ><span class="text-[#00abe7] neon-text-cyan">México</span>
+          </div>
+        </a>
+        <div
+          class="hidden md:flex space-x-8 text-xs font-bold uppercase tracking-[0.2em] space-mono"
+        >
+          <a
+            href="#aprende"
+            class="text-gray-400 hover:text-cyan-400 transition"
+            >Aprende</a
+          >
+          <a href="#blog" class="text-gray-400 hover:text-cyan-400 transition"
+            >Archivo</a
+          >
+          <a
+            href="#construye"
+            class="text-gray-400 hover:text-cyan-400 transition"
+            >Red</a
+          >
         </div>
+      </div>
     </nav>
 
-    <header class="aztec-hero relative min-h-screen flex items-center justify-center px-6 py-28 overflow-hidden">
-        <div class="aztec-grid absolute inset-0 opacity-60 pointer-events-none" aria-hidden="true"></div>
-        <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');" aria-hidden="true"></div>
-        <div class="absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-cyan-500/15 blur-3xl" aria-hidden="true"></div>
+    <header
+      class="aztec-hero relative min-h-screen flex items-center justify-center px-6 py-28 overflow-hidden"
+    >
+      <div
+        class="aztec-grid absolute inset-0 opacity-60 pointer-events-none"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute inset-0 opacity-20 pointer-events-none"
+        style="
+          background-image: url(&quot;https://www.transparenttextures.com/patterns/carbon-fibre.png&quot;);
+        "
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute -top-32 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-cyan-500/15 blur-3xl"
+        aria-hidden="true"
+      ></div>
 
-        <div class="max-w-5xl mx-auto text-center relative z-10">
-            <div class="inline-block mb-6 px-4 py-1 border border-cyan-500/30 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] uppercase tracking-[0.3em] space-mono animate-pulse">
-                Iniciativa Comunitaria Soberana
-            </div>
-            <h1 class="text-5xl md:text-8xl font-extrabold mb-8 italic text-white tracking-tighter leading-none">
-                Cultura <span class="text-[#00abe7] neon-text-cyan">XEC</span> <br>
-                <span class="neon-text-gold text-[#ffcc00]">Código Soberano</span>
-            </h1>
-            <p class="text-lg md:text-2xl mb-12 text-gray-400 max-w-3xl mx-auto leading-relaxed italic">
-                Reconstruyendo el efectivo electrónico desde México. Sin intermediarios, sin permisos, puro linaje digital.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <a href="https://cartera.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="neon-border bg-transparent text-cyan-400 px-10 py-4 rounded-sm font-bold uppercase tracking-widest space-mono hover:bg-cyan-400 hover:text-black transition-all duration-500">
-                    <i class="fas fa-wallet mr-3"></i>Abrir Tonalli
-                </a>
-                <a href="#blog" class="px-10 py-4 text-gray-400 border border-white/10 hover:border-white/30 hover:text-white transition-all uppercase tracking-widest text-xs font-bold flex items-center justify-center gap-2">
-                    Explorar el Blog <i class="fas fa-database text-[10px]"></i>
-                </a>
-            </div>
+      <div class="max-w-5xl mx-auto text-center relative z-10">
+        <div
+          class="inline-block mb-6 px-4 py-1 border border-cyan-500/30 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] uppercase tracking-[0.3em] space-mono animate-pulse"
+        >
+          Iniciativa Comunitaria Soberana
         </div>
+        <h1
+          class="text-5xl md:text-8xl font-extrabold mb-8 italic text-white tracking-tighter leading-none"
+        >
+          eCash México y <span class="text-[#00abe7] neon-text-cyan">XEC</span
+          ><br /><span class="neon-text-gold text-[#ffcc00]"
+            >autocustodia, pagos y guías</span
+          >
+        </h1>
+        <p
+          class="text-lg md:text-2xl mb-12 text-gray-400 max-w-3xl mx-auto leading-relaxed italic"
+        >
+          Reconstruyendo el efectivo electrónico desde México. Sin
+          intermediarios, sin permisos, puro linaje digital.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-6">
+          <a
+            href="https://cartera.xolosarmy.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="neon-border bg-transparent text-cyan-400 px-10 py-4 rounded-sm font-bold uppercase tracking-widest space-mono hover:bg-cyan-400 hover:text-black transition-all duration-500"
+          >
+            <i class="fas fa-wallet mr-3"></i>Abrir Tonalli
+          </a>
+          <a
+            href="#blog"
+            class="px-10 py-4 text-gray-400 border border-white/10 hover:border-white/30 hover:text-white transition-all uppercase tracking-widest text-xs font-bold flex items-center justify-center gap-2"
+          >
+            Explorar el Blog <i class="fas fa-database text-[10px]"></i>
+          </a>
+        </div>
+      </div>
     </header>
 
     <section id="aprende" class="py-32 px-6 max-w-7xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-8">
-                <div>
-                    <span class="text-[#00abe7] font-bold text-xs uppercase tracking-[0.3em] space-mono">Manifiesto</span>
-                    <h2 class="text-4xl md:text-5xl font-bold italic text-white border-l-4 border-cyan-500 pl-6 mt-4">Nuestra Visión</h2>
-                </div>
-                <div class="space-mono text-gray-400 space-y-6 leading-relaxed">
-                    <p class="text-xl text-cyan-100">
-                        “Sin cultura no hay adopción. Sin comunidad no hay red. Sin infraestructura no hay soberanía.”
-                    </p>
-                    <p>
-                        <strong class="text-white">eCash México</strong> no busca adaptar XEC al sistema financiero tradicional. Buscamos fortalecer su utilidad nativa y construir una comunidad con identidad propia.
-                    </p>
-                </div>
-            </div>
-            <div class="card-blur p-8 rounded-2xl neon-border relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-4 opacity-10 transition group-hover:opacity-30" aria-hidden="true">
-                    <i class="fas fa-microchip text-6xl text-cyan-400"></i>
-                </div>
-                <h3 class="text-[#ffcc00] font-bold mb-4 uppercase tracking-widest space-mono">Aviso Educativo</h3>
-                <p class="text-sm text-gray-300 italic leading-relaxed">
-                    Este nodo digital es puramente educativo e informativo. No constituye asesoría financiera. Gestiona tus activos con responsabilidad cypherpunk.
-                </p>
-            </div>
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="space-y-8">
+          <div>
+            <span
+              class="text-[#00abe7] font-bold text-xs uppercase tracking-[0.3em] space-mono"
+              >Manifiesto</span
+            >
+            <h2
+              class="text-4xl md:text-5xl font-bold italic text-white border-l-4 border-cyan-500 pl-6 mt-4"
+            >
+              Nuestra Visión
+            </h2>
+          </div>
+          <div class="space-mono text-gray-400 space-y-6 leading-relaxed">
+            <p class="text-xl text-cyan-100">
+              “Sin cultura no hay adopción. Sin comunidad no hay red. Sin
+              infraestructura no hay soberanía.”
+            </p>
+            <p>
+              <strong class="text-white">eCash México</strong> no busca adaptar
+              XEC al sistema financiero tradicional. Buscamos fortalecer su
+              utilidad nativa y construir una comunidad con identidad propia.
+            </p>
+          </div>
         </div>
+        <div
+          class="card-blur p-8 rounded-2xl neon-border relative overflow-hidden group"
+        >
+          <div
+            class="absolute top-0 right-0 p-4 opacity-10 transition group-hover:opacity-30"
+            aria-hidden="true"
+          >
+            <i class="fas fa-microchip text-6xl text-cyan-400"></i>
+          </div>
+          <h3
+            class="text-[#ffcc00] font-bold mb-4 uppercase tracking-widest space-mono"
+          >
+            Aviso Educativo
+          </h3>
+          <p class="text-sm text-gray-300 italic leading-relaxed">
+            Este nodo digital es puramente educativo e informativo. No
+            constituye asesoría financiera. Gestiona tus activos con
+            responsabilidad cypherpunk.
+          </p>
+        </div>
+      </div>
     </section>
 
     <section id="blog" class="py-24 px-6 bg-black/30 border-y border-white/5">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-16">
-                <div>
-                    <span class="text-[#00abe7] font-bold text-xs uppercase tracking-[0.3em] space-mono">Primeros Pasos</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white italic tracking-tighter mt-3">Archivo de Conocimiento</h2>
-                    <div class="glyph-divider h-1 w-40 mt-4"></div>
-                </div>
-                <a href="blog/index.html" class="text-[#00abe7] font-bold text-xs uppercase tracking-widest hover:text-white transition md:text-right space-mono">Ver todos los artículos →</a>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <a href="blog/que-es-ecash.html" class="card-blur p-6 rounded-xl hover:border-cyan-500/50 transition duration-500 group">
-                    <div class="text-[10px] space-mono text-cyan-500 mb-4 font-bold tracking-widest">FUNDAMENTOS // 001</div>
-                    <h3 class="text-xl font-bold text-white mb-4 group-hover:text-cyan-400 transition">¿Qué es XEC?</h3>
-                    <p class="text-gray-500 text-sm italic mb-6 leading-relaxed">La evolución del efectivo electrónico explicada sin ruido financiero.</p>
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                        <span>Ver Transmisión</span> <i class="fas fa-caret-right animate-pulse"></i>
-                    </div>
-                </a>
-
-                <a href="blog/comprar-xec-en-mexico.html" class="card-blur p-6 rounded-xl hover:border-cyan-500/50 transition duration-500 group">
-                    <div class="text-[10px] space-mono text-cyan-500 mb-4 font-bold tracking-widest">ONBOARDING // 002</div>
-                    <h3 class="text-xl font-bold text-white mb-4 group-hover:text-cyan-400 transition">Comprar en México</h3>
-                    <p class="text-gray-500 text-sm italic mb-6 leading-relaxed">Rutas seguras para adquirir soberanía y moverla a autocustodia.</p>
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                        <span>Acceder Guía</span> <i class="fas fa-caret-right animate-pulse"></i>
-                    </div>
-                </a>
-
-                <a href="blog/tutorial-tonalli-wallet.html" class="card-blur p-6 rounded-xl hover:border-cyan-500/50 transition duration-500 group">
-                    <div class="text-[10px] space-mono text-cyan-500 mb-4 font-bold tracking-widest">SISTEMAS // 003</div>
-                    <h3 class="text-xl font-bold text-white mb-4 group-hover:text-cyan-400 transition">Tonalli Wallet</h3>
-                    <p class="text-gray-500 text-sm italic mb-6 leading-relaxed">Manual interactivo para activar tu primer guardián de llaves.</p>
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                        <span>Iniciar Tutorial</span> <i class="fas fa-caret-right animate-pulse"></i>
-                    </div>
-                </a>
-            </div>
+      <div class="max-w-7xl mx-auto">
+        <div
+          class="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-16"
+        >
+          <div>
+            <span
+              class="text-[#00abe7] font-bold text-xs uppercase tracking-[0.3em] space-mono"
+              >Primeros Pasos</span
+            >
+            <h2
+              class="text-3xl md:text-4xl font-bold text-white italic tracking-tighter mt-3"
+            >
+              Archivo de Conocimiento
+            </h2>
+            <div class="glyph-divider h-1 w-40 mt-4"></div>
+          </div>
+          <a
+            href="blog/index.html"
+            class="text-[#00abe7] font-bold text-xs uppercase tracking-widest hover:text-white transition md:text-right space-mono"
+            >Ver todos los artículos →</a
+          >
         </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <a
+            href="blog/que-es-ecash.html"
+            class="card-blur p-6 rounded-xl hover:border-cyan-500/50 transition duration-500 group"
+          >
+            <div
+              class="text-[10px] space-mono text-cyan-500 mb-4 font-bold tracking-widest"
+            >
+              FUNDAMENTOS // 001
+            </div>
+            <h3
+              class="text-xl font-bold text-white mb-4 group-hover:text-cyan-400 transition"
+            >
+              ¿Qué es XEC?
+            </h3>
+            <p class="text-gray-500 text-sm italic mb-6 leading-relaxed">
+              La evolución del efectivo electrónico explicada sin ruido
+              financiero.
+            </p>
+            <div
+              class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tighter"
+            >
+              <span>Ver Transmisión</span>
+              <i class="fas fa-caret-right animate-pulse"></i>
+            </div>
+          </a>
+
+          <a
+            href="blog/comprar-xec-en-mexico.html"
+            class="card-blur p-6 rounded-xl hover:border-cyan-500/50 transition duration-500 group"
+          >
+            <div
+              class="text-[10px] space-mono text-cyan-500 mb-4 font-bold tracking-widest"
+            >
+              ONBOARDING // 002
+            </div>
+            <h3
+              class="text-xl font-bold text-white mb-4 group-hover:text-cyan-400 transition"
+            >
+              Comprar en México
+            </h3>
+            <p class="text-gray-500 text-sm italic mb-6 leading-relaxed">
+              Rutas seguras para adquirir soberanía y moverla a autocustodia.
+            </p>
+            <div
+              class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tighter"
+            >
+              <span>Acceder Guía</span>
+              <i class="fas fa-caret-right animate-pulse"></i>
+            </div>
+          </a>
+
+          <a
+            href="blog/tutorial-tonalli-wallet.html"
+            class="card-blur p-6 rounded-xl hover:border-cyan-500/50 transition duration-500 group"
+          >
+            <div
+              class="text-[10px] space-mono text-cyan-500 mb-4 font-bold tracking-widest"
+            >
+              SISTEMAS // 003
+            </div>
+            <h3
+              class="text-xl font-bold text-white mb-4 group-hover:text-cyan-400 transition"
+            >
+              Tonalli Wallet
+            </h3>
+            <p class="text-gray-500 text-sm italic mb-6 leading-relaxed">
+              Manual interactivo para activar tu primer guardián de llaves.
+            </p>
+            <div
+              class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-tighter"
+            >
+              <span>Iniciar Tutorial</span>
+              <i class="fas fa-caret-right animate-pulse"></i>
+            </div>
+          </a>
+        </div>
+      </div>
     </section>
 
     <section id="construye" class="py-28 px-6 max-w-7xl mx-auto">
-        <div class="text-center mb-14">
-            <span class="text-[#ffcc00] font-bold text-xs uppercase tracking-[0.3em] space-mono">xolosArmy Network</span>
-            <h2 class="text-3xl md:text-5xl font-bold mt-4 text-white italic">Infraestructura y Ecosistema</h2>
-        </div>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left italic">
-            <a href="https://cartera.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="card-blur p-8 rounded-2xl hover:border-cyan-500/60 transition group">
-                <div class="text-[#00abe7] font-bold text-xs uppercase mb-2 tracking-tighter space-mono">Wallet Soberana</div>
-                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-[#00abe7]">Tonalli Wallet</h3>
-                <p class="text-gray-500 text-sm">Autocustodia y entrada simple para nuevos usuarios.</p>
-            </a>
-            <a href="https://teyolia.cash" target="_blank" rel="noopener noreferrer" class="card-blur p-8 rounded-2xl hover:border-cyan-500/60 transition group">
-                <div class="text-[#00abe7] font-bold text-xs uppercase mb-2 tracking-tighter space-mono">Coordinación</div>
-                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-[#00abe7]">Teyolia</h3>
-                <p class="text-gray-500 text-sm">Crowdfunding no custodial y coordinación comunitaria.</p>
-            </a>
-            <a href="https://chronik.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="card-blur p-8 rounded-2xl neon-border-gold hover:border-yellow-300/70 transition group">
-                <div class="text-[#ffcc00] font-bold text-xs uppercase mb-2 tracking-tighter space-mono">Public Endpoint</div>
-                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-[#ffcc00]">Chronik API</h3>
-                <p class="text-gray-500 text-sm">Infraestructura para indexación de datos y builders.</p>
-            </a>
-            <a href="https://explorer.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="card-blur p-8 rounded-2xl hover:border-cyan-500/60 transition group">
-                <div class="text-[#00abe7] font-bold text-xs uppercase mb-2 tracking-tighter space-mono">Utilidad</div>
-                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-[#00abe7]">Xolos eCash Explorer</h3>
-                <p class="text-gray-500 text-sm">Verificación pública de transacciones y eTokens de linaje.</p>
-            </a>
-            <a href="https://xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="card-blur p-8 rounded-2xl hover:border-[#ffcc00]/70 transition group sm:col-span-2 lg:col-span-1">
-                <div class="text-[#ffcc00] font-bold text-xs uppercase mb-2 tracking-tighter space-mono">Capa Cultural</div>
-                <h3 class="text-xl font-bold mb-2 text-white group-hover:text-[#ffcc00]">xolosArmy Network</h3>
-                <p class="text-gray-500 text-sm">Identidad, linaje xoloitzcuintle y comunidad.</p>
-            </a>
-        </div>
+      <div class="text-center mb-14">
+        <span
+          class="text-[#ffcc00] font-bold text-xs uppercase tracking-[0.3em] space-mono"
+          >xolosArmy Network</span
+        >
+        <h2 class="text-3xl md:text-5xl font-bold mt-4 text-white italic">
+          Infraestructura y Ecosistema
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left italic">
+        <a
+          href="https://cartera.xolosarmy.xyz"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card-blur p-8 rounded-2xl hover:border-cyan-500/60 transition group"
+        >
+          <div
+            class="text-[#00abe7] font-bold text-xs uppercase mb-2 tracking-tighter space-mono"
+          >
+            Wallet Soberana
+          </div>
+          <h3
+            class="text-xl font-bold mb-2 text-white group-hover:text-[#00abe7]"
+          >
+            Tonalli Wallet
+          </h3>
+          <p class="text-gray-500 text-sm">
+            Autocustodia y entrada simple para nuevos usuarios.
+          </p>
+        </a>
+        <a
+          href="https://teyolia.cash"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card-blur p-8 rounded-2xl hover:border-cyan-500/60 transition group"
+        >
+          <div
+            class="text-[#00abe7] font-bold text-xs uppercase mb-2 tracking-tighter space-mono"
+          >
+            Coordinación
+          </div>
+          <h3
+            class="text-xl font-bold mb-2 text-white group-hover:text-[#00abe7]"
+          >
+            Teyolia
+          </h3>
+          <p class="text-gray-500 text-sm">
+            Crowdfunding no custodial y coordinación comunitaria.
+          </p>
+        </a>
+        <a
+          href="https://chronik.xolosarmy.xyz"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card-blur p-8 rounded-2xl neon-border-gold hover:border-yellow-300/70 transition group"
+        >
+          <div
+            class="text-[#ffcc00] font-bold text-xs uppercase mb-2 tracking-tighter space-mono"
+          >
+            Public Endpoint
+          </div>
+          <h3
+            class="text-xl font-bold mb-2 text-white group-hover:text-[#ffcc00]"
+          >
+            Chronik API
+          </h3>
+          <p class="text-gray-500 text-sm">
+            Infraestructura para indexación de datos y builders.
+          </p>
+        </a>
+        <a
+          href="https://explorer.xolosarmy.xyz"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card-blur p-8 rounded-2xl hover:border-cyan-500/60 transition group"
+        >
+          <div
+            class="text-[#00abe7] font-bold text-xs uppercase mb-2 tracking-tighter space-mono"
+          >
+            Utilidad
+          </div>
+          <h3
+            class="text-xl font-bold mb-2 text-white group-hover:text-[#00abe7]"
+          >
+            Xolos eCash Explorer
+          </h3>
+          <p class="text-gray-500 text-sm">
+            Verificación pública de transacciones y eTokens de linaje.
+          </p>
+        </a>
+        <a
+          href="https://xolosarmy.xyz"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card-blur p-8 rounded-2xl hover:border-[#ffcc00]/70 transition group sm:col-span-2 lg:col-span-1"
+        >
+          <div
+            class="text-[#ffcc00] font-bold text-xs uppercase mb-2 tracking-tighter space-mono"
+          >
+            Capa Cultural
+          </div>
+          <h3
+            class="text-xl font-bold mb-2 text-white group-hover:text-[#ffcc00]"
+          >
+            xolosArmy Network
+          </h3>
+          <p class="text-gray-500 text-sm">
+            Identidad, linaje xoloitzcuintle y comunidad.
+          </p>
+        </a>
+      </div>
     </section>
 
     <footer class="bg-black py-20 px-6 border-t border-cyan-500/20">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-            <div class="space-y-6">
-                <div class="flex items-center gap-4">
-                    <img src="https://i.imgur.com/UaAx4EK.png" alt="Logo eCash México" class="h-12 w-auto rounded-full grayscale opacity-50">
-                    <h4 class="text-white font-bold space-mono uppercase tracking-[0.3em]">eCash México</h4>
-                </div>
-                <p class="text-gray-500 text-sm italic leading-relaxed">
-                    Iniciativa independiente para la reconstrucción de la cultura eCash. Alineados con el protocolo, enfocados en adopción real.
-                </p>
-                <div class="bg-slate-900/50 p-4 border border-white/5 rounded-sm">
-                    <span class="text-[10px] font-bold text-cyan-500 uppercase block mb-2 tracking-widest space-mono">Terminal de Apoyo</span>
-                    <code class="text-[9px] break-all text-gray-400 font-mono">ecash:qq7qn90ev23ecastqmn8as00u8mcp4tzsspvt5dtlk</code>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-8 text-left italic">
-                <div>
-                    <h5 class="text-white font-bold mb-6 uppercase text-xs tracking-widest space-mono">Nodos</h5>
-                    <ul class="text-xs space-y-4 text-gray-500">
-                        <li><a href="https://explorer.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition">Explorador Xolos</a></li>
-                        <li><a href="https://chronik.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition">API Chronik</a></li>
-                        <li><a href="https://teyolia.cash" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition">Teyolia</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5 class="text-white font-bold mb-6 uppercase text-xs tracking-widest space-mono">Legal</h5>
-                    <ul class="text-xs space-y-4 text-gray-500">
-                        <li><a href="LICENSE" class="hover:text-cyan-400 transition">Licencia MIT</a></li>
-                        <li><a href="https://e.cash" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-400 transition">Sitio Global</a></li>
-                    </ul>
-                </div>
-            </div>
+      <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
+        <div class="space-y-6">
+          <div class="flex items-center gap-4">
+            <img
+              src="https://i.imgur.com/UaAx4EK.png"
+              alt="Logo eCash México"
+              class="h-12 w-auto rounded-full grayscale opacity-50"
+            />
+            <h4
+              class="text-white font-bold space-mono uppercase tracking-[0.3em]"
+            >
+              eCash México
+            </h4>
+          </div>
+          <p class="text-gray-500 text-sm italic leading-relaxed">
+            Iniciativa independiente para la reconstrucción de la cultura eCash.
+            Alineados con el protocolo, enfocados en adopción real.
+          </p>
+          <div class="bg-slate-900/50 p-4 border border-white/5 rounded-sm">
+            <span
+              class="text-[10px] font-bold text-cyan-500 uppercase block mb-2 tracking-widest space-mono"
+              >Terminal de Apoyo</span
+            >
+            <code class="text-[9px] break-all text-gray-400 font-mono"
+              >ecash:qq7qn90ev23ecastqmn8as00u8mcp4tzsspvt5dtlk</code
+            >
+          </div>
         </div>
-        <div class="mt-20 pt-8 border-t border-white/5 text-center text-[10px] text-gray-600 space-mono uppercase tracking-widest">
-            &copy; 2026 RMZ TECHNOLOGIES. RECONSTRUYENDO CULTURA DESDE MÉXICO.
+        <div class="grid grid-cols-2 gap-8 text-left italic">
+          <div>
+            <h5
+              class="text-white font-bold mb-6 uppercase text-xs tracking-widest space-mono"
+            >
+              Nodos
+            </h5>
+            <ul class="text-xs space-y-4 text-gray-500">
+              <li>
+                <a
+                  href="https://explorer.xolosarmy.xyz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-cyan-400 transition"
+                  >Explorador Xolos</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://chronik.xolosarmy.xyz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-cyan-400 transition"
+                  >API Chronik</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://teyolia.cash"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-cyan-400 transition"
+                  >Teyolia</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h5
+              class="text-white font-bold mb-6 uppercase text-xs tracking-widest space-mono"
+            >
+              Legal
+            </h5>
+            <ul class="text-xs space-y-4 text-gray-500">
+              <li>
+                <a href="LICENSE" class="hover:text-cyan-400 transition"
+                  >Licencia MIT</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://e.cash"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-cyan-400 transition"
+                  >Sitio Global</a
+                >
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
+      <div
+        class="mt-20 pt-8 border-t border-white/5 text-center text-[10px] text-gray-600 space-mono uppercase tracking-widest"
+      >
+        &copy; 2026 RMZ TECHNOLOGIES. RECONSTRUYENDO CULTURA DESDE MÉXICO.
+      </div>
     </footer>
-
-</body>
+  </body>
 </html>
