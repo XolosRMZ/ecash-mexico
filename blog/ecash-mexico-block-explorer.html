@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cómo usar Xolos Explorer: Guía del Explorador de eCash | eCash México</title>
+    <meta name="description" content="Tutorial completo sobre Xolos Explorer de eCash México. Aprende a buscar bloques, transacciones, direcciones y verificar inscripciones de linaje OP_RETURN." />
+    <link rel="canonical" href="https://ecash.mx/blog/tutorial-xolos-explorer.html" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="eCash México" />
+    <meta property="og:title" content="Cómo usar Xolos Explorer: Guía del Explorador de eCash" />
+    <meta property="og:description" content="Tutorial completo sobre Xolos Explorer de eCash México. Aprende a buscar bloques, transacciones, direcciones y verificar inscripciones de linaje OP_RETURN." />
+    <meta property="og:url" content="https://ecash.mx/blog/tutorial-xolos-explorer.html" />
+    <meta property="og:image" content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cómo usar Xolos Explorer: Guía del Explorador de eCash" />
+    <meta name="twitter:description" content="Tutorial completo sobre Xolos Explorer de eCash México. Aprende a buscar bloques, transacciones, direcciones y verificar inscripciones de linaje OP_RETURN." />
+    <meta name="twitter:image" content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg" />
+
+    <!-- Inline Styles (Tailwind equivalent & Custom themed) -->
+    <style>
+      :root {
+        --deep-obsidian: #05070a;
+        --temple-blue: #001e62;
+        --cypher-neon: #00abe7;
+        --aztec-gold: #ffcc00;
+        --text-slate: #cbd5e1;
+        --text-muted: #94a3b8;
+        --card-bg: rgba(15, 23, 42, 0.65);
+        --line-color: rgba(255, 255, 255, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+        background-color: var(--deep-obsidian);
+        color: var(--text-slate);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      .space-mono {
+        font-family: 'Space Mono', ui-monospace, monospace;
+      }
+
+      /* Background layouts */
+      .bg-hero {
+        background: 
+          radial-gradient(circle at 50% 30%, rgba(0, 171, 231, 0.15) 0%, rgba(0, 30, 98, 0.2) 40%, rgba(5, 7, 10, 1) 80%),
+          linear-gradient(135deg, rgba(255, 204, 0, 0.05), transparent 40%),
+          url("https://www.transparenttextures.com/patterns/aztec.png");
+        border-bottom: 1px solid var(--line-color);
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* Navbar */
+      nav {
+        border-bottom: 1px solid var(--line-color);
+        background-color: rgba(5, 7, 10, 0.8);
+        backdrop-filter: blur(12px);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 0;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #ffffff;
+        font-style: italic;
+      }
+
+      .nav-brand .accent {
+        color: var(--cypher-neon);
+        text-shadow: 0 0 15px rgba(0, 171, 231, 0.5);
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--text-muted);
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover, .nav-links a.active {
+        color: var(--cypher-neon);
+      }
+
+      /* Header Section */
+      header {
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      .kicker {
+        display: inline-block;
+        padding: 6px 16px;
+        border: 1px solid rgba(0, 171, 231, 0.3);
+        border-radius: 999px;
+        background-color: rgba(0, 171, 231, 0.1);
+        color: var(--cypher-neon);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        font-style: italic;
+        margin-bottom: 24px;
+      }
+
+      h1 span {
+        color: var(--aztec-gold);
+        text-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
+      }
+
+      .lead {
+        font-size: clamp(1.1rem, 2vw, 1.35rem);
+        color: var(--text-slate);
+        max-width: 760px;
+        margin: 0 auto;
+        font-style: italic;
+        font-weight: 300;
+      }
+
+      /* Content Grid Layout */
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 60px 0;
+      }
+
+      @media (min-width: 768px) {
+        .content-grid {
+          grid-template-columns: 2fr 1fr;
+        }
+      }
+
+      /* Card styles */
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--line-color);
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        margin-bottom: 32px;
+      }
+
+      .card-accent {
+        border-left: 4px solid var(--cypher-neon);
+      }
+
+      .card-gold {
+        border: 1px solid rgba(255, 204, 0, 0.3);
+        box-shadow: 0 0 25px rgba(255, 204, 0, 0.05);
+      }
+
+      h2 {
+        font-size: 1.75rem;
+        color: #ffffff;
+        margin-bottom: 16px;
+        font-style: italic;
+        letter-spacing: -0.02em;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        color: var(--aztec-gold);
+        margin-top: 24px;
+        margin-bottom: 12px;
+        font-style: italic;
+      }
+
+      p {
+        margin-bottom: 16px;
+        color: #94a3b8;
+        font-size: 1.05rem;
+      }
+
+      p strong {
+        color: #ffffff;
+      }
+
+      ul {
+        list-style: none;
+        margin-bottom: 20px;
+      }
+
+      li {
+        position: relative;
+        padding-left: 28px;
+        margin-bottom: 12px;
+        color: #94a3b8;
+        font-size: 1rem;
+      }
+
+      li::before {
+        content: "🐾";
+        position: absolute;
+        left: 0;
+        top: 2px;
+        font-size: 0.9rem;
+      }
+
+      /* Feature Box Blocks */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin: 24px 0;
+      }
+
+      @media (min-width: 640px) {
+        .feature-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .feature-box {
+        background-color: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--line-color);
+        border-radius: 12px;
+        padding: 20px;
+        transition: border-color 0.3s;
+      }
+
+      .feature-box:hover {
+        border-color: var(--cypher-neon);
+      }
+
+      .feature-box strong {
+        display: block;
+        color: #ffffff;
+        margin-bottom: 6px;
+        font-style: italic;
+      }
+
+      /* Code block representation */
+      .code-display {
+        font-family: 'Space Mono', monospace;
+        background-color: #030508;
+        border: 1px solid rgba(0, 171, 231, 0.2);
+        color: #7dd3fc;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        overflow-x: auto;
+        margin: 16px 0;
+        word-break: break-all;
+      }
+      
+      .code-keyword { color: #f43f5e; }
+      .code-string { color: #34d399; }
+      .code-prefix { color: #fbbf24; font-weight: bold; }
+
+      /* Sidebar widgets */
+      .sidebar-widget {
+        background-color: rgba(30, 41, 59, 0.4);
+        border: 1px solid var(--line-color);
+        border-radius: 16px;
+        padding: 24px;
+        position: sticky;
+        top: 100px;
+      }
+
+      .widget-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--cypher-neon);
+        margin-bottom: 16px;
+      }
+
+      .sidebar-links a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-slate);
+        text-decoration: none;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 0.95rem;
+        transition: color 0.2s;
+      }
+
+      .sidebar-links a:hover {
+        color: var(--cypher-neon);
+      }
+
+      .sidebar-links a:last-child {
+        border-bottom: none;
+      }
+
+      /* Bottom Call to Action */
+      .action-banner {
+        background: linear-gradient(135deg, var(--temple-blue) 0%, #030712 100%);
+        border: 1px solid rgba(0, 171, 231, 0.3);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        margin-top: 40px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .action-banner h3 {
+        color: #ffffff;
+        font-size: 1.5rem;
+        margin-top: 0;
+        margin-bottom: 12px;
+      }
+
+      .btn-neon {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--cypher-neon);
+        border: 1px solid var(--cypher-neon);
+        padding: 12px 28px;
+        border-radius: 4px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.1em;
+        margin-top: 16px;
+        box-shadow: 0 0 15px rgba(0, 171, 231, 0.2);
+        transition: all 0.3s;
+      }
+
+      .btn-neon:hover {
+        background-color: var(--cypher-neon);
+        color: var(--deep-obsidian);
+        box-shadow: 0 0 25px rgba(0, 171, 231, 0.6);
+      }
+
+      /* Footer */
+      footer {
+        border-top: 1px solid var(--line-color);
+        background-color: #030508;
+        padding: 60px 0;
+        margin-top: 80px;
+        text-align: center;
+      }
+
+      .footer-brand {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 12px;
+        font-style: italic;
+      }
+
+      .footer-text {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        line-height: 2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top Navigation Bar -->
+    <nav>
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          eCash <span class="accent">México</span>
+        </a>
+        <div class="nav-links space-mono">
+          <a href="../index.html">Inicio</a>
+          <a href="./index.html" class="active">Blog</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Header -->
+    <div class="bg-hero">
+      <header class="container">
+        <div class="kicker space-mono">Tutorial / Infraestructura</div>
+        <h1>Cómo usar Xolos Explorer:<br /><span>El Explorador de Bloques Comunitario</span></h1>
+        <p class="lead">
+          Aprende a navegar las transacciones de eCash (XEC), consultar saldos de eTokens y auditar registros de linaje inmutables on-chain.
+        </p>
+      </header>
+    </div>
+
+    <!-- Main Grid Layout -->
+    <div class="container">
+      <div class="content-grid">
+        
+        <!-- Left Article Content -->
+        <main>
+          <article class="card card-accent">
+            <h2>1. Más allá de un Explorador Técnico</h2>
+            <p>
+              En la infraestructura blockchain tradicional, un explorador de bloques es visto como una simple herramienta de depuración o auditoría de hashes fríos. Sin embargo, alineados con la visión soberana de <strong>eCash México</strong>, el desarrollo de <strong>Xolos Explorer</strong> rompe este paradigma.
+            </p>
+            <p>
+              Construido utilizando el stack moderno de <strong>React + Vite</strong> y conectado directamente a nuestro endpoint soberano de la <strong>Chronik API</strong> (<code>https://chronik.xolosarmy.xyz</code>), esta interfaz combina la precisión matemática de la red eCash con las capas narrativas y culturales de nuestro Estado Red. No solo buscamos rastrear transacciones, sino dar visibilidad a la memoria digital viva.
+            </p>
+
+            <h3>Características Principales de la Herramienta</h3>
+            <div class="feature-grid">
+              <div class="feature-box">
+                <strong>⚡ Resolución en Milisegundos</strong>
+                <p style="font-size: 0.9rem; margin-bottom: 0;">Gracias a la indexación directa de Chronik, las consultas de saldos e historiales cargan de forma instantánea.</p>
+              </div>
+              <div class="feature-box">
+                <strong>🐾 Desgranado de Linaje</strong>
+                <p style="font-size: 0.9rem; margin-bottom: 0;">Módulo exclusivo capaz de interpretar registros nativos estructurados en las salidas de datos del protocolo.</p>
+              </div>
+              <div class="feature-box">
+                <strong>📦 Gestión de eTokens (NFTs)</strong>
+                <p style="font-size: 0.9rem; margin-bottom: 0;">Fichas integradas con resolución de metadatos IPFS para la visualización directa de colecciones coleccionables.</p>
+              </div>
+              <div class="feature-box">
+                <strong>🔒 Auditoría de Integridad</strong>
+                <p style="font-size: 0.9rem; margin-bottom: 0;">Comparación automática entre los hashes documentales guardados en la génesis y la metadata real consultada.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="card card-accent">
+            <h2>2. Anatomía de una Búsqueda Global</h2>
+            <p>
+              La barra de búsqueda de Xolos Explorer implementa un motor de detección inteligente en el frontend. No necesitas indicarle al sistema qué estás buscando; el software analiza el formato del string ingresado y redirige automáticamente a la sección correspondiente:
+            </p>
+
+            <ul>
+              <li><strong>Altura de Bloque:</strong> Si ingresas únicamente números (ej: <code>9000</code>), el explorador te llevará al índice del bloque, desplegando su tamaño, número de transacciones y marca de tiempo.</li>
+              <li><strong>Dirección eCash:</strong> Cadenas que comienzan con el prefijo oficial <code>ecash:</code>. Te mostrará el balance visible en XEC, la lista de UTXOs activos y tus coleccionables o tokens fungibles separados de forma lógica.</li>
+              <li><strong>Hashes de 64 caracteres:</strong> El sistema resolverá de forma autónoma si el hash corresponde a una transacción (TXID) o a un Token ID específico, mostrándote su árbol genealógico si cumple con los estándares criptográficos del linaje.</li>
+            </ul>
+          </article>
+
+          <article class="card card-gold">
+            <h2>3. El Secreto está en el OP_RETURN</h2>
+            <p>
+              Uno de los componentes más avanzados de Xolos Explorer es su capacidad para realizar lo que llamamos <em>arqueología moderna</em>. Cuando interactúas con transacciones del ecosistema, el explorador escanea los scripts de salida en busca de la instrucción de script <code>OP_RETURN</code> (representada por el código hex inicial <code>6a</code>).
+            </p>
+            <p>
+              Si el script contiene el prefijo oficial de registro de linaje de xolosArmy, el explorador activa una capa visual de <strong>Ficha Oficial de Linaje</strong>, traduciendo los bytes crudos a un formulario estructurado legible por cualquier persona:
+            </p>
+
+            <div class="code-display">
+              <span class="code-keyword">6a</span><!-- OP_RETURN -->
+              <span class="code-prefix">584f4c4f7c52414d4952455a7c</span><!-- XOLO|RAMIREZ| -->
+              <span class="code-string">4e4f4d4252453d54494b417c4e41433d323032352d31302d3036...</span><!-- NOMBRE=TIKA|NAC=2025-10-06... -->
+            </div>
+
+            <p>
+              Al identificar este formato, el software procesa las variables internas y despliega de manera automática los datos biológicos guardados en piedra digital: nombre completo, afijo de criadero, variedad, sexo, color, número de microchip subdermal verificado y enlaces criptográficos directos hacia las fichas individuales de sus progenitores (padre y madre), construyendo un árbol genealógico dinámico en pantalla.
+            </p>
+          </article>
+
+          <!-- Action Call To Action Banner -->
+          <div class="action-banner">
+            <h3>¿Listo para auditar la red?</h3>
+            <p style="margin-bottom: 0;">Accede de forma directa a la aplicación del explorador y consulta bloques en tiempo real conectados a nuestro nodo soberano.</p>
+            <a href="https://explorer.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="btn-neon">
+              <i class="fas fa-search-dollar"></i> Ir a Xolos Explorer
+            </a>
+          </div>
+        </main>
+
+        <!-- Right Sidebar Widgets -->
+        <aside>
+          <div class="sidebar-widget">
+            <div class="widget-title space-mono">Guías Relacionadas</div>
+            <div class="sidebar-links">
+              <a href="./que-es-ecash.html">
+                <span>🪙</span> ¿Qué es eCash y XEC?
+              </a>
+              <a href="./tutorial-tonalli-wallet.html">
+                <span>👛</span> Guía de Tonalli Wallet
+              </a>
+              <a href="./chronik-builders-ecash.html">
+                <span>🔗</span> Infraestructura Chronik API
+              </a>
+              <a href="./teyolia-crowdfunding-xec.html">
+                <span>🌱</span> Teyolia Crowdfunding
+              </a>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+
+    <!-- Footer Area -->
+    <footer>
+      <div class="container">
+        <div class="footer-brand">eCash México</div>
+        <p class="footer-text space-mono">
+          Iniciativa Independiente impulsada por xolosArmy Network.<br />
+          Infraestructura abierta, educación y adopción real. Licencia MIT.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
