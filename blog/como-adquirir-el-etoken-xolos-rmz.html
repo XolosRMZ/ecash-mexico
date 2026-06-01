@@ -115,6 +115,13 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 25px rgba(0,171,231,0.4);
     }
+    .btn-primary:disabled {
+      background: #475569;
+      color: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
 
     .btn-secondary {
       width: 100%;
@@ -153,6 +160,24 @@
       border-color: rgba(255,204,0,0.3);
       color: #ffcc00;
     }
+
+    /* Tarjeta de Oferta DEX */
+    .dex-offer-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 204, 0, 0.4);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .dex-offer-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 4px; height: 100%;
+      background: #ffcc00;
+    }
   </style>
 </head>
 <body>
@@ -161,100 +186,4 @@
     
     <div class="text-center mb-6">
       <h1 class="text-xl font-black italic tracking-tight text-white mb-1">Ruta de Onboarding Cultural</h1>
-      <p class="text-xs space-mono text-gray-400">xolosArmy Network Simulator</p>
-    </div>
-
-    <div class="progress-bar" id="progressBar">
-      <div class="progress-step current" id="ind-1">1</div>
-      <div class="progress-step" id="ind-2">2</div>
-      <div class="progress-step" id="ind-3">3</div>
-      <div class="progress-step" id="ind-4">4</div>
-    </div>
-
-    <div class="step active text-center" id="step-1">
-      <div class="icon-box">
-        <i class="fa-solid fa-mobile-screen"></i>
-      </div>
-      <h2 class="text-2xl font-bold text-white mb-2">1. La Curiosidad</h2>
-      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
-        Ves un meme en X sobre Tonalli Faucet y te preguntas: <em>"¿How get RMZ?"</em>. Ese es el primer paso. No necesitas saber criptografía, solo necesitas escanear.
-      </p>
-      <button class="btn-primary" onclick="goToStep(2)">
-        <i class="fa-solid fa-qrcode"></i> Escanear Faucet
-      </button>
-    </div>
-
-    <div class="step text-center" id="step-2">
-      <div class="icon-box">
-        <i class="fa-solid fa-coins"></i>
-      </div>
-      <h2 class="text-2xl font-bold text-white mb-2">2. XEC es el Dinero</h2>
-      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
-        ¡Felicidades! Has recibido una fracción de eCash (XEC) en tu nueva wallet web. Has experimentado dinero electrónico real, rápido y sin pedir permiso a bancos.
-      </p>
-      <div class="bg-slate-900 border border-white/10 rounded-lg p-4 mb-6 text-left">
-        <span class="block text-xs space-mono text-gray-500 mb-1">Balance Actual</span>
-        <span class="text-2xl font-black text-white">100.00 <span class="text-cyan-400 text-lg">XEC</span></span>
-      </div>
-      <button class="btn-primary" onclick="goToStep(3)">
-        <i class="fa-solid fa-arrow-right-arrow-left"></i> Siguiente: Adquirir RMZ
-      </button>
-    </div>
-
-    <div class="step text-center" id="step-3">
-      <div class="icon-box gold">
-        <i class="fa-solid fa-key"></i>
-      </div>
-      <h2 class="text-2xl font-bold text-white mb-2">3. RMZ es la Llave</h2>
-      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
-        La Faucet ya te guio a Tonalli DEX. Con los XEC que obtuviste, ahora puedes comprar el token cultural oficial. Esta es la llave criptográfica.
-      </p>
-      <button class="btn-primary" onclick="goToStep(4)">
-        <i class="fa-solid fa-cart-shopping"></i> Comprar eToken $RMZ
-      </button>
-      <button class="btn-secondary" onclick="goToStep(1)">Cancelar</button>
-    </div>
-
-    <div class="step text-center" id="step-4">
-      <div class="icon-box" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: #a855f7;">
-        <i class="fa-solid fa-network-wired"></i>
-      </div>
-      <h2 class="text-2xl font-bold text-white mb-2">4. La Cultura es la Red</h2>
-      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
-        ¡Onboarding Completado! Ahora posees XEC para mover valor y RMZ para entrar a nuestra comunidad (Token-Gated). Bienvenido a la infraestructura soberana.
-      </p>
-      <a href="https://magazine.ecash.mx" class="btn-primary" style="background: linear-gradient(90deg, #a855f7, #c084fc); color: white;">
-        <i class="fa-solid fa-book-open"></i> Leer eCash Magazine
-      </a>
-      <button class="btn-secondary" onclick="goToStep(1)">
-        <i class="fa-solid fa-rotate-right"></i> Reiniciar Simulador
-      </button>
-    </div>
-
-  </div>
-
-  <script>
-    function goToStep(stepNumber) {
-      // Ocultar todos los pasos
-      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-      // Mostrar el paso seleccionado
-      document.getElementById('step-' + stepNumber).classList.add('active');
-
-      // Actualizar indicadores
-      for (let i = 1; i <= 4; i++) {
-        const ind = document.getElementById('ind-' + i);
-        ind.classList.remove('completed', 'current');
-        if (i < stepNumber) {
-          ind.classList.add('completed');
-          ind.innerHTML = '<i class="fa-solid fa-check"></i>';
-        } else if (i === stepNumber) {
-          ind.classList.add('current');
-          ind.innerHTML = i;
-        } else {
-          ind.innerHTML = i;
-        }
-      }
-    }
-  </script>
-</body>
-</html>
+      <p class="text-xs space-mono text-gray-400">xolosArmy Network
