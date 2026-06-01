@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Onboarding | eCash México</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap');
+    
+    body {
+      background-color: #05070a;
+      color: #e2e8f0;
+      font-family: 'Lexend', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      background-image: radial-gradient(circle at center, rgba(0,171,231,0.1) 0%, #05070a 70%);
+    }
+
+    .space-mono { font-family: 'Space Mono', monospace; }
+
+    .app-container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 171, 231, 0.3);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+      position: relative;
+    }
+
+    /* Animación de entrada para los pasos */
+    .step {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Barra de progreso */
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      z-index: 0;
+    }
+    .progress-step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #0f172a;
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+    .progress-step.completed {
+      background: #00abe7;
+      border-color: #00abe7;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0,171,231,0.5);
+    }
+    .progress-step.current {
+      border-color: #ffcc00;
+      color: #ffcc00;
+      box-shadow: 0 0 15px rgba(255,204,0,0.3);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #00abe7, #38bdf8);
+      color: black;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,171,231,0.4);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      background: transparent;
+      color: #ffcc00;
+      border: 1px solid #ffcc00;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 12px;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,204,0,0.1);
+    }
+
+    .icon-box {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: rgba(0,171,231,0.1);
+      border: 1px solid rgba(0,171,231,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: #00abe7;
+      margin: 0 auto 20px;
+    }
+
+    .icon-box.gold {
+      background: rgba(255,204,0,0.1);
+      border-color: rgba(255,204,0,0.3);
+      color: #ffcc00;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <div class="text-center mb-6">
+      <h1 class="text-xl font-black italic tracking-tight text-white mb-1">Ruta de Onboarding Cultural</h1>
+      <p class="text-xs space-mono text-gray-400">xolosArmy Network Simulator</p>
+    </div>
+
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-step current" id="ind-1">1</div>
+      <div class="progress-step" id="ind-2">2</div>
+      <div class="progress-step" id="ind-3">3</div>
+      <div class="progress-step" id="ind-4">4</div>
+    </div>
+
+    <div class="step active text-center" id="step-1">
+      <div class="icon-box">
+        <i class="fa-solid fa-mobile-screen"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">1. La Curiosidad</h2>
+      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+        Ves un meme en X sobre Tonalli Faucet y te preguntas: <em>"¿How get RMZ?"</em>. Ese es el primer paso. No necesitas saber criptografía, solo necesitas escanear.
+      </p>
+      <button class="btn-primary" onclick="goToStep(2)">
+        <i class="fa-solid fa-qrcode"></i> Escanear Faucet
+      </button>
+    </div>
+
+    <div class="step text-center" id="step-2">
+      <div class="icon-box">
+        <i class="fa-solid fa-coins"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">2. XEC es el Dinero</h2>
+      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+        ¡Felicidades! Has recibido una fracción de eCash (XEC) en tu nueva wallet web. Has experimentado dinero electrónico real, rápido y sin pedir permiso a bancos.
+      </p>
+      <div class="bg-slate-900 border border-white/10 rounded-lg p-4 mb-6 text-left">
+        <span class="block text-xs space-mono text-gray-500 mb-1">Balance Actual</span>
+        <span class="text-2xl font-black text-white">100.00 <span class="text-cyan-400 text-lg">XEC</span></span>
+      </div>
+      <button class="btn-primary" onclick="goToStep(3)">
+        <i class="fa-solid fa-arrow-right-arrow-left"></i> Siguiente: Adquirir RMZ
+      </button>
+    </div>
+
+    <div class="step text-center" id="step-3">
+      <div class="icon-box gold">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">3. RMZ es la Llave</h2>
+      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+        La Faucet ya te guio a Tonalli DEX. Con los XEC que obtuviste, ahora puedes comprar el token cultural oficial. Esta es la llave criptográfica.
+      </p>
+      <button class="btn-primary" onclick="goToStep(4)">
+        <i class="fa-solid fa-cart-shopping"></i> Comprar eToken $RMZ
+      </button>
+      <button class="btn-secondary" onclick="goToStep(1)">Cancelar</button>
+    </div>
+
+    <div class="step text-center" id="step-4">
+      <div class="icon-box" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: #a855f7;">
+        <i class="fa-solid fa-network-wired"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">4. La Cultura es la Red</h2>
+      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+        ¡Onboarding Completado! Ahora posees XEC para mover valor y RMZ para entrar a nuestra comunidad (Token-Gated). Bienvenido a la infraestructura soberana.
+      </p>
+      <a href="https://magazine.ecash.mx" class="btn-primary" style="background: linear-gradient(90deg, #a855f7, #c084fc); color: white;">
+        <i class="fa-solid fa-book-open"></i> Leer eCash Magazine
+      </a>
+      <button class="btn-secondary" onclick="goToStep(1)">
+        <i class="fa-solid fa-rotate-right"></i> Reiniciar Simulador
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    function goToStep(stepNumber) {
+      // Ocultar todos los pasos
+      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+      // Mostrar el paso seleccionado
+      document.getElementById('step-' + stepNumber).classList.add('active');
+
+      // Actualizar indicadores
+      for (let i = 1; i <= 4; i++) {
+        const ind = document.getElementById('ind-' + i);
+        ind.classList.remove('completed', 'current');
+        if (i < stepNumber) {
+          ind.classList.add('completed');
+          ind.innerHTML = '<i class="fa-solid fa-check"></i>';
+        } else if (i === stepNumber) {
+          ind.classList.add('current');
+          ind.innerHTML = i;
+        } else {
+          ind.innerHTML = i;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
