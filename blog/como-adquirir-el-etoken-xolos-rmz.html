@@ -184,11 +184,13 @@
 
   <div class="app-container">
     
+    <!-- HEADER -->
     <div class="text-center mb-6">
       <h1 class="text-xl font-black italic tracking-tight text-white mb-1">Ruta de Onboarding Cultural</h1>
       <p class="text-xs space-mono text-gray-400">xolosArmy Network Simulator</p>
     </div>
 
+    <!-- PROGRESS BAR -->
     <div class="progress-bar" id="progressBar">
       <div class="progress-step current" id="ind-1">1</div>
       <div class="progress-step" id="ind-2">2</div>
@@ -196,6 +198,7 @@
       <div class="progress-step" id="ind-4">4</div>
     </div>
 
+    <!-- STEP 1: El Meme -->
     <div class="step active text-center" id="step-1">
       <div class="icon-box">
         <i class="fa-solid fa-mobile-screen"></i>
@@ -209,6 +212,7 @@
       </button>
     </div>
 
+    <!-- STEP 2: XEC es el dinero -->
     <div class="step text-center" id="step-2">
       <div class="icon-box">
         <i class="fa-solid fa-coins"></i>
@@ -220,7 +224,7 @@
       <div class="bg-slate-900 border border-white/10 rounded-lg p-4 mb-6 text-left flex justify-between items-center">
         <div>
           <span class="block text-xs space-mono text-gray-500 mb-1">Balance Actual</span>
-          <span class="text-2xl font-black text-white">100.00 <span class="text-cyan-400 text-lg">XEC</span></span>
+          <span class="text-2xl font-black text-white">500.00 <span class="text-cyan-400 text-lg">XEC</span></span>
         </div>
         <div class="text-right">
           <span class="block text-xs space-mono text-gray-500 mb-1">Tokens</span>
@@ -232,15 +236,17 @@
       </button>
     </div>
 
+    <!-- STEP 3: Tonalli DEX (Simulación de Mercado) -->
     <div class="step text-center" id="step-3">
       <div class="icon-box gold mb-4">
         <i class="fa-solid fa-store"></i>
       </div>
       <h2 class="text-2xl font-bold text-white mb-2">3. Tonalli DEX (Agora)</h2>
       <p class="text-gray-400 text-sm mb-4 leading-relaxed">
-        El DEX integrado en tu wallet lista ofertas descentralizadas. Para adquirir la llave cultural, intercambia una fracción de tus XEC por RMZ.
+        El DEX integrado en tu wallet lista ofertas descentralizadas. Para adquirir la llave cultural, intercambia tus XEC por RMZ.
       </p>
 
+      <!-- Tarjeta simulando la UI del DEX -->
       <div class="dex-offer-card">
         <div class="flex justify-between items-start mb-4">
           <div>
@@ -252,7 +258,7 @@
           </div>
           <div class="text-right">
             <span class="text-[10px] space-mono font-bold text-gray-400 uppercase tracking-widest block mb-1">Precio Total</span>
-            <span class="text-lg font-bold text-cyan-400">50.00 XEC</span>
+            <span class="text-lg font-bold text-cyan-400">500.00 XEC</span>
           </div>
         </div>
         
@@ -268,19 +274,20 @@
       <button class="btn-secondary !text-gray-400 !border-gray-600 hover:!bg-gray-800" onclick="goToStep(1)">Cancelar</button>
     </div>
 
+    <!-- STEP 4: La cultura es la red -->
     <div class="step text-center" id="step-4">
       <div class="icon-box" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: #a855f7;">
         <i class="fa-solid fa-key"></i>
       </div>
       <h2 class="text-2xl font-bold text-white mb-2">4. La Cultura es la Red</h2>
       <p class="text-gray-400 text-sm mb-6 leading-relaxed">
-        ¡Swap exitoso! Ahora posees XEC para mover valor y el eToken RMZ para entrar a nuestra comunidad (Token-Gated). Bienvenido a la infraestructura soberana.
+        ¡Swap exitoso! Intercambiaste el valor de tus XEC para adquirir el eToken RMZ y entrar a nuestra comunidad (Token-Gated). Bienvenido a la infraestructura soberana.
       </p>
 
       <div class="bg-slate-900 border border-purple-500/30 rounded-lg p-4 mb-6 text-left flex justify-between items-center shadow-[0_0_15px_rgba(168,85,247,0.15)]">
         <div>
           <span class="block text-xs space-mono text-gray-500 mb-1">Balance Actual</span>
-          <span class="text-2xl font-black text-white">50.00 <span class="text-cyan-400 text-lg">XEC</span></span>
+          <span class="text-2xl font-black text-gray-500">0.00 <span class="text-gray-600 text-lg">XEC</span></span>
         </div>
         <div class="text-right">
           <span class="block text-xs space-mono text-purple-400 mb-1">Tokens (La Llave)</span>
