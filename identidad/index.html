@@ -207,7 +207,7 @@
               <p
                 class="space-mono mt-4 text-[10px] uppercase tracking-[0.22em] text-gray-500"
               >
-                WalletConnect estará disponible próximamente.
+                Conexión read-only por WalletConnect.
               </p>
             </div>
           </article>
@@ -224,7 +224,7 @@
                 <p
                   class="space-mono text-[10px] font-bold uppercase tracking-[0.24em] text-yellow-200"
                 >
-                  Preview conectado
+                  Identidad conectada
                 </p>
                 <h2 class="mt-2 text-2xl font-bold text-white">
                   Dashboard cultural
@@ -232,8 +232,9 @@
               </div>
               <div class="flex flex-wrap items-center justify-end gap-3">
                 <span
+                  id="ui-rmz-status"
                   class="space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200"
-                  >Mockup</span
+                  >No verificado</span
                 >
                 <button
                   id="btn-disconnect"
@@ -253,16 +254,22 @@
                 RMZ
               </div>
               <div>
-                <h3 class="text-3xl font-extrabold tracking-tight text-white">
-                  xolos.xec
+                <h3
+                  id="ui-alias"
+                  class="text-3xl font-extrabold tracking-tight text-white"
+                >
+                  Wallet desconectada
                 </h3>
-                <p class="space-mono mt-2 text-sm text-gray-400">
-                  ecash:qp...8f92
+                <p
+                  id="ui-address"
+                  class="space-mono mt-2 break-all text-sm text-gray-400"
+                >
+                  ecash:...
                 </p>
                 <div
                   class="mt-4 inline-flex rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-1.5 text-sm font-bold text-emerald-200"
                 >
-                  Guardián RMZ
+                  RMZ Identity Alpha
                 </div>
               </div>
             </div>
@@ -274,21 +281,29 @@
                 <span class="font-semibold text-white"
                   >Guardianía Telegram</span
                 >
-                <span class="space-mono text-xs text-emerald-200">Activo</span>
+                <span
+                  id="ui-telegram-status"
+                  class="space-mono text-xs text-emerald-200"
+                  >Requiere RMZ</span
+                >
               </div>
               <div
                 class="flex items-center justify-between gap-4 rounded-md border border-emerald-300/20 bg-emerald-300/10 px-4 py-3"
               >
                 <span class="font-semibold text-white">Faucet Tonalli</span>
-                <span class="space-mono text-xs text-emerald-200"
-                  >Desbloqueada</span
+                <span
+                  id="ui-faucet-status"
+                  class="space-mono text-xs text-emerald-200"
+                  >Limitada</span
                 >
               </div>
               <div
                 class="flex items-center justify-between gap-4 rounded-md border border-white/10 bg-white/[0.03] px-4 py-3"
               >
                 <span class="font-semibold text-gray-300">Asamblea RMZ</span>
-                <span class="space-mono text-xs text-gray-500"
+                <span
+                  id="ui-voting-status"
+                  class="space-mono text-xs text-gray-500"
                   >Próximamente</span
                 >
               </div>
@@ -427,9 +442,9 @@
     <footer class="border-t border-white/10 bg-black px-5 py-8">
       <div class="mx-auto max-w-7xl">
         <p class="max-w-4xl text-sm leading-7 text-gray-500">
-          Esta página es la primera etapa visual del RMZ Identity MVP. La
-          conexión real con Tonalli Wallet, tonalli-core y Chronik llegará en la
-          siguiente fase.
+          Esta página es un alpha read-only del RMZ Identity MVP. Conecta
+          Tonalli Wallet por WalletConnect y verifica acceso RMZ con
+          tonalli-core y Chronik sin solicitar transacciones.
         </p>
       </div>
     </footer>
