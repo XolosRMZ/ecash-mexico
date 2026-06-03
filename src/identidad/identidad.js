@@ -1,3 +1,4 @@
+import "./polyfills.js";
 import UniversalProvider from "@walletconnect/universal-provider";
 import { WalletConnectModal } from "@walletconnect/modal";
 import { ChronikClient } from "chronik-client";
@@ -123,6 +124,12 @@ function getFirstEcashAccount(session) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.debug("[RMZ Identity] Browser polyfills:", {
+    hasBuffer: typeof globalThis.Buffer !== "undefined",
+    hasGlobal: typeof globalThis.global !== "undefined",
+    hasProcess: typeof globalThis.process !== "undefined",
+  });
+
   const ui = {
     connectButton: document.getElementById("btn-connect"),
     disconnectButton: document.getElementById("btn-disconnect"),

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build:css": "tailwindcss -i ./src/tailwind.css -o ./assets/css/tailwind.css --minify",
-    "build:js": "esbuild src/identidad/identidad.js --bundle --minify --outfile=assets/js/identidad.bundle.js",
+    "build:js": "esbuild src/identidad/identidad.js --bundle --minify --outfile=assets/js/identidad.bundle.js --define:global=window",
     "build:sitemap": "node ./scripts/generate-sitemap.mjs",
     "build": "npm run build:css && npm run build:js && npm run build:sitemap",
     "lint:html": "htmlhint \"./**/*.html\" --config .htmlhintrc",
@@ -28,6 +28,7 @@
     "@walletconnect/modal": "^2.7.0",
     "@walletconnect/universal-provider": "^2.23.9",
     "@xolosarmy/tonalli-core": "github:xolosArmy/tonalli-core#33dde8d",
+    "buffer": "^6.0.3",
     "chronik-client": "^4.3.0"
   }
 }
