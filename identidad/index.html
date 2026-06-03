@@ -180,7 +180,8 @@
 
         <div class="mt-12 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
           <article
-            class="rounded-lg border border-emerald-300/20 bg-black/55 p-6 shadow-[0_0_36px_rgba(52,211,153,0.10)] backdrop-blur-xl md:p-8"
+            id="state-disconnected"
+            class="block rounded-lg border border-emerald-300/20 bg-black/55 p-6 shadow-[0_0_36px_rgba(52,211,153,0.10)] backdrop-blur-xl md:p-8"
           >
             <div
               class="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-emerald-200/30 bg-gradient-to-br from-emerald-300/20 via-gray-950 to-yellow-300/10 text-3xl font-extrabold text-emerald-100 shadow-[0_0_32px_rgba(52,211,153,0.18)]"
@@ -197,6 +198,7 @@
                 on-chain dentro del ecosistema eCash México.
               </p>
               <button
+                id="btn-connect"
                 type="button"
                 class="space-mono mt-7 w-full rounded-sm border border-emerald-300/70 bg-emerald-300 px-5 py-4 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_26px_rgba(52,211,153,0.24)] transition hover:bg-emerald-200 sm:w-auto"
               >
@@ -211,7 +213,8 @@
           </article>
 
           <article
-            class="rounded-lg border border-white/10 bg-gray-950/70 p-6 backdrop-blur-xl md:p-8"
+            id="state-connected"
+            class="hidden rounded-lg border border-white/10 bg-gray-950/70 p-6 backdrop-blur-xl md:p-8"
             aria-label="Vista previa del dashboard de identidad conectado"
           >
             <div
@@ -227,10 +230,19 @@
                   Dashboard cultural
                 </h2>
               </div>
-              <span
-                class="space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200"
-                >Mockup</span
-              >
+              <div class="flex flex-wrap items-center justify-end gap-3">
+                <span
+                  class="space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200"
+                  >Mockup</span
+                >
+                <button
+                  id="btn-disconnect"
+                  type="button"
+                  class="space-mono rounded-sm border border-white/10 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-300 transition hover:border-emerald-300/60 hover:text-emerald-200"
+                >
+                  Desconectar Identidad
+                </button>
+              </div>
             </div>
 
             <div class="grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center">
@@ -421,5 +433,6 @@
         </p>
       </div>
     </footer>
+    <script src="../assets/js/identidad.bundle.js"></script>
   </body>
 </html>

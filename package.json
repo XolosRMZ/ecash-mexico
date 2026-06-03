@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "build:css": "tailwindcss -i ./src/tailwind.css -o ./assets/css/tailwind.css --minify",
+    "build:js": "esbuild src/identidad/identidad.js --bundle --minify --outfile=assets/js/identidad.bundle.js",
     "build:sitemap": "node ./scripts/generate-sitemap.mjs",
-    "build": "npm run build:css && npm run build:sitemap",
+    "build": "npm run build:css && npm run build:js && npm run build:sitemap",
     "lint:html": "htmlhint \"./**/*.html\" --config .htmlhintrc",
     "format:check": "prettier --check \"**/*.{html,css,js,mjs,json,yml,md}\"",
     "test:seo": "node ./scripts/validate-seo.mjs",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@lhci/cli": "^0.14.0",
+    "esbuild": "^0.28.0",
     "glob": "^11.0.0",
     "htmlhint": "^1.6.3",
     "http-server": "^14.1.1",
