@@ -85,25 +85,29 @@ class ChronikAdapter {
 }
 
 function normalizeEcashAccount(account) {
-  const cleanAccount = String(account ?? "").trim();
-  const embeddedAddressMarker = ":ecash:";
-
-  if (cleanAccount.includes(embeddedAddressMarker)) {
-    return cleanAccount.slice(cleanAccount.indexOf(embeddedAddressMarker) + 1);
+  if (!account || typeof account !== "string") {
+    throw new Error("WalletConnect account is empty or invalid.");
   }
 
-  if (cleanAccount.startsWith("ecash:q")) {
-    return cleanAccount;
+  const trimmed = account.trim();
+
+  if (trimmed.startsWith("ecash:q") || trimmed.startsWith("ecash:p")) {
+    return trimmed;
   }
 
-  const addressMatch = cleanAccount.match(/ecash:[qp][a-z0-9]+$/i);
-  if (addressMatch) {
-    return addressMatch[0];
+  const lastEcashIndex = trimmed.lastIndexOf("ecash:");
+  if (lastEcashIndex >= 0) {
+    return trimmed.slice(lastEcashIndex);
   }
 
-  throw new Error(
-    `Unable to normalize eCash WalletConnect account: ${cleanAccount}`,
-  );
+  const parts = trimmed.split(":");
+  const lastPart = parts[parts.length - 1];
+
+  if (lastPart?.startsWith("q") || lastPart?.startsWith("p")) {
+    return `ecash:${lastPart}`;
+  }
+
+  throw new Error(`Unable to normalize eCash account: ${account}`);
 }
 
 function getFirstEcashAccount(session) {
@@ -207,6 +211,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const restoreDashboard = async (session) => {
     const account = getFirstEcashAccount(session);
     const address = normalizeEcashAddress(normalizeEcashAccount(account));
+
+    console.debug("[RMZ Identity] WalletConnect account:", account);
+    console.debug("[RMZ Identity] Normalized eCash address:", address);
 
     if (!isValidEcashAddress(address)) {
       throw new Error(`Invalid eCash address from wallet: ${address}`);
