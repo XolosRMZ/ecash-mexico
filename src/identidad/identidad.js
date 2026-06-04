@@ -5,6 +5,7 @@ import {
   getRMZAccessStatus,
   isValidEcashAddress,
   normalizeEcashAddress,
+  resolveAlias,
 } from "@xolosarmy/tonalli-core";
 
 const PROJECT_ID = "d8772b58056b6812d57c181501dd854c";
@@ -135,6 +136,12 @@ function extractFirstWalletAddress(response) {
   return null;
 }
 
+function normalizeAddressForCompare(address) {
+  return String(address || "")
+    .trim()
+    .toLowerCase();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   console.debug("[RMZ Identity] Browser polyfills:", {
     hasBuffer: typeof globalThis.Buffer !== "undefined",
@@ -155,6 +162,12 @@ document.addEventListener("DOMContentLoaded", () => {
     votingStatus: document.getElementById("ui-voting-status"),
   };
 
+  const aliasSetupSection = document.getElementById("alias-setup-section");
+  const inputAlias = document.getElementById("input-alias");
+  const btnVerifyAlias = document.getElementById("btn-verify-alias");
+  const aliasErrorMsg = document.getElementById("alias-error-msg");
+  const aliasSuccessMsg = document.getElementById("alias-success-msg");
+
   if (
     !ui.connectButton ||
     !ui.disconnectButton ||
@@ -165,7 +178,12 @@ document.addEventListener("DOMContentLoaded", () => {
     !ui.rmzStatus ||
     !ui.telegramStatus ||
     !ui.faucetStatus ||
-    !ui.votingStatus
+    !ui.votingStatus ||
+    !aliasSetupSection ||
+    !inputAlias ||
+    !btnVerifyAlias ||
+    !aliasErrorMsg ||
+    !aliasSuccessMsg
   ) {
     console.warn("[RMZ Identity] Missing expected identity UI elements.");
     return;
@@ -174,6 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let provider;
   const modal = new WalletConnectModal({ projectId: PROJECT_ID });
   const adapter = new ChronikAdapter(CHRONIK_URL);
+  let currentConnectedAddress = "";
 
   const setConnectLoading = (isLoading) => {
     ui.connectButton.disabled = isLoading;
@@ -192,6 +211,16 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.telegramStatus.textContent = "Requiere RMZ";
     ui.faucetStatus.textContent = "Limitada";
     ui.votingStatus.textContent = "Próximamente";
+    currentConnectedAddress = "";
+    inputAlias.value = "";
+    aliasErrorMsg.textContent = "";
+    aliasErrorMsg.classList.add("hidden");
+    aliasSuccessMsg.textContent = "";
+    aliasSuccessMsg.classList.add("hidden");
+    aliasSetupSection.classList.add("hidden");
+    inputAlias.disabled = false;
+    btnVerifyAlias.disabled = false;
+    btnVerifyAlias.textContent = "Verificar";
     setConnectLoading(false);
   };
 
@@ -201,15 +230,50 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.connectedState.classList.remove("hidden");
   };
 
+  const clearAliasMessages = () => {
+    aliasErrorMsg.textContent = "";
+    aliasErrorMsg.classList.add("hidden");
+    aliasSuccessMsg.textContent = "";
+    aliasSuccessMsg.classList.add("hidden");
+  };
+
+  const showAliasError = (message) => {
+    aliasErrorMsg.textContent = message;
+    aliasErrorMsg.classList.remove("hidden");
+    aliasSuccessMsg.textContent = "";
+    aliasSuccessMsg.classList.add("hidden");
+  };
+
+  const showAliasSuccess = (message) => {
+    aliasSuccessMsg.textContent = message;
+    aliasSuccessMsg.classList.remove("hidden");
+    aliasErrorMsg.textContent = "";
+    aliasErrorMsg.classList.add("hidden");
+  };
+
+  const resetAliasVerification = () => {
+    inputAlias.value = "";
+    clearAliasMessages();
+    aliasSetupSection.classList.add("hidden");
+    inputAlias.disabled = false;
+    btnVerifyAlias.disabled = false;
+    btnVerifyAlias.textContent = "Verificar";
+  };
+
   const applyHolderStatus = (address, status) => {
     ui.address.textContent = address;
     ui.votingStatus.textContent = "Próximamente";
+    aliasSetupSection.classList.add("hidden");
 
     if (status === "holder") {
       ui.alias.textContent = "Guardián RMZ";
       ui.rmzStatus.textContent = "Guardián RMZ";
       ui.telegramStatus.textContent = "Activo";
       ui.faucetStatus.textContent = "Desbloqueada";
+      inputAlias.disabled = false;
+      btnVerifyAlias.disabled = false;
+      btnVerifyAlias.textContent = "Verificar";
+      aliasSetupSection.classList.remove("hidden");
       return;
     }
 
@@ -225,6 +289,60 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.rmzStatus.textContent = "No verificado";
     ui.telegramStatus.textContent = "Requiere RMZ";
     ui.faucetStatus.textContent = "Limitada";
+  };
+
+  const handleAliasVerification = async () => {
+    const aliasValue = inputAlias.value.trim();
+    clearAliasMessages();
+
+    if (!aliasValue) {
+      showAliasError("Escribe un alias .xec.");
+      return;
+    }
+
+    btnVerifyAlias.disabled = true;
+    btnVerifyAlias.textContent = "Verificando...";
+
+    try {
+      const resolution = await resolveAlias(aliasValue);
+
+      if (resolution === null) {
+        showAliasError("Alias no registrado en eCash.");
+        return;
+      }
+
+      if (!resolution?.address) {
+        showAliasError("El servidor de alias no devolvió dirección.");
+        return;
+      }
+
+      const resolvedAddress = normalizeAddressForCompare(resolution.address);
+      const connectedAddress = normalizeAddressForCompare(
+        currentConnectedAddress,
+      );
+
+      if (resolvedAddress !== connectedAddress) {
+        showAliasError("Ese alias no pertenece a la wallet conectada.");
+        return;
+      }
+
+      ui.alias.textContent = resolution.alias;
+      showAliasSuccess("Alias verificado. Identidad confirmada.");
+      inputAlias.disabled = true;
+      btnVerifyAlias.disabled = true;
+      btnVerifyAlias.textContent = "Verificado";
+      console.debug("[RMZ Identity] Alias verified:", resolution);
+    } catch (error) {
+      console.error("[RMZ Identity] Alias verification failed.", error);
+      showAliasError(
+        "No se pudo consultar el servidor de aliases. Intenta de nuevo.",
+      );
+    } finally {
+      if (!inputAlias.disabled) {
+        btnVerifyAlias.disabled = false;
+        btnVerifyAlias.textContent = "Verificar";
+      }
+    }
   };
 
   const getPrimaryWalletAccount = async (session) => {
@@ -259,6 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     showConnected();
+    resetAliasVerification();
     ui.address.textContent = address;
     ui.alias.textContent = "Verificando RMZ...";
     ui.rmzStatus.textContent = "Verificando...";
@@ -267,6 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.votingStatus.textContent = "Próximamente";
 
     const status = await getRMZAccessStatus(address, adapter);
+    currentConnectedAddress = address;
     applyHolderStatus(address, status);
   };
 
@@ -328,6 +448,14 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       setConnectLoading(false);
     }
+  });
+
+  if (btnVerifyAlias) {
+    btnVerifyAlias.addEventListener("click", handleAliasVerification);
+  }
+
+  inputAlias.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") handleAliasVerification();
   });
 
   ui.disconnectButton.addEventListener("click", async () => {
