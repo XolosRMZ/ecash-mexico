@@ -103,6 +103,29 @@
         animation: scanline 9s linear infinite;
       }
 
+      #input-alias {
+        color: #ecfdf5;
+        background-color: rgba(0, 0, 0, 0.82);
+        caret-color: #6ee7b7;
+      }
+
+      #input-alias::placeholder {
+        color: #6b7280;
+      }
+
+      #input-alias::selection {
+        background: rgba(16, 185, 129, 0.35);
+        color: #ffffff;
+      }
+
+      #input-alias:-webkit-autofill,
+      #input-alias:-webkit-autofill:hover,
+      #input-alias:-webkit-autofill:focus {
+        -webkit-text-fill-color: #ecfdf5;
+        box-shadow: 0 0 0px 1000px #020617 inset;
+        transition: background-color 9999s ease-in-out 0s;
+      }
+
       @keyframes scanline {
         0% {
           bottom: 100%;
@@ -287,7 +310,7 @@
                       id="input-alias"
                       placeholder="tunombre.xec"
                       autocomplete="off"
-                      class="w-full rounded-md border border-emerald-300/20 bg-black/40 px-3 py-2 font-mono text-sm text-white placeholder-gray-600 focus:border-emerald-400 focus:outline-none"
+                      class="w-full rounded-md border border-emerald-300/30 bg-black/80 px-3 py-2 font-mono text-sm text-emerald-50 placeholder:text-gray-500 caret-emerald-300 shadow-inner outline-none transition focus:border-emerald-300 focus:bg-black focus:ring-1 focus:ring-emerald-300/40"
                     />
                     <button
                       id="btn-verify-alias"
