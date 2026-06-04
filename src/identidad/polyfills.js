@@ -11,3 +11,5 @@ if (typeof globalThis !== "undefined") {
   globalThis.global = globalThis.global || globalThis;
   globalThis.process = globalThis.process || { env: {} };
 }
+
+export { Buffer };

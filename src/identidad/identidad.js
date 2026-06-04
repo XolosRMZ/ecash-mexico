@@ -1,4 +1,3 @@
-import "./polyfills.js";
 import UniversalProvider from "@walletconnect/universal-provider";
 import { WalletConnectModal } from "@walletconnect/modal";
 import { ChronikClient } from "chronik-client";
@@ -22,7 +21,12 @@ const WALLETCONNECT_METADATA = {
 const ECASH_NAMESPACE = {
   ecash: {
     chains: [ECASH_CHAIN],
-    methods: ["ecash_getAddresses", "ecash_signAndBroadcastTransaction"],
+    methods: [
+      "ecash_getAddresses",
+      "ecash_signMessage",
+      "ecash_signAndBroadcastTransaction",
+      "ecash_signAndBroadcast",
+    ],
     events: ["accountsChanged", "chainChanged"],
   },
 };
@@ -123,6 +127,14 @@ function getFirstEcashAccount(session) {
   return namespaceEntry?.[1]?.accounts?.[0] ?? null;
 }
 
+function extractFirstWalletAddress(response) {
+  if (Array.isArray(response)) return response[0] ?? null;
+  if (typeof response?.address === "string") return response.address;
+  if (Array.isArray(response?.addresses)) return response.addresses[0] ?? null;
+  if (Array.isArray(response?.result)) return response.result[0] ?? null;
+  return null;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   console.debug("[RMZ Identity] Browser polyfills:", {
     hasBuffer: typeof globalThis.Buffer !== "undefined",
@@ -215,12 +227,32 @@ document.addEventListener("DOMContentLoaded", () => {
     ui.faucetStatus.textContent = "Limitada";
   };
 
-  const restoreDashboard = async (session) => {
-    const account = getFirstEcashAccount(session);
-    const address = normalizeEcashAddress(normalizeEcashAccount(account));
+  const getPrimaryWalletAccount = async (session) => {
+    try {
+      const walletAddresses = await provider.request({
+        method: "ecash_getAddresses",
+        params: {},
+      });
+      return (
+        extractFirstWalletAddress(walletAddresses) ??
+        getFirstEcashAccount(session)
+      );
+    } catch (error) {
+      console.debug("[RMZ Identity] ecash_getAddresses failed.", error);
+      return getFirstEcashAccount(session);
+    }
+  };
 
-    console.debug("[RMZ Identity] WalletConnect account:", account);
+  const restoreDashboard = async (session) => {
+    const rawAccount = await getPrimaryWalletAccount(session);
+    const address = normalizeEcashAddress(normalizeEcashAccount(rawAccount));
+
+    console.debug("[RMZ Identity] WalletConnect account:", rawAccount);
     console.debug("[RMZ Identity] Normalized eCash address:", address);
+    console.debug(
+      "[RMZ Identity] isValidEcashAddress:",
+      isValidEcashAddress(address),
+    );
 
     if (!isValidEcashAddress(address)) {
       throw new Error(`Invalid eCash address from wallet: ${address}`);
