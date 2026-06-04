@@ -133,6 +133,12 @@ function extractFirstWalletAddress(response) {
   if (typeof response?.address === "string") return response.address;
   if (Array.isArray(response?.addresses)) return response.addresses[0] ?? null;
   if (Array.isArray(response?.result)) return response.result[0] ?? null;
+  if (typeof response?.result?.address === "string") {
+    return response.result.address;
+  }
+  if (Array.isArray(response?.result?.addresses)) {
+    return response.result.addresses[0] ?? null;
+  }
   return null;
 }
 
@@ -194,6 +200,59 @@ document.addEventListener("DOMContentLoaded", () => {
   const adapter = new ChronikAdapter(CHRONIK_URL);
   let currentConnectedAddress = "";
 
+  const ensureAliasInputEditable = () => {
+    inputAlias.disabled = false;
+    inputAlias.readOnly = false;
+    inputAlias.removeAttribute("disabled");
+    inputAlias.removeAttribute("readonly");
+    inputAlias.classList.remove("pointer-events-none");
+    aliasSetupSection.classList.remove("pointer-events-none");
+    aliasSetupSection.classList.remove("hidden");
+
+    console.debug("[RMZ Identity] Alias input editable:", {
+      disabled: inputAlias?.disabled,
+      readOnly: inputAlias?.readOnly,
+    });
+  };
+
+  const getAliasStorageKey = (address) =>
+    `rmzIdentityAlias:${String(address || "").trim()}`;
+
+  const getSavedAlias = (address) => {
+    try {
+      const saved = localStorage.getItem(getAliasStorageKey(address));
+      if (!saved) return null;
+
+      const parsed = JSON.parse(saved);
+      if (
+        parsed?.alias &&
+        normalizeAddressForCompare(parsed.address) ===
+          normalizeAddressForCompare(address)
+      ) {
+        return parsed;
+      }
+    } catch (error) {
+      console.warn("[RMZ Identity] Unable to read saved alias:", error);
+    }
+
+    return null;
+  };
+
+  const saveVerifiedAlias = (address, alias) => {
+    try {
+      localStorage.setItem(
+        getAliasStorageKey(address),
+        JSON.stringify({
+          alias,
+          address,
+          verifiedAt: new Date().toISOString(),
+        }),
+      );
+    } catch (error) {
+      console.warn("[RMZ Identity] Unable to save verified alias:", error);
+    }
+  };
+
   const setConnectLoading = (isLoading) => {
     ui.connectButton.disabled = isLoading;
     ui.connectButton.textContent = isLoading
@@ -219,6 +278,9 @@ document.addEventListener("DOMContentLoaded", () => {
     aliasSuccessMsg.classList.add("hidden");
     aliasSetupSection.classList.add("hidden");
     inputAlias.disabled = false;
+    inputAlias.readOnly = false;
+    inputAlias.removeAttribute("disabled");
+    inputAlias.removeAttribute("readonly");
     btnVerifyAlias.disabled = false;
     btnVerifyAlias.textContent = "Verificar";
     setConnectLoading(false);
@@ -256,6 +318,9 @@ document.addEventListener("DOMContentLoaded", () => {
     clearAliasMessages();
     aliasSetupSection.classList.add("hidden");
     inputAlias.disabled = false;
+    inputAlias.readOnly = false;
+    inputAlias.removeAttribute("disabled");
+    inputAlias.removeAttribute("readonly");
     btnVerifyAlias.disabled = false;
     btnVerifyAlias.textContent = "Verificar";
   };
@@ -270,10 +335,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ui.rmzStatus.textContent = "Guardián RMZ";
       ui.telegramStatus.textContent = "Activo";
       ui.faucetStatus.textContent = "Desbloqueada";
-      inputAlias.disabled = false;
+      ensureAliasInputEditable();
       btnVerifyAlias.disabled = false;
       btnVerifyAlias.textContent = "Verificar";
-      aliasSetupSection.classList.remove("hidden");
       return;
     }
 
@@ -327,10 +391,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       ui.alias.textContent = resolution.alias;
+      saveVerifiedAlias(currentConnectedAddress, resolution.alias);
       showAliasSuccess("Alias verificado. Identidad confirmada.");
-      inputAlias.disabled = true;
-      btnVerifyAlias.disabled = true;
-      btnVerifyAlias.textContent = "Verificado";
+      ensureAliasInputEditable();
+      btnVerifyAlias.disabled = false;
+      btnVerifyAlias.textContent = "Verificar";
       console.debug("[RMZ Identity] Alias verified:", resolution);
     } catch (error) {
       console.error("[RMZ Identity] Alias verification failed.", error);
@@ -338,10 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "No se pudo consultar el servidor de aliases. Intenta de nuevo.",
       );
     } finally {
-      if (!inputAlias.disabled) {
-        btnVerifyAlias.disabled = false;
-        btnVerifyAlias.textContent = "Verificar";
-      }
+      btnVerifyAlias.disabled = false;
+      btnVerifyAlias.textContent = "Verificar";
     }
   };
 
@@ -361,12 +424,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const restoreDashboard = async (session) => {
-    const rawAccount = await getPrimaryWalletAccount(session);
+  const restoreVerifiedAlias = (address) => {
+    const savedAlias = getSavedAlias(address);
+    if (!savedAlias) return;
+
+    ui.alias.textContent = savedAlias.alias;
+    inputAlias.value = savedAlias.alias;
+    showAliasSuccess("Alias verificado anteriormente.");
+  };
+
+  const handleAccount = async (rawAccount, options = {}) => {
     const address = normalizeEcashAddress(normalizeEcashAccount(rawAccount));
 
     console.debug("[RMZ Identity] WalletConnect account:", rawAccount);
     console.debug("[RMZ Identity] Normalized eCash address:", address);
+    console.debug(
+      "[RMZ Identity] Account restored:",
+      Boolean(options.restored),
+    );
     console.debug(
       "[RMZ Identity] isValidEcashAddress:",
       isValidEcashAddress(address),
@@ -388,6 +463,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const status = await getRMZAccessStatus(address, adapter);
     currentConnectedAddress = address;
     applyHolderStatus(address, status);
+
+    if (status === "holder") {
+      restoreVerifiedAlias(address);
+      ensureAliasInputEditable();
+    }
+  };
+
+  const restoreWalletSession = async () => {
+    console.debug(
+      "[RMZ Identity] Session restored:",
+      Boolean(provider?.session),
+    );
+    if (!provider?.session) return;
+
+    try {
+      console.debug("[RMZ Identity] Restoring WalletConnect session.");
+      const rawAccount = await getPrimaryWalletAccount(provider.session);
+      if (!rawAccount) return;
+      await handleAccount(rawAccount, { restored: true });
+    } catch (error) {
+      console.warn(
+        "[RMZ Identity] Unable to restore WalletConnect session:",
+        error,
+      );
+    }
   };
 
   const initializeProvider = async () => {
@@ -405,21 +505,15 @@ document.addEventListener("DOMContentLoaded", () => {
     provider.on("accountsChanged", async () => {
       if (!provider?.session) return;
       try {
-        await restoreDashboard(provider.session);
+        const rawAccount = await getPrimaryWalletAccount(provider.session);
+        if (rawAccount) await handleAccount(rawAccount);
       } catch (error) {
         console.error("[RMZ Identity] Unable to refresh account.", error);
         showDisconnected();
       }
     });
 
-    if (provider.session) {
-      try {
-        await restoreDashboard(provider.session);
-      } catch (error) {
-        console.error("[RMZ Identity] Unable to restore session.", error);
-        showDisconnected();
-      }
-    }
+    await restoreWalletSession();
   };
 
   ui.connectButton.addEventListener("click", async () => {
@@ -434,7 +528,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!session) throw new Error("WalletConnect did not return a session.");
 
       try {
-        await restoreDashboard(session);
+        const rawAccount = await getPrimaryWalletAccount(session);
+        if (!rawAccount) {
+          throw new Error("WalletConnect did not return an eCash account.");
+        }
+        await handleAccount(rawAccount);
       } catch (error) {
         console.error("[RMZ Identity] Invalid wallet address.", error);
         alert("La wallet devolvió una dirección eCash inválida.");
