@@ -368,7 +368,9 @@ document.addEventListener("DOMContentLoaded", () => {
     btnVerifyAlias.textContent = "Verificando...";
 
     try {
-      const resolution = await resolveAlias(aliasValue);
+      const resolution = await resolveAlias(aliasValue, {
+        endpoint: "https://alias.ecash.mx",
+      });
 
       if (resolution === null) {
         showAliasError("Alias no registrado en eCash.");
