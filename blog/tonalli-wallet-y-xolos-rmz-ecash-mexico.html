@@ -6,7 +6,88 @@
 <title>Ecosistema eCash México: Tonalli Wallet y RMZ</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap");
+
+:root {
+    --aztec-gold: #ffcc00;
+    --cypher-neon: #00abe7;
+    --deep-obsidian: #05070a;
+    --temple-blue: #001e62;
+    --emerald: #34d399;
+}
+
+body {
+    font-family: "Lexend", sans-serif;
+    background-color: var(--deep-obsidian);
+    color: #e2e8f0;
+    overflow-x: hidden;
+}
+
+.space-mono {
+    font-family: "Space Mono", monospace;
+}
+
+/* Efectos visuales de ecash.mx */
+.scanline {
+    width: 100%;
+    height: 100px;
+    z-index: 99;
+    background: linear-gradient(
+        0deg,
+        rgba(0, 171, 231, 0) 0%,
+        rgba(0, 171, 231, 0.1) 50%,
+        rgba(0, 171, 231, 0) 100%
+    );
+    opacity: 0.18;
+    position: fixed;
+    bottom: 100%;
+    pointer-events: none;
+    animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+    0% { bottom: 100%; }
+    100% { bottom: -100%; }
+}
+
+.aztec-grid {
+    background-image:
+        linear-gradient(rgba(0, 171, 231, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 171, 231, 0.08) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.neon-border {
+    border: 1px solid rgba(0, 171, 231, 0.5);
+    box-shadow:
+        0 0 10px rgba(0, 171, 231, 0.3),
+        inset 0 0 10px rgba(0, 171, 231, 0.2);
+}
+
+.neon-border-gold {
+    border: 1px solid rgba(255, 204, 0, 0.45);
+    box-shadow:
+        0 0 18px rgba(255, 204, 0, 0.14),
+        inset 0 0 16px rgba(255, 204, 0, 0.08);
+}
+
+.neon-text-gold {
+    text-shadow: 0 0 16px rgba(255, 204, 0, 0.55);
+}
+
+.neon-text-cyan {
+    text-shadow: 0 0 18px rgba(0, 171, 231, 0.6);
+}
+
+.card-blur {
+    background: rgba(15, 23, 42, 0.62);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .chart-container {
     position: relative;
     width: 100%;
@@ -17,163 +98,163 @@
     max-height: 400px;
 }
 @media (min-width: 768px) {
-    .chart-container {
-        height: 400px;
-    }
+    .chart-container { height: 400px; }
 }
-.glass-panel {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-.unicode-icon {
-    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-}
+
 .interactive-card {
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
 }
 .interactive-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
-.active-card {
-    border-color: #d97706;
-    background-color: #fffbeb;
 }
 </style>
 </head>
-<body class="bg-[#fdfbf7] text-stone-800 font-sans leading-relaxed min-h-screen">
+<body class="min-h-screen relative">
+<div class="scanline" aria-hidden="true"></div>
 
-<!-- Chosen Palette: Warm Neutrals with Amber and Cyan accents (bg-[#fdfbf7], text-stone-800, amber-600, cyan-700) -->
-<!-- Application Structure Plan: The SPA uses a dashboard-style thematic structure. It begins with a hero introducing the core concept. The main interaction area splits the two pillars (Tonalli and RMZ) into clickable cards that dynamically update a detail pane, allowing users to explore their distinct roles without feeling overwhelmed. A visual HTML/CSS flowchart follows to illustrate their combined "Token-Gated" mechanism in practice. Finally, a conceptual chart synthesizes their complementary strengths. This structure was chosen because it moves from high-level concept -> detailed exploration -> practical application -> analytical synthesis. -->
-<!-- Visualization & Content Choices: 
-1. Interactive Pillars: Textual insights -> Goal: Compare/Organize -> Interactive Side-by-Side Cards (JS updates detail pane) -> Justification: Allows user to focus on one component at a time while understanding they are part of a whole. 
-2. Token-Gated Flow: Process Analysis -> Goal: Change/Process -> HTML/CSS Timeline with hover states -> Justification: Clearly visualizes the step-by-step user journey from onboarding to community access without relying on external image assets. 
-3. Ecosystem Synergy Chart: Conceptual Data -> Goal: Relationships -> Chart.js Radar Chart -> Justification: Demonstrates how Tonalli and RMZ complement each other across different attributes (Custody, Identity, etc.) providing a holistic view. 
-Library/Method: Tailwind CSS, Vanilla JS, Chart.js. -->
-<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<div class="aztec-grid absolute inset-0 opacity-60 pointer-events-none fixed" aria-hidden="true"></div>
+<div class="absolute top-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-cyan-500/15 blur-3xl pointer-events-none fixed" aria-hidden="true"></div>
 
-<div class="max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+<div class="max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8 relative z-10">
     
-    <header class="text-center mb-16">
-        <div class="inline-block p-4 bg-amber-100 rounded-full mb-4">
-            <span class="text-4xl unicode-icon">🇲🇽</span>
+    <header class="text-center mb-20 pt-10">
+        <div class="inline-block px-4 py-1 border border-cyan-500/30 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] uppercase tracking-[0.3em] space-mono mb-6 animate-pulse">
+            Iniciativa Comunitaria Soberana
         </div>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight mb-4">
-            eCash México: Identidad y Autocustodia
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white tracking-tighter mb-6 italic leading-tight">
+            eCash México:<br>
+            <span class="text-[#00abe7] neon-text-cyan">Identidad</span> y 
+            <span class="text-[#ffcc00] neon-text-gold">Autocustodia</span>
         </h1>
-        <p class="text-xl text-stone-600 max-w-3xl mx-auto">
-            Explora cómo <span class="font-bold text-cyan-700">Tonalli Wallet</span> y el <span class="font-bold text-amber-600">eToken RMZ</span> funcionan de manera complementaria como los pilares de la autocustodia, el acceso y la identidad digital soberana en el ecosistema.
+        <p class="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto italic leading-relaxed">
+            Explora cómo <span class="font-bold text-[#00abe7]">Tonalli Wallet</span> y el <span class="font-bold text-[#ffcc00]">eToken RMZ</span> funcionan de manera complementaria como los pilares de la autocustodia, el acceso y la identidad digital soberana en el ecosistema.
         </p>
     </header>
 
-    <section class="mb-20">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-stone-800 mb-4">Los Dos Pilares del Ecosistema</h2>
-            <p class="text-stone-600 max-w-2xl mx-auto">
+    <section class="mb-28">
+        <div class="text-center mb-12">
+            <span class="text-[#00abe7] font-bold text-xs uppercase tracking-[0.3em] space-mono">Ecosistema xolosArmy</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 italic mt-2">Los Dos Pilares</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">
                 Selecciona cada componente a continuación para descubrir su rol específico. Esta sección desglosa las funciones de la infraestructura técnica frente al activo digital que actúa como credencial.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <button id="btn-tonalli" class="interactive-card text-left p-8 rounded-2xl bg-white border-2 border-transparent shadow-sm hover:border-cyan-200 focus:outline-none" onclick="selectPillar('tonalli')">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+            <button id="btn-tonalli" class="interactive-card text-left p-8 rounded-2xl card-blur border border-white/10 transition-all hover:border-cyan-500/50 focus:outline-none" onclick="selectPillar('tonalli')">
+                <div class="text-[#00abe7] font-bold text-xs uppercase mb-4 tracking-tighter space-mono">Infraestructura de Acceso</div>
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-cyan-800">Tonalli Wallet</h3>
-                    <span class="text-4xl unicode-icon">🛡️</span>
+                    <h3 class="text-2xl font-bold text-white group-hover:text-[#00abe7]">Tonalli Wallet</h3>
+                    <i class="fas fa-wallet text-3xl text-[#00abe7]"></i>
                 </div>
-                <p class="text-stone-600 text-lg">La Bóveda de Autocustodia y la Infraestructura de Acceso.</p>
+                <p class="text-gray-400 text-sm">La Bóveda de Autocustodia y la puerta de entrada principal a la red.</p>
             </button>
 
-            <button id="btn-rmz" class="interactive-card text-left p-8 rounded-2xl bg-white border-2 border-transparent shadow-sm hover:border-amber-200 focus:outline-none" onclick="selectPillar('rmz')">
+            <button id="btn-rmz" class="interactive-card text-left p-8 rounded-2xl card-blur border border-white/10 transition-all hover:border-[#ffcc00]/50 focus:outline-none" onclick="selectPillar('rmz')">
+                <div class="text-[#ffcc00] font-bold text-xs uppercase mb-4 tracking-tighter space-mono">Capa Cultural</div>
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-amber-700">eToken Xolos RMZ</h3>
-                    <span class="text-4xl unicode-icon">🔑</span>
+                    <h3 class="text-2xl font-bold text-white group-hover:text-[#ffcc00]">eToken Xolos RMZ</h3>
+                    <i class="fas fa-key text-3xl text-[#ffcc00]"></i>
                 </div>
-                <p class="text-stone-600 text-lg">La Llave de Acceso, Identidad y Cultura Convertida en Utilidad.</p>
+                <p class="text-gray-400 text-sm">La Llave de Acceso, Identidad y Cultura Convertida en Utilidad on-chain.</p>
             </button>
         </div>
 
-        <div id="details-pane" class="glass-panel rounded-3xl p-8 md:p-12 shadow-lg hidden opacity-0 transition-opacity duration-500">
-            <div class="flex flex-col md:flex-row gap-8 items-start">
+        <div id="details-pane" class="card-blur rounded-2xl p-8 md:p-12 shadow-2xl hidden opacity-0 transition-opacity duration-500 border">
+            <div class="flex flex-col md:flex-row gap-10 items-start">
                 <div class="w-full md:w-1/3 text-center md:text-left">
-                    <div id="detail-icon" class="text-7xl unicode-icon mb-6 inline-block bg-white p-6 rounded-full shadow-inner"></div>
-                    <h3 id="detail-title" class="text-3xl font-bold mb-2"></h3>
-                    <p id="detail-subtitle" class="text-lg font-medium text-stone-500 mb-6"></p>
+                    <div id="detail-icon" class="text-5xl mb-6 inline-flex items-center justify-center w-24 h-24 rounded-full border bg-black/40 shadow-inner"></div>
+                    <h3 id="detail-title" class="text-3xl font-bold mb-2 text-white italic"></h3>
+                    <p id="detail-subtitle" class="text-sm font-bold uppercase tracking-widest space-mono mb-6"></p>
                 </div>
                 <div class="w-full md:w-2/3">
-                    <ul id="detail-list" class="space-y-6">
-                    </ul>
+                    <ul id="detail-list" class="space-y-4">
+                        </ul>
                 </div>
             </div>
         </div>
-        <div id="initial-prompt" class="text-center p-12 bg-stone-100 rounded-3xl border border-stone-200 border-dashed">
-            <span class="text-4xl unicode-icon block mb-4">👆</span>
-            <p class="text-stone-500 text-lg font-medium">Haz clic en uno de los pilares arriba para explorar sus características detalladas.</p>
+
+        <div id="initial-prompt" class="text-center p-12 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 border-dashed">
+            <i class="fas fa-hand-pointer text-3xl text-gray-500 mb-4 animate-bounce"></i>
+            <p class="text-gray-400 text-sm font-bold uppercase tracking-widest space-mono">Selecciona un pilar arriba para explorar sus características.</p>
         </div>
     </section>
 
-    <section class="mb-20 bg-stone-900 text-stone-100 rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
-        <div class="absolute top-0 right-0 -mt-10 -mr-10 text-9xl unicode-icon opacity-5">⚙️</div>
+    <section class="mb-28 card-blur rounded-3xl p-8 md:p-14 shadow-2xl relative overflow-hidden border-t border-white/10">
+        <div class="absolute top-0 right-0 p-8 opacity-5 text-[#00abe7]" aria-hidden="true">
+            <i class="fas fa-microchip text-9xl"></i>
+        </div>
         
-        <div class="relative z-10 mb-10 text-center md:text-left">
-            <h2 class="text-3xl font-bold text-white mb-4">El Flujo de Aprobación "Token-Gated"</h2>
-            <p class="text-stone-400 max-w-3xl">
-                Esta sección ilustra cómo la teoría se convierte en práctica. Observa el proceso técnico mediante el cual un usuario utiliza la infraestructura (Tonalli) para demostrar la posesión de la credencial (RMZ) y obtener acceso a un espacio comunitario cerrado.
+        <div class="relative z-10 mb-14 text-center md:text-left">
+            <span class="text-emerald-400 font-bold text-xs uppercase tracking-[0.3em] space-mono">Protocolo de Verificación</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 italic mt-2">El Flujo "Token-Gated"</h2>
+            <p class="text-gray-400 max-w-3xl leading-relaxed">
+                Esta sección ilustra cómo la teoría se convierte en práctica. Observa el proceso técnico mediante el cual un usuario utiliza la infraestructura (<span class="text-[#00abe7]">Tonalli</span>) para demostrar la posesión de la credencial (<span class="text-[#ffcc00]">RMZ</span>) y obtener acceso a un espacio comunitario.
             </p>
         </div>
 
-        <div class="flex flex-col md:flex-row items-center justify-between space-y-8 md:space-y-0 relative">
-            <div class="hidden md:block absolute top-1/2 left-10 right-10 h-1 bg-stone-700 -translate-y-1/2 z-0"></div>
+        <div class="flex flex-col md:flex-row items-center justify-between space-y-8 md:space-y-0 relative px-4">
+            <div class="hidden md:block absolute top-[40px] left-16 right-16 h-0.5 bg-gray-800 z-0"></div>
 
             <div class="relative z-10 flex flex-col items-center group">
-                <div class="w-20 h-20 bg-stone-800 border-4 border-cyan-500 rounded-full flex items-center justify-center text-3xl unicode-icon mb-4 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(6,182,212,0.5)]">📱</div>
-                <h4 class="font-bold text-center">1. Interfaz</h4>
-                <p class="text-xs text-stone-400 text-center mt-2 max-w-[120px]">Usuario abre Tonalli Wallet.</p>
+                <div class="w-20 h-20 bg-black/80 border border-[#00abe7]/50 rounded-full flex items-center justify-center text-2xl text-[#00abe7] mb-4 group-hover:scale-110 transition-all shadow-[0_0_15px_rgba(0,171,231,0.3)] group-hover:shadow-[0_0_25px_rgba(0,171,231,0.6)]">
+                    <i class="fas fa-mobile-screen"></i>
+                </div>
+                <h4 class="font-bold text-white text-sm uppercase tracking-wider space-mono">1. Interfaz</h4>
+                <p class="text-xs text-gray-500 text-center mt-2 max-w-[120px]">Usuario abre Tonalli Wallet.</p>
             </div>
 
-            <div class="text-stone-500 text-2xl md:hidden unicode-icon">⬇️</div>
-            <div class="hidden md:block text-stone-500 text-2xl unicode-icon z-10 bg-stone-900">▶️</div>
+            <div class="text-gray-600 text-lg md:hidden"><i class="fas fa-arrow-down"></i></div>
+            <div class="hidden md:block text-gray-600 text-sm z-10 bg-[var(--deep-obsidian)] px-2"><i class="fas fa-chevron-right"></i></div>
 
             <div class="relative z-10 flex flex-col items-center group">
-                <div class="w-20 h-20 bg-stone-800 border-4 border-amber-500 rounded-full flex items-center justify-center text-3xl unicode-icon mb-4 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(245,158,11,0.5)]">✍️</div>
-                <h4 class="font-bold text-center">2. Firma</h4>
-                <p class="text-xs text-stone-400 text-center mt-2 max-w-[120px]">Firma criptográfica de verificación.</p>
+                <div class="w-20 h-20 bg-black/80 border border-[#ffcc00]/50 rounded-full flex items-center justify-center text-2xl text-[#ffcc00] mb-4 group-hover:scale-110 transition-all shadow-[0_0_15px_rgba(255,204,0,0.3)] group-hover:shadow-[0_0_25px_rgba(255,204,0,0.6)]">
+                    <i class="fas fa-signature"></i>
+                </div>
+                <h4 class="font-bold text-white text-sm uppercase tracking-wider space-mono">2. Firma</h4>
+                <p class="text-xs text-gray-500 text-center mt-2 max-w-[120px]">Firma criptográfica de posesión RMZ.</p>
             </div>
 
-            <div class="text-stone-500 text-2xl md:hidden unicode-icon">⬇️</div>
-            <div class="hidden md:block text-stone-500 text-2xl unicode-icon z-10 bg-stone-900">▶️</div>
+            <div class="text-gray-600 text-lg md:hidden"><i class="fas fa-arrow-down"></i></div>
+            <div class="hidden md:block text-gray-600 text-sm z-10 bg-[var(--deep-obsidian)] px-2"><i class="fas fa-chevron-right"></i></div>
 
             <div class="relative z-10 flex flex-col items-center group">
-                <div class="w-20 h-20 bg-stone-800 border-4 border-purple-500 rounded-full flex items-center justify-center text-3xl unicode-icon mb-4 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(168,85,247,0.5)]">🤖</div>
-                <h4 class="font-bold text-center">3. Validación</h4>
-                <p class="text-xs text-stone-400 text-center mt-2 max-w-[120px]">Guardianía RMZ Bot usa @tonalli-core.</p>
+                <div class="w-20 h-20 bg-black/80 border border-purple-500/50 rounded-full flex items-center justify-center text-2xl text-purple-400 mb-4 group-hover:scale-110 transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] group-hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h4 class="font-bold text-white text-sm uppercase tracking-wider space-mono">3. Validación</h4>
+                <p class="text-xs text-gray-500 text-center mt-2 max-w-[120px]">Guardianía Bot usa @tonalli-core.</p>
             </div>
 
-            <div class="text-stone-500 text-2xl md:hidden unicode-icon">⬇️</div>
-            <div class="hidden md:block text-stone-500 text-2xl unicode-icon z-10 bg-stone-900">▶️</div>
+            <div class="text-gray-600 text-lg md:hidden"><i class="fas fa-arrow-down"></i></div>
+            <div class="hidden md:block text-gray-600 text-sm z-10 bg-[var(--deep-obsidian)] px-2"><i class="fas fa-chevron-right"></i></div>
 
             <div class="relative z-10 flex flex-col items-center group">
-                <div class="w-20 h-20 bg-stone-800 border-4 border-green-500 rounded-full flex items-center justify-center text-3xl unicode-icon mb-4 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(34,197,94,0.5)]">✅</div>
-                <h4 class="font-bold text-center">4. Acceso</h4>
-                <p class="text-xs text-stone-400 text-center mt-2 max-w-[120px]">Ingreso al grupo oficial de eCash.</p>
+                <div class="w-20 h-20 bg-black/80 border border-emerald-500/50 rounded-full flex items-center justify-center text-2xl text-emerald-400 mb-4 group-hover:scale-110 transition-all shadow-[0_0_15px_rgba(52,211,153,0.3)] group-hover:shadow-[0_0_25px_rgba(52,211,153,0.6)]">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4 class="font-bold text-white text-sm uppercase tracking-wider space-mono">4. Acceso</h4>
+                <p class="text-xs text-gray-500 text-center mt-2 max-w-[120px]">Ingreso al grupo oficial y roles on-chain.</p>
             </div>
         </div>
     </section>
 
-    <section class="mb-10">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-bold text-stone-800 mb-4">Sinergia del Ecosistema</h2>
-            <p class="text-stone-600 max-w-2xl mx-auto">
-                El siguiente gráfico conceptual ilustra cómo Tonalli y RMZ se complementan. Mientras que la wallet maximiza la autocustodia y facilita el onboarding masivo, el token RMZ aporta los mecanismos de identidad y la cohesión cultural comunitaria.
+    <section class="mb-16">
+        <div class="text-center mb-12">
+            <span class="text-purple-400 font-bold text-xs uppercase tracking-[0.3em] space-mono">Análisis Global</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 italic mt-2">Sinergia del Ecosistema</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                El siguiente gráfico ilustra cómo Tonalli y RMZ se complementan. Mientras que la wallet maximiza la autocustodia y el onboarding, el token RMZ aporta los mecanismos de identidad y la cohesión comunitaria.
             </p>
         </div>
 
-        <div class="bg-white p-6 rounded-3xl shadow-sm border border-stone-100">
+        <div class="card-blur p-8 md:p-10 rounded-2xl border border-white/10 relative">
             <div class="chart-container">
                 <canvas id="synergyChart"></canvas>
             </div>
-            <div class="text-center mt-6 text-sm text-stone-500 bg-stone-50 p-4 rounded-xl">
-                <span class="font-bold text-stone-700">Conclusión del Modelo:</span> "Mientras que RMZ actúa como la credencial o llave digital de pertenencia al ecosistema, Tonalli Wallet es la infraestructura que resguarda esa llave y permite al usuario ejercer su soberanía y validar su acceso a la red."
+            <div class="text-center mt-8 text-xs text-gray-400 bg-black/40 border border-white/5 p-5 rounded-xl space-mono leading-relaxed max-w-4xl mx-auto">
+                <span class="font-bold text-white block mb-2 uppercase tracking-widest">Conclusión del Modelo:</span> 
+                "Mientras que RMZ actúa como la credencial o llave digital de pertenencia al ecosistema, Tonalli Wallet es la infraestructura que resguarda esa llave y permite al usuario ejercer su soberanía y validar su acceso a la red."
             </div>
         </div>
     </section>
@@ -186,23 +267,24 @@ const data = {
         id: 'tonalli',
         title: 'Tonalli Wallet',
         subtitle: 'El Guardián de Llaves',
-        icon: '👛',
-        colorClass: 'text-cyan-800',
+        icon: '<i class="fas fa-wallet text-[#00abe7]"></i>',
+        textColor: 'text-[#00abe7]',
+        borderColor: 'border-[#00abe7]/50',
         features: [
             {
                 title: 'Bóveda de Autocustodia',
                 desc: 'Es una "Wallet Soberana" diseñada para brindar una entrada sencilla a los nuevos usuarios, garantizando en todo momento la autocustodia de sus propios fondos.',
-                icon: '🏦'
+                icon: '<i class="fas fa-building-columns"></i>'
             },
             {
                 title: 'Adopción y Onboarding',
-                desc: 'A través de la iniciativa Tonalli Faucet, actúa como una puerta de entrada masiva (estrategia de fan-out) orientada a las universidades, facilitando la transición "del QR al primer XEC".',
-                icon: '🎓'
+                desc: 'A través de la iniciativa Tonalli Faucet, actúa como una puerta de entrada masiva orientada a las universidades, facilitando la transición "del QR al primer XEC".',
+                icon: '<i class="fas fa-graduation-cap"></i>'
             },
             {
                 title: 'Aprobación de Identidad',
                 desc: 'Funciona como la interfaz principal donde los usuarios aprueban y firman criptográficamente su verificación para acceder a espacios comunitarios cerrados.',
-                icon: '✍️'
+                icon: '<i class="fas fa-file-signature"></i>'
             }
         ]
     },
@@ -210,36 +292,44 @@ const data = {
         id: 'rmz',
         title: 'eToken Xolos RMZ',
         subtitle: 'La Llave Digital',
-        icon: '🔑',
-        colorClass: 'text-amber-700',
+        icon: '<i class="fas fa-key text-[#ffcc00]"></i>',
+        textColor: 'text-[#ffcc00]',
+        borderColor: 'border-[#ffcc00]/50',
         features: [
             {
                 title: 'Llave de Acceso y Autenticación',
-                desc: 'Bajo la premisa de que "XEC es el dinero, RMZ es la llave", este token funciona como una nueva capa de autenticación para distinguir a los miembros reales dentro de la comunidad.',
-                icon: '🔐'
+                desc: 'Bajo la premisa de que "XEC es el dinero, RMZ es la llave", este token funciona como una nueva capa de autenticación para distinguir a los miembros de la red.',
+                icon: '<i class="fas fa-lock"></i>'
             },
             {
                 title: 'Filtro de Entrada (Token-Gated)',
-                desc: 'Para ingresar al grupo oficial, el "Guardianía RMZ Bot" exige poseer RMZ. Las primitivas para esta verificación usan la librería pública @xolosarmy/tonalli-core.',
-                icon: '🛡️'
+                desc: 'Para ingresar al grupo oficial, el Guardianía RMZ Bot exige poseer RMZ. Las primitivas para esta verificación usan la librería pública @xolosarmy/tonalli-core.',
+                icon: '<i class="fas fa-shield-halved"></i>'
             },
             {
-                title: 'Cultura Convertida en Infraestructura',
-                desc: 'RMZ representa cómo un elemento de la cultura comunitaria o un "meme" se transforma en una herramienta de onboarding real para introducir a las personas a la soberanía financiera.',
-                icon: '🌱'
+                title: 'Cultura Convertida en Utilidad',
+                desc: 'RMZ representa cómo un elemento de la cultura o "meme" se transforma en una herramienta de onboarding real para introducir a las personas a la soberanía.',
+                icon: '<i class="fas fa-seedling"></i>'
             }
         ]
     }
 };
 
 function selectPillar(pillarId) {
-    document.getElementById('btn-tonalli').classList.remove('active-card', 'border-cyan-500');
-    document.getElementById('btn-rmz').classList.remove('active-card', 'border-amber-500');
-    
+    const btnT = document.getElementById('btn-tonalli');
+    const btnR = document.getElementById('btn-rmz');
+
+    // Reset styles
+    btnT.className = "interactive-card text-left p-8 rounded-2xl card-blur border border-white/10 transition-all hover:border-cyan-500/50 focus:outline-none";
+    btnR.className = "interactive-card text-left p-8 rounded-2xl card-blur border border-white/10 transition-all hover:border-[#ffcc00]/50 focus:outline-none";
+
+    // Add active styles based on selection
     if(pillarId === 'tonalli') {
-        document.getElementById('btn-tonalli').classList.add('active-card', 'border-cyan-500');
+        btnT.classList.remove('border-white/10');
+        btnT.classList.add('border-[#00abe7]', 'bg-[#00abe7]/10', 'shadow-[0_0_20px_rgba(0,171,231,0.2)]');
     } else {
-        document.getElementById('btn-rmz').classList.add('active-card', 'border-amber-500');
+        btnR.classList.remove('border-white/10');
+        btnR.classList.add('border-[#ffcc00]', 'bg-[#ffcc00]/10', 'shadow-[0_0_20px_rgba(255,204,0,0.2)]');
     }
 
     document.getElementById('initial-prompt').classList.add('hidden');
@@ -247,6 +337,7 @@ function selectPillar(pillarId) {
     const pane = document.getElementById('details-pane');
     pane.classList.remove('hidden');
     
+    // Animation trigger
     setTimeout(() => {
         pane.classList.remove('opacity-0');
         pane.classList.add('opacity-100');
@@ -254,25 +345,29 @@ function selectPillar(pillarId) {
 
     const content = data[pillarId];
     
-    document.getElementById('detail-icon').textContent = content.icon;
+    // Update Pane Content
+    document.getElementById('detail-icon').innerHTML = content.icon;
+    document.getElementById('detail-icon').className = `text-5xl mb-6 inline-flex items-center justify-center w-24 h-24 rounded-full border bg-black/60 shadow-inner ${content.borderColor}`;
     
     const titleEl = document.getElementById('detail-title');
     titleEl.textContent = content.title;
-    titleEl.className = `text-3xl font-bold mb-2 ${content.colorClass}`;
+    titleEl.className = `text-3xl font-bold mb-2 italic ${content.textColor}`;
     
-    document.getElementById('detail-subtitle').textContent = content.subtitle;
+    const subtitleEl = document.getElementById('detail-subtitle');
+    subtitleEl.textContent = content.subtitle;
+    subtitleEl.className = `text-sm font-bold uppercase tracking-widest space-mono mb-6 ${content.textColor}`;
 
     const listEl = document.getElementById('detail-list');
     listEl.innerHTML = '';
     
     content.features.forEach(feat => {
         const li = document.createElement('li');
-        li.className = 'bg-white bg-opacity-60 p-5 rounded-2xl flex gap-4 items-start shadow-sm';
+        li.className = 'bg-black/40 border border-white/5 p-5 rounded-xl flex gap-5 items-start transition hover:border-white/20';
         li.innerHTML = `
-            <div class="text-2xl mt-1 unicode-icon">${feat.icon}</div>
+            <div class="text-2xl mt-1 w-8 text-center text-gray-500">${feat.icon}</div>
             <div>
-                <h4 class="font-bold text-stone-800 text-lg">${feat.title}</h4>
-                <p class="text-stone-600 leading-relaxed">${feat.desc}</p>
+                <h4 class="font-bold text-gray-200 text-lg mb-1">${feat.title}</h4>
+                <p class="text-gray-400 text-sm leading-relaxed">${feat.desc}</p>
             </div>
         `;
         listEl.appendChild(li);
@@ -282,13 +377,16 @@ function selectPillar(pillarId) {
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('synergyChart').getContext('2d');
     
+    Chart.defaults.color = '#94a3b8'; // text-slate-400
+    Chart.defaults.font.family = "'Lexend', sans-serif";
+    
     new Chart(ctx, {
         type: 'radar',
         data: {
             labels: [
                 'Autocustodia Financiera',
                 'Facilidad de Onboarding',
-                'Infraestructura / Interfaz',
+                'Infraestructura',
                 'Identidad Comunitaria',
                 'Autenticación Segura'
             ],
@@ -296,23 +394,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 label: 'Tonalli Wallet',
                 data: [100, 95, 100, 40, 60],
                 fill: true,
-                backgroundColor: 'rgba(6, 182, 212, 0.2)',
-                borderColor: 'rgba(6, 182, 212, 1)',
-                pointBackgroundColor: 'rgba(6, 182, 212, 1)',
+                backgroundColor: 'rgba(0, 171, 231, 0.15)',
+                borderColor: '#00abe7',
+                pointBackgroundColor: '#00abe7',
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(6, 182, 212, 1)',
+                pointHoverBorderColor: '#00abe7',
                 borderWidth: 2
             }, {
                 label: 'eToken RMZ',
                 data: [30, 60, 20, 100, 100],
                 fill: true,
-                backgroundColor: 'rgba(245, 158, 11, 0.2)',
-                borderColor: 'rgba(245, 158, 11, 1)',
-                pointBackgroundColor: 'rgba(245, 158, 11, 1)',
+                backgroundColor: 'rgba(255, 204, 0, 0.15)',
+                borderColor: '#ffcc00',
+                pointBackgroundColor: '#ffcc00',
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(245, 158, 11, 1)',
+                pointHoverBorderColor: '#ffcc00',
                 borderWidth: 2
             }]
         },
@@ -320,25 +418,19 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             elements: {
-                line: {
-                    tension: 0.3
-                }
+                line: { tension: 0.3 }
             },
             scales: {
                 r: {
-                    angleLines: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
+                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
                     pointLabels: {
                         font: {
-                            family: "'Inter', 'Segoe UI', sans-serif",
-                            size: 12,
-                            weight: '600'
+                            family: "'Space Mono', monospace",
+                            size: 11,
+                            weight: 'bold'
                         },
-                        color: '#444'
+                        color: '#cbd5e1'
                     },
                     ticks: {
                         display: false,
@@ -353,25 +445,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: {
                         padding: 20,
                         font: {
-                            family: "'Inter', 'Segoe UI', sans-serif",
-                            size: 14,
+                            family: "'Space Mono', monospace",
+                            size: 12,
                             weight: 'bold'
                         },
-                        usePointStyle: true
+                        usePointStyle: true,
+                        color: '#cbd5e1'
                     }
                 },
                 tooltip: {
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    titleFont: { size: 14 },
-                    bodyFont: { size: 13 },
+                    backgroundColor: 'rgba(5, 7, 10, 0.9)',
+                    titleFont: { size: 14, family: "'Lexend', sans-serif" },
+                    bodyFont: { size: 13, family: "'Lexend', sans-serif" },
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
                     padding: 12,
                     cornerRadius: 8,
-                    displayColors: true,
-                    callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': Nivel de enfoque';
-                        }
-                    }
+                    displayColors: true
                 }
             }
         }
