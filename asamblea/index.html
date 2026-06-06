@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asamblea RMZ | eCash México</title>
+    <meta
+      name="description"
+      content="Asamblea RMZ para votar propuestas culturales con alias .xec, Tonalli Wallet y firmas verificables."
+    />
+    <link rel="canonical" href="https://ecash.mx/asamblea/" />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="eCash México" />
+    <meta property="og:title" content="Asamblea RMZ | eCash México" />
+    <meta
+      property="og:description"
+      content="Votación RMZ con elegibilidad por alias .xec y firma de Tonalli Wallet."
+    />
+    <meta property="og:url" content="https://ecash.mx/asamblea/" />
+    <meta
+      property="og:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Asamblea RMZ | eCash México" />
+    <meta
+      name="twitter:description"
+      content="Vota propuestas RMZ con alias .xec confirmado y firma WalletConnect."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
+
+    <link rel="preload" href="/assets/css/tailwind.css" as="style" />
+    <link rel="stylesheet" href="/assets/css/tailwind.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap");
+
+      :root {
+        --obsidian: #05070a;
+        --solar: #ffcc00;
+        --emerald: #34d399;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Lexend", sans-serif;
+        background: var(--obsidian);
+        color: #e5e7eb;
+        overflow-x: hidden;
+      }
+
+      .space-mono {
+        font-family: "Space Mono", monospace;
+      }
+
+      .assembly-field {
+        background:
+          radial-gradient(
+            circle at 18% 18%,
+            rgba(52, 211, 153, 0.17),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 82% 10%,
+            rgba(255, 204, 0, 0.15),
+            transparent 28%
+          ),
+          linear-gradient(145deg, rgba(5, 7, 10, 0.97), rgba(17, 24, 39, 0.93));
+      }
+
+      .grid-field {
+        background-image:
+          linear-gradient(rgba(52, 211, 153, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(52, 211, 153, 0.08) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: radial-gradient(circle at center, black, transparent 72%);
+      }
+
+      .scanline {
+        width: 100%;
+        height: 100px;
+        z-index: 50;
+        background: linear-gradient(
+          0deg,
+          rgba(52, 211, 153, 0) 0%,
+          rgba(52, 211, 153, 0.12) 50%,
+          rgba(52, 211, 153, 0) 100%
+        );
+        opacity: 0.18;
+        position: fixed;
+        bottom: 100%;
+        pointer-events: none;
+        animation: scanline 9s linear infinite;
+      }
+
+      #input-alias {
+        color: #ecfdf5;
+        background-color: rgba(0, 0, 0, 0.82);
+        caret-color: #6ee7b7;
+      }
+
+      #input-alias::placeholder {
+        color: #6b7280;
+      }
+
+      #input-alias::selection {
+        background: rgba(16, 185, 129, 0.35);
+        color: #ffffff;
+      }
+
+      #input-alias:-webkit-autofill,
+      #input-alias:-webkit-autofill:hover,
+      #input-alias:-webkit-autofill:focus {
+        -webkit-text-fill-color: #ecfdf5;
+        box-shadow: 0 0 0px 1000px #020617 inset;
+        transition: background-color 9999s ease-in-out 0s;
+      }
+
+      @keyframes scanline {
+        0% {
+          bottom: 100%;
+        }
+        100% {
+          bottom: -100%;
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-black text-gray-200">
+    <div class="scanline" aria-hidden="true"></div>
+
+    <header
+      class="sticky top-0 z-40 border-b border-emerald-400/10 bg-black/75 backdrop-blur-xl"
+    >
+      <div
+        class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4"
+      >
+        <a
+          href="/"
+          class="flex items-center gap-3 text-lg font-extrabold italic tracking-tighter text-white"
+          aria-label="Volver al inicio de eCash México"
+        >
+          <span
+            class="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-400/10 text-sm text-emerald-200 shadow-[0_0_24px_rgba(52,211,153,0.22)]"
+            aria-hidden="true"
+            >RMZ</span
+          >
+          <span>eCash.mx</span>
+        </a>
+        <a
+          href="/identidad/"
+          class="space-mono inline-flex items-center justify-center rounded-sm border border-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-300 transition hover:border-emerald-300/60 hover:text-emerald-200"
+        >
+          Identidad RMZ
+        </a>
+      </div>
+    </header>
+
+    <main class="assembly-field relative overflow-hidden">
+      <div
+        class="grid-field pointer-events-none absolute inset-0 opacity-80"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="pointer-events-none absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-emerald-400/10 blur-3xl"
+        aria-hidden="true"
+      ></div>
+
+      <section class="relative mx-auto max-w-7xl px-5 py-16 md:py-24">
+        <div class="max-w-4xl">
+          <div
+            class="space-mono mb-5 inline-flex rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.28em] text-emerald-200"
+          >
+            RMZ Identity &rarr; RMZ Assembly
+          </div>
+          <h1
+            class="text-5xl font-extrabold italic leading-none tracking-tighter text-white md:text-7xl"
+          >
+            Asamblea <span class="text-emerald-300">RMZ</span>
+          </h1>
+          <p
+            class="mt-6 max-w-3xl text-xl leading-relaxed text-gray-300 md:text-2xl"
+          >
+            Vota con tu alias .xec confirmado y una firma de Tonalli Wallet.
+          </p>
+          <p class="mt-6 max-w-3xl text-base leading-8 text-gray-400">
+            La asamblea valida elegibilidad en backend, prepara un mensaje
+            canónico y publica resultados auditables sin transacciones on-chain.
+          </p>
+        </div>
+
+        <div class="mt-12 grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+          <article
+            class="rounded-lg border border-emerald-300/20 bg-black/55 p-6 shadow-[0_0_36px_rgba(52,211,153,0.10)] backdrop-blur-xl md:p-8"
+          >
+            <div
+              class="mb-5 flex items-center justify-between gap-4 border-b border-white/10 pb-5"
+            >
+              <div>
+                <p
+                  class="space-mono text-[10px] font-bold uppercase tracking-[0.24em] text-yellow-200"
+                >
+                  Connected Identity
+                </p>
+                <h2 class="mt-2 text-2xl font-bold text-white">
+                  Identidad conectada
+                </h2>
+              </div>
+              <span
+                id="ui-wallet-status"
+                class="space-mono rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400"
+                >Desconectada</span
+              >
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-[auto_1fr] sm:items-center">
+              <div
+                class="flex h-24 w-24 items-center justify-center rounded-full border border-yellow-200/30 bg-yellow-200/10 text-2xl font-black text-yellow-100"
+                aria-hidden="true"
+              >
+                V
+              </div>
+              <div>
+                <h3
+                  id="ui-alias"
+                  class="text-3xl font-extrabold tracking-tight text-white"
+                >
+                  Alias pendiente
+                </h3>
+                <p
+                  id="ui-address"
+                  class="space-mono mt-2 break-all text-sm text-gray-400"
+                >
+                  ecash:...
+                </p>
+                <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+                  <button
+                    id="btn-connect"
+                    type="button"
+                    class="space-mono rounded-sm border border-emerald-300/70 bg-emerald-300 px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_26px_rgba(52,211,153,0.24)] transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Conectar Tonalli Wallet
+                  </button>
+                  <button
+                    id="btn-disconnect"
+                    type="button"
+                    class="space-mono rounded-sm border border-white/10 px-5 py-3 text-xs font-bold uppercase tracking-[0.18em] text-gray-300 transition hover:border-emerald-300/60 hover:text-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled
+                  >
+                    Desconectar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <section
+              class="mt-8 border-t border-white/10 pt-6"
+              aria-labelledby="alias-title"
+            >
+              <p
+                class="space-mono text-[10px] font-bold uppercase tracking-[0.24em] text-emerald-200"
+              >
+                Alias verification
+              </p>
+              <h2 id="alias-title" class="mt-2 text-xl font-bold text-white">
+                Verificación de alias
+              </h2>
+              <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="text"
+                  id="input-alias"
+                  placeholder="xolosarmy.xec"
+                  autocomplete="off"
+                  class="w-full rounded-md border border-emerald-300/30 bg-black/80 px-3 py-2 font-mono text-sm text-emerald-50 placeholder:text-gray-500 caret-emerald-300 shadow-inner outline-none transition focus:border-emerald-300 focus:bg-black focus:ring-1 focus:ring-emerald-300/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled
+                />
+                <button
+                  id="btn-check-eligibility"
+                  type="button"
+                  class="whitespace-nowrap rounded-md border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-emerald-200 transition hover:bg-emerald-300/20 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled
+                >
+                  Verificar
+                </button>
+              </div>
+              <div
+                id="ui-eligibility"
+                class="mt-4 rounded-md border border-white/10 bg-white/[0.03] p-4 text-sm leading-7 text-gray-300"
+              >
+                Conecta Tonalli Wallet para verificar elegibilidad.
+              </div>
+            </section>
+          </article>
+
+          <article
+            class="rounded-lg border border-white/10 bg-gray-950/70 p-6 backdrop-blur-xl md:p-8"
+          >
+            <div
+              class="mb-5 flex flex-col justify-between gap-4 border-b border-white/10 pb-5 md:flex-row md:items-start"
+            >
+              <div>
+                <p
+                  class="space-mono text-[10px] font-bold uppercase tracking-[0.24em] text-yellow-200"
+                >
+                  Active Proposal
+                </p>
+                <h2
+                  id="proposal-title"
+                  class="mt-2 text-2xl font-bold text-white"
+                >
+                  Cargando propuesta...
+                </h2>
+              </div>
+              <span
+                id="proposal-status"
+                class="space-mono rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400"
+                >rmz-b3-001</span
+              >
+            </div>
+            <p id="proposal-summary" class="text-sm leading-7 text-gray-400">
+              Consultando servidor de asamblea.
+            </p>
+            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+              <div
+                class="rounded-md border border-emerald-300/20 bg-emerald-300/10 px-4 py-3"
+              >
+                <span
+                  class="space-mono block text-[10px] uppercase tracking-[0.18em] text-emerald-200"
+                  >Inicia</span
+                >
+                <span id="proposal-start" class="mt-1 block text-sm text-white"
+                  >...</span
+                >
+              </div>
+              <div
+                class="rounded-md border border-yellow-200/20 bg-yellow-200/10 px-4 py-3"
+              >
+                <span
+                  class="space-mono block text-[10px] uppercase tracking-[0.18em] text-yellow-200"
+                  >Cierra</span
+                >
+                <span id="proposal-end" class="mt-1 block text-sm text-white"
+                  >...</span
+                >
+              </div>
+            </div>
+
+            <section class="mt-8" aria-labelledby="choices-title">
+              <h2 id="choices-title" class="text-xl font-bold text-white">
+                Voting choices
+              </h2>
+              <div id="choices-list" class="mt-4 grid gap-3"></div>
+              <button
+                id="btn-vote"
+                type="button"
+                class="space-mono mt-5 w-full rounded-sm border border-emerald-300/70 bg-emerald-300 px-5 py-4 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_26px_rgba(52,211,153,0.24)] transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled
+              >
+                Preparar voto
+              </button>
+            </section>
+
+            <section class="mt-8" aria-labelledby="confirmation-title">
+              <h2 id="confirmation-title" class="text-xl font-bold text-white">
+                Audit links / vote confirmation
+              </h2>
+              <div
+                id="ui-vote-status"
+                class="mt-4 rounded-md border border-white/10 bg-white/[0.03] p-4 text-sm leading-7 text-gray-300"
+              >
+                Selecciona una opción después de verificar tu alias.
+              </div>
+              <details
+                id="message-details"
+                class="mt-4 hidden rounded-md border border-emerald-300/20 bg-black/50 p-4"
+              >
+                <summary
+                  class="cursor-pointer text-sm font-bold text-emerald-200"
+                >
+                  Mensaje canónico a firmar
+                </summary>
+                <pre
+                  id="canonical-message"
+                  class="space-mono mt-4 max-h-72 overflow-auto whitespace-pre-wrap break-words text-xs leading-6 text-gray-300"
+                ></pre>
+              </details>
+              <div id="audit-links" class="mt-4 hidden grid gap-3"></div>
+            </section>
+          </article>
+        </div>
+
+        <section
+          class="mt-12 rounded-lg border border-yellow-200/20 bg-yellow-200/5 p-6 md:p-8"
+          aria-labelledby="results-title"
+        >
+          <div
+            class="flex flex-col justify-between gap-4 border-b border-white/10 pb-5 md:flex-row md:items-end"
+          >
+            <div>
+              <p
+                class="space-mono text-[10px] font-bold uppercase tracking-[0.28em] text-yellow-200"
+              >
+                Results
+              </p>
+              <h2 id="results-title" class="mt-3 text-2xl font-bold text-white">
+                Resultados actuales
+              </h2>
+            </div>
+            <button
+              id="btn-refresh-results"
+              type="button"
+              class="space-mono rounded-sm border border-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.18em] text-gray-300 transition hover:border-emerald-300/60 hover:text-emerald-200"
+            >
+              Actualizar
+            </button>
+          </div>
+          <div id="results-list" class="mt-6 grid gap-4 md:grid-cols-3"></div>
+          <div
+            class="mt-6 grid gap-3 border-t border-white/10 pt-6 md:grid-cols-3"
+          >
+            <div class="rounded-md border border-white/10 bg-black/25 p-4">
+              <span class="block text-sm font-semibold text-gray-300"
+                >effectiveVotes</span
+              >
+              <span
+                id="effective-votes"
+                class="space-mono mt-2 block text-2xl text-emerald-200"
+                >0</span
+              >
+            </div>
+            <div class="rounded-md border border-white/10 bg-black/25 p-4">
+              <span class="block text-sm font-semibold text-gray-300"
+                >supersededVotes</span
+              >
+              <span
+                id="superseded-votes"
+                class="space-mono mt-2 block text-2xl text-yellow-200"
+                >0</span
+              >
+            </div>
+            <div class="rounded-md border border-white/10 bg-black/25 p-4">
+              <span class="block text-sm font-semibold text-gray-300"
+                >invalidVotes</span
+              >
+              <span
+                id="invalid-votes"
+                class="space-mono mt-2 block text-2xl text-red-300"
+                >0</span
+              >
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="border-t border-white/10 bg-black px-5 py-8">
+      <div class="mx-auto max-w-7xl">
+        <p class="max-w-4xl text-sm leading-7 text-gray-500">
+          Asamblea RMZ B3.6 usa verificación de elegibilidad en backend y firma
+          de mensaje canónico. La interfaz no decide elegibilidad ni altera el
+          mensaje firmado.
+        </p>
+      </div>
+    </footer>
+    <script src="../assets/js/asamblea.bundle.js"></script>
+  </body>
+</html>
