@@ -13,6 +13,7 @@ const MESSAGES = {
   idle: "Pega tu dirección eCash para iniciar.",
   validating: "Validando dirección eCash.",
   submitting: "Entregando Starter Pack Guardián RMZ...",
+  networkError: "Error de red. Vuelve a intentarlo.",
   genericError: "No se pudo entregar el Starter Pack en este momento.",
   addressCooldown:
     "Energía de ignición en recarga. Esta dirección ya recibió su chispa inicial recientemente.",
@@ -42,7 +43,12 @@ function normalizeBoolean(value) {
 
 function formatBoolean(value) {
   if (value === undefined || value === null) return "...";
-  return normalizeBoolean(value) ? "true" : "false";
+  return normalizeBoolean(value) ? "Sí" : "No";
+}
+
+function formatDryRun(value) {
+  if (value === undefined || value === null) return "...";
+  return normalizeBoolean(value) ? "Activo" : "Inactivo";
 }
 
 function getStarterPackConfig(payload) {
@@ -98,7 +104,7 @@ function validateAddress(value) {
 }
 
 function setStatus(element, message, tone = "neutral") {
-  element.className = `mt-5 rounded-md border p-4 text-sm leading-7 ${toneClasses[tone]}`;
+  element.className = `mt-5 rounded-md border p-4 text-sm leading-7 transition-opacity duration-300 ${toneClasses[tone]}`;
   element.textContent = message;
 }
 
@@ -142,6 +148,10 @@ async function apiRequest(url, options = {}) {
 }
 
 function mapBackendError(error) {
+  if (error instanceof TypeError) {
+    return MESSAGES.networkError;
+  }
+
   const message = String(
     error?.payload?.error ?? error?.payload?.message ?? error?.message ?? "",
   );
@@ -191,13 +201,15 @@ function renderSuccess(ui, payload) {
   ui.successAddress.textContent = payload?.address ?? "";
   ui.successXec.textContent = starterPack.xec ?? starterPack.xecSats ?? "...";
   ui.successRmz.textContent = starterPack.rmzAtoms ?? "...";
-  ui.successDryRun.textContent = formatBoolean(payload?.dryRun);
+  ui.successDryRun.textContent = formatDryRun(payload?.dryRun);
   ui.successTxids.replaceChildren();
 
-  renderTxid(ui.successTxids, "xec txid", payload?.txids?.xec);
-  renderTxid(ui.successTxids, "rmz txid", payload?.txids?.rmz);
+  renderTxid(ui.successTxids, "Transacción XEC", payload?.txids?.xec);
+  renderTxid(ui.successTxids, "Transacción RMZ", payload?.txids?.rmz);
 
-  ui.form.classList.add("opacity-45");
+  ui.addressInput.disabled = true;
+  ui.claimButton.disabled = true;
+  ui.form.classList.add("hidden");
   ui.successCard.classList.remove("hidden");
   ui.nextSteps.classList.remove("hidden");
 }
@@ -225,7 +237,7 @@ function renderHealth(ui, payload) {
   ui.healthStatus.className =
     "space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200";
   ui.healthEnabled.textContent = formatBoolean(enabled);
-  ui.healthDryRun.textContent = formatBoolean(dryRun);
+  ui.healthDryRun.textContent = formatDryRun(dryRun);
   ui.healthTurnstile.textContent = formatBoolean(turnstileEnabled);
   ui.healthCooldown.textContent =
     cooldownDays === undefined || cooldownDays === null
@@ -234,7 +246,7 @@ function renderHealth(ui, payload) {
   ui.healthAmounts.textContent = [
     starterPack.xec ? `${starterPack.xec} XEC` : null,
     starterPack.xecSats ? `${starterPack.xecSats} sats` : null,
-    starterPack.rmzAtoms ? `${starterPack.rmzAtoms} RMZ atoms` : null,
+    starterPack.rmzAtoms ? `${starterPack.rmzAtoms} Átomos RMZ` : null,
   ]
     .filter(Boolean)
     .join(" · ");
