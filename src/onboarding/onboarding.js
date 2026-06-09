@@ -17,7 +17,8 @@ const MESSAGES = {
   genericError: "No se pudo entregar el Starter Pack en este momento.",
   addressCooldown:
     "Energía de ignición en recarga. Esta dirección ya recibió su chispa inicial recientemente.",
-  ipCooldown: "Esta zona de red ya reclamó un Starter Pack recientemente.",
+  rateLimit:
+    "Demasiados intentos por ahora. Espera unos minutos antes de volver a reclamar el Starter Pack.",
 };
 
 const toneClasses = {
@@ -75,10 +76,26 @@ function getNestedValue(payload, keys, fallback = undefined) {
   return fallback;
 }
 
-function cleanAddress(value) {
+function cleanAddressInput(value) {
   return String(value || "")
     .trim()
-    .toLowerCase();
+    .replace(/\s+/g, "")
+    .replace(/^web\+ecash:/i, "ecash:")
+    .replace(/^xec:/i, "ecash:");
+}
+
+function normalizeAddressForValidation(value) {
+  let cleaned = cleanAddressInput(value).toLowerCase();
+
+  if (cleaned.startsWith("tokenaddr:")) {
+    return cleaned;
+  }
+
+  if (!cleaned.includes(":") && /^q[a-z0-9]{41}$/.test(cleaned)) {
+    cleaned = `ecash:${cleaned}`;
+  }
+
+  return cleaned;
 }
 
 function hasPlausibleAddressShape(address) {
@@ -90,7 +107,7 @@ function hasPlausibleAddressShape(address) {
 }
 
 function validateAddress(value) {
-  const address = cleanAddress(value);
+  const address = normalizeAddressForValidation(value);
 
   if (!hasPlausibleAddressShape(address)) {
     return { valid: false, address, message: MESSAGES.invalidAddress };
@@ -114,26 +131,23 @@ function setStatus(element, message, tone = "neutral") {
 }
 
 async function readJsonResponse(response) {
-  const text = await response.text();
   let payload = null;
 
-  if (text) {
-    try {
-      payload = JSON.parse(text);
-    } catch {
-      payload = { error: text };
-    }
+  try {
+    payload = await response.json();
+  } catch {
+    payload = null;
   }
 
-  if (!response.ok) {
-    const message =
-      payload?.error ??
-      payload?.message ??
-      payload?.reason ??
-      `HTTP ${response.status}`;
-    const error = new Error(message);
-    error.payload = payload;
-    throw error;
+  if (!response.ok || payload?.ok === false) {
+    const backendError =
+      payload?.error || payload?.message || `HTTP ${response.status}`;
+
+    throw Object.assign(new Error(backendError), {
+      status: response.status,
+      payload,
+      backendError,
+    });
   }
 
   return payload ?? {};
@@ -158,15 +172,35 @@ function mapBackendError(error) {
   }
 
   const message = String(
-    error?.payload?.error ?? error?.payload?.message ?? error?.message ?? "",
-  );
+    error?.backendError ??
+      error?.payload?.error ??
+      error?.payload?.message ??
+      error?.message ??
+      "",
+  ).toLowerCase();
 
-  if (message.includes("Address already received a starter pack recently")) {
+  const isAddressCooldown =
+    message.includes("address already") ||
+    message.includes("already received") ||
+    (message.includes("address") &&
+      (message.includes("cooldown") || message.includes("recently")));
+
+  if (isAddressCooldown) {
     return MESSAGES.addressCooldown;
   }
 
-  if (message.includes("IP already used for starter pack recently")) {
-    return MESSAGES.ipCooldown;
+  const isRateLimit =
+    error?.status === 429 ||
+    message.includes("too many") ||
+    message.includes("rate limit") ||
+    message.includes("rate-limit") ||
+    message.includes("429") ||
+    message.includes("cooldown") ||
+    message.includes("recently") ||
+    message.includes("ip");
+
+  if (isRateLimit) {
+    return MESSAGES.rateLimit;
   }
 
   return MESSAGES.genericError;
@@ -332,11 +366,16 @@ document.addEventListener("DOMContentLoaded", () => {
     setStatus(ui.claimStatus, message, tone);
   };
 
-  const syncAddressValidation = () => {
-    currentValidation = validateAddress(ui.addressInput.value);
+  const validateAndRenderAddress = () => {
+    const cleaned = cleanAddressInput(ui.addressInput.value);
+    if (ui.addressInput.value !== cleaned) {
+      ui.addressInput.value = cleaned;
+    }
+
+    currentValidation = validateAddress(cleaned);
     ui.addressMessage.classList.toggle(
       "hidden",
-      currentValidation.valid || ui.addressInput.value.trim() === "",
+      currentValidation.valid || cleaned.trim() === "",
     );
     ui.claimButton.disabled =
       !currentValidation.valid ||
@@ -346,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   ui.addressInput.addEventListener("input", () => {
-    syncAddressValidation();
+    validateAndRenderAddress();
     if (state === "idle") return;
     if (currentValidation.valid) {
       setFlowState("idle", "Dirección lista para recibir Starter Pack.");
@@ -355,10 +394,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  ui.addressInput.addEventListener("paste", () => {
+    window.setTimeout(() => {
+      validateAndRenderAddress();
+    }, 0);
+  });
+
   ui.form.addEventListener("submit", async (event) => {
     event.preventDefault();
     setFlowState("validating", MESSAGES.validating);
-    syncAddressValidation();
+    validateAndRenderAddress();
 
     if (!currentValidation.valid) {
       setFlowState("idle", MESSAGES.invalidAddress, "error");
@@ -369,22 +414,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const turnstileToken = await getTurnstileToken();
+      const address = normalizeAddressForValidation(ui.addressInput.value);
       const payload = await apiRequest(STARTER_PACK_URL, {
         method: "POST",
         body: JSON.stringify({
-          address: currentValidation.address,
+          address,
           ...(turnstileToken ? { turnstileToken } : {}),
         }),
       });
-
-      if (!payload?.ok) {
-        throw Object.assign(
-          new Error(payload?.error || MESSAGES.genericError),
-          {
-            payload,
-          },
-        );
-      }
 
       renderSuccess(ui, payload);
       setFlowState(
@@ -393,11 +430,16 @@ document.addEventListener("DOMContentLoaded", () => {
         "success",
       );
     } catch (error) {
-      setFlowState("cooldown/error", mapBackendError(error), "error");
+      console.warn("[onboarding] starter-pack failed", {
+        status: error?.status,
+        backendError: error?.backendError,
+        payloadError: error?.payload?.error,
+      });
+      setFlowState("error", mapBackendError(error), "error");
     }
   });
 
-  syncAddressValidation();
+  validateAndRenderAddress();
   setFlowState("idle", MESSAGES.idle);
 
   apiRequest(HEALTH_URL)
