@@ -28,11 +28,22 @@ const toneClasses = {
   error: "border-red-300/30 bg-red-400/10 text-red-100",
 };
 
+const ADDRESS_PATTERN = /^(ecash:)?[qp][a-z0-9]{41}$/;
+
 let turnstileTokenProvider = null;
+let turnstileToken = null;
 
 globalThis.RMZOnboarding = {
   setTurnstileTokenProvider(provider) {
     turnstileTokenProvider = provider;
+  },
+  setTurnstileToken(token) {
+    turnstileToken = token || null;
+    globalThis.dispatchEvent?.(
+      new CustomEvent("rmz:onboarding:turnstile", {
+        detail: { token: turnstileToken },
+      }),
+    );
   },
 };
 
@@ -81,17 +92,19 @@ function cleanAddressInput(value) {
     .trim()
     .replace(/\s+/g, "")
     .replace(/^web\+ecash:/i, "ecash:")
-    .replace(/^xec:/i, "ecash:");
+    .replace(/^xec:/i, "ecash:")
+    .toLowerCase()
+    .replace(/[^a-z0-9:]/g, "");
 }
 
 function normalizeAddressForValidation(value) {
-  let cleaned = cleanAddressInput(value).toLowerCase();
+  let cleaned = cleanAddressInput(value);
 
   if (cleaned.startsWith("tokenaddr:")) {
     return cleaned;
   }
 
-  if (!cleaned.includes(":") && /^q[a-z0-9]{41}$/.test(cleaned)) {
+  if (!cleaned.includes(":") && /^[qp][a-z0-9]{41}$/.test(cleaned)) {
     cleaned = `ecash:${cleaned}`;
   }
 
@@ -101,9 +114,7 @@ function normalizeAddressForValidation(value) {
 function hasPlausibleAddressShape(address) {
   if (!address.startsWith("ecash:")) return false;
   if (address.startsWith("tokenaddr:")) return false;
-  if (address.length < 42 || address.length > 64) return false;
-  if (!/^ecash:[qp][a-z0-9]+$/.test(address)) return false;
-  return true;
+  return ADDRESS_PATTERN.test(address);
 }
 
 function validateAddress(value) {
@@ -119,15 +130,73 @@ function validateAddress(value) {
       return { valid: true, address: normalized };
     }
   } catch {
-    return { valid: false, address, message: MESSAGES.invalidAddress };
+    // Fall back to the strict local shape check below.
+  }
+
+  if (ADDRESS_PATTERN.test(address)) {
+    return { valid: true, address };
   }
 
   return { valid: false, address, message: MESSAGES.invalidAddress };
 }
 
+function isClaimButtonDisabled({
+  valid,
+  state,
+  turnstileRequired = false,
+  turnstileCompleted = false,
+}) {
+  return (
+    !valid ||
+    state === "validating" ||
+    state === "submitting" ||
+    state === "success" ||
+    (turnstileRequired && !turnstileCompleted)
+  );
+}
+
+function applyAddressValidation(ui, options = {}) {
+  const cleaned = cleanAddressInput(ui.addressInput.value);
+
+  if (ui.addressInput.value !== cleaned) {
+    ui.addressInput.value = cleaned;
+  }
+
+  const currentValidation = validateAddress(cleaned);
+  const hasValue = cleaned.trim() !== "";
+  const isInvalid = hasValue && !currentValidation.valid;
+
+  ui.addressMessage.classList.toggle("hidden", !isInvalid);
+  ui.addressInput.setAttribute("aria-invalid", isInvalid ? "true" : "false");
+  ui.claimButton.disabled = isClaimButtonDisabled({
+    valid: currentValidation.valid,
+    state: options.state,
+    turnstileRequired: options.turnstileRequired,
+    turnstileCompleted: options.turnstileCompleted,
+  });
+
+  return currentValidation;
+}
+
+function getTurnstileEnabled(payload) {
+  return normalizeBoolean(
+    getNestedValue(payload, [
+      "turnstileEnabled",
+      "turnstile.enabled",
+      "config.turnstileEnabled",
+    ]),
+  );
+}
+
 function setStatus(element, message, tone = "neutral") {
   element.className = `mt-5 rounded-md border p-4 text-sm leading-7 transition-opacity duration-300 ${toneClasses[tone]}`;
   element.textContent = message;
+
+  if (tone === "error") {
+    element.setAttribute("role", "alert");
+  } else {
+    element.setAttribute("role", "status");
+  }
 }
 
 async function readJsonResponse(response) {
@@ -318,131 +387,144 @@ function renderHealthError(ui) {
 }
 
 async function getTurnstileToken() {
+  if (turnstileToken) return turnstileToken;
   if (typeof turnstileTokenProvider !== "function") return null;
   return turnstileTokenProvider();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const ui = {
-    dryRunBanner: document.getElementById("dry-run-banner"),
-    healthStatus: document.getElementById("health-status"),
-    healthEnabled: document.getElementById("health-enabled"),
-    healthDryRun: document.getElementById("health-dry-run"),
-    healthTurnstile: document.getElementById("health-turnstile"),
-    healthCooldown: document.getElementById("health-cooldown"),
-    healthAmounts: document.getElementById("health-amounts"),
-    form: document.getElementById("claim-form"),
-    addressInput: document.getElementById("input-address"),
-    addressMessage: document.getElementById("address-message"),
-    turnstileSlot: document.getElementById("turnstile-slot"),
-    claimButton: document.getElementById("btn-claim"),
-    claimStatus: document.getElementById("claim-status"),
-    successCard: document.getElementById("success-card"),
-    successAddress: document.getElementById("success-address"),
-    successXec: document.getElementById("success-xec"),
-    successRmz: document.getElementById("success-rmz"),
-    successDryRun: document.getElementById("success-dry-run"),
-    successTxids: document.getElementById("success-txids"),
-    nextSteps: document.getElementById("next-steps"),
-  };
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const ui = {
+      dryRunBanner: document.getElementById("dry-run-banner"),
+      healthStatus: document.getElementById("health-status"),
+      healthEnabled: document.getElementById("health-enabled"),
+      healthDryRun: document.getElementById("health-dry-run"),
+      healthTurnstile: document.getElementById("health-turnstile"),
+      healthCooldown: document.getElementById("health-cooldown"),
+      healthAmounts: document.getElementById("health-amounts"),
+      form: document.getElementById("claim-form"),
+      addressInput: document.getElementById("input-address"),
+      addressMessage: document.getElementById("address-message"),
+      turnstileSlot: document.getElementById("turnstile-slot"),
+      claimButton: document.getElementById("btn-claim"),
+      claimStatus: document.getElementById("claim-status"),
+      successCard: document.getElementById("success-card"),
+      successAddress: document.getElementById("success-address"),
+      successXec: document.getElementById("success-xec"),
+      successRmz: document.getElementById("success-rmz"),
+      successDryRun: document.getElementById("success-dry-run"),
+      successTxids: document.getElementById("success-txids"),
+      nextSteps: document.getElementById("next-steps"),
+    };
 
-  if (Object.values(ui).some((element) => !element)) {
-    console.warn("[RMZ Onboarding] Missing expected onboarding UI elements.");
-    return;
-  }
-
-  let state = "idle";
-  let currentValidation = validateAddress("");
-
-  const setFlowState = (nextState, message, tone = "neutral") => {
-    state = nextState;
-    ui.claimButton.disabled =
-      !currentValidation.valid ||
-      state === "validating" ||
-      state === "submitting" ||
-      state === "success";
-    ui.claimButton.textContent =
-      state === "submitting" ? "Enviando..." : "Recibir Starter Pack";
-    setStatus(ui.claimStatus, message, tone);
-  };
-
-  const validateAndRenderAddress = () => {
-    const cleaned = cleanAddressInput(ui.addressInput.value);
-    if (ui.addressInput.value !== cleaned) {
-      ui.addressInput.value = cleaned;
-    }
-
-    currentValidation = validateAddress(cleaned);
-    ui.addressMessage.classList.toggle(
-      "hidden",
-      currentValidation.valid || cleaned.trim() === "",
-    );
-    ui.claimButton.disabled =
-      !currentValidation.valid ||
-      state === "validating" ||
-      state === "submitting" ||
-      state === "success";
-  };
-
-  ui.addressInput.addEventListener("input", () => {
-    validateAndRenderAddress();
-    if (state === "idle") return;
-    if (currentValidation.valid) {
-      setFlowState("idle", "Dirección lista para recibir Starter Pack.");
-    } else {
-      setFlowState("idle", MESSAGES.invalidAddress, "error");
-    }
-  });
-
-  ui.addressInput.addEventListener("paste", () => {
-    window.setTimeout(() => {
-      validateAndRenderAddress();
-    }, 0);
-  });
-
-  ui.form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    setFlowState("validating", MESSAGES.validating);
-    validateAndRenderAddress();
-
-    if (!currentValidation.valid) {
-      setFlowState("idle", MESSAGES.invalidAddress, "error");
+    if (Object.values(ui).some((element) => !element)) {
+      console.warn("[RMZ Onboarding] Missing expected onboarding UI elements.");
       return;
     }
 
-    setFlowState("submitting", MESSAGES.submitting);
+    let state = "idle";
+    let turnstileRequired = false;
+    let turnstileCompleted = Boolean(turnstileToken);
+    let currentValidation = validateAddress("");
 
-    try {
-      const turnstileToken = await getTurnstileToken();
-      const address = normalizeAddressForValidation(ui.addressInput.value);
-      const payload = await apiRequest(STARTER_PACK_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          address,
-          ...(turnstileToken ? { turnstileToken } : {}),
-        }),
+    const setFlowState = (nextState, message, tone = "neutral") => {
+      state = nextState;
+      ui.claimButton.disabled = isClaimButtonDisabled({
+        valid: currentValidation.valid,
+        state,
+        turnstileRequired,
+        turnstileCompleted,
       });
+      ui.claimButton.textContent =
+        state === "submitting" ? "Enviando..." : "Recibir Starter Pack";
+      setStatus(ui.claimStatus, message, tone);
+    };
 
-      renderSuccess(ui, payload);
-      setFlowState(
-        "success",
-        "Starter Pack Guardián RMZ entregado.",
-        "success",
-      );
-    } catch (error) {
-      console.warn("[onboarding] starter-pack failed", {
-        status: error?.status,
-        backendError: error?.backendError,
-        payloadError: error?.payload?.error,
+    const validateAndRenderAddress = () => {
+      currentValidation = applyAddressValidation(ui, {
+        state,
+        turnstileRequired,
+        turnstileCompleted,
       });
-      setFlowState("error", mapBackendError(error), "error");
-    }
+    };
+
+    globalThis.addEventListener?.("rmz:onboarding:turnstile", (event) => {
+      turnstileCompleted = Boolean(event.detail?.token);
+      validateAndRenderAddress();
+    });
+
+    ui.addressInput.addEventListener("input", () => {
+      validateAndRenderAddress();
+      if (state === "idle") return;
+      if (currentValidation.valid) {
+        setFlowState("idle", "Dirección lista para recibir Starter Pack.");
+      } else {
+        setFlowState("idle", MESSAGES.invalidAddress, "error");
+      }
+    });
+
+    ui.addressInput.addEventListener("paste", () => {
+      window.setTimeout(() => {
+        validateAndRenderAddress();
+      }, 0);
+    });
+
+    ui.form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setFlowState("validating", MESSAGES.validating);
+      validateAndRenderAddress();
+
+      if (!currentValidation.valid) {
+        setFlowState("idle", MESSAGES.invalidAddress, "error");
+        return;
+      }
+
+      setFlowState("submitting", MESSAGES.submitting);
+
+      try {
+        const turnstileToken = await getTurnstileToken();
+        const address = normalizeAddressForValidation(ui.addressInput.value);
+        const payload = await apiRequest(STARTER_PACK_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            address,
+            ...(turnstileToken ? { turnstileToken } : {}),
+          }),
+        });
+
+        renderSuccess(ui, payload);
+        setFlowState(
+          "success",
+          "Starter Pack Guardián RMZ entregado.",
+          "success",
+        );
+      } catch (error) {
+        console.warn("[onboarding] starter-pack failed", {
+          status: error?.status,
+          backendError: error?.backendError,
+          payloadError: error?.payload?.error,
+        });
+        setFlowState("error", mapBackendError(error), "error");
+      }
+    });
+
+    validateAndRenderAddress();
+    setFlowState("idle", MESSAGES.idle);
+
+    apiRequest(HEALTH_URL)
+      .then((payload) => {
+        renderHealth(ui, payload);
+        turnstileRequired = getTurnstileEnabled(payload);
+        validateAndRenderAddress();
+      })
+      .catch(() => renderHealthError(ui));
   });
+}
 
-  validateAndRenderAddress();
-  setFlowState("idle", MESSAGES.idle);
-
-  apiRequest(HEALTH_URL)
-    .then((payload) => renderHealth(ui, payload))
-    .catch(() => renderHealthError(ui));
-});
+export {
+  applyAddressValidation,
+  cleanAddressInput,
+  isClaimButtonDisabled,
+  setStatus,
+  validateAddress,
+};
