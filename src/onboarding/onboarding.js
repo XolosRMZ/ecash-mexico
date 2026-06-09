@@ -51,6 +51,11 @@ function formatDryRun(value) {
   return normalizeBoolean(value) ? "Activo" : "Inactivo";
 }
 
+function formatRmzAtoms(value) {
+  const atoms = String(value ?? "0");
+  return atoms === "1" ? "1 átomo RMZ" : `${atoms} átomos RMZ`;
+}
+
 function getStarterPackConfig(payload) {
   return (
     payload?.starterPack ??
@@ -200,7 +205,10 @@ function renderSuccess(ui, payload) {
   const starterPack = payload?.starterPack ?? {};
   ui.successAddress.textContent = payload?.address ?? "";
   ui.successXec.textContent = starterPack.xec ?? starterPack.xecSats ?? "...";
-  ui.successRmz.textContent = starterPack.rmzAtoms ?? "...";
+  ui.successRmz.textContent =
+    starterPack.rmzAtoms === undefined || starterPack.rmzAtoms === null
+      ? "..."
+      : formatRmzAtoms(starterPack.rmzAtoms);
   ui.successDryRun.textContent = formatDryRun(payload?.dryRun);
   ui.successTxids.replaceChildren();
 
@@ -246,7 +254,7 @@ function renderHealth(ui, payload) {
   ui.healthAmounts.textContent = [
     starterPack.xec ? `${starterPack.xec} XEC` : null,
     starterPack.xecSats ? `${starterPack.xecSats} sats` : null,
-    starterPack.rmzAtoms ? `${starterPack.rmzAtoms} Átomos RMZ` : null,
+    starterPack.rmzAtoms ? formatRmzAtoms(starterPack.rmzAtoms) : null,
   ]
     .filter(Boolean)
     .join(" · ");
