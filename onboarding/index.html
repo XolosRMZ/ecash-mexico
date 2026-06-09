@@ -399,7 +399,7 @@
               </div>
             </div>
 
-            <form id="claim-form" class="mt-6" novalidate>
+            <form id="claim-form" class="mt-6">
               <label
                 for="input-address"
                 class="mb-2 block text-xs font-bold uppercase tracking-widest text-gray-400"
@@ -409,15 +409,20 @@
               <input
                 type="text"
                 id="input-address"
+                required
                 inputmode="text"
                 autocomplete="off"
                 spellcheck="false"
+                aria-describedby="address-message"
+                aria-invalid="false"
+                pattern="^(ecash:)?[qp][a-z0-9]{41}$"
                 placeholder="ecash:q..."
                 class="w-full rounded-md border border-emerald-300/30 bg-black/80 px-3 py-3 font-mono text-sm text-emerald-50 placeholder:text-gray-500 caret-emerald-300 shadow-inner outline-none transition focus:border-emerald-300 focus:bg-black focus:ring-1 focus:ring-emerald-300/40"
               />
               <p
                 id="address-message"
                 class="mt-2 hidden text-xs italic text-red-300"
+                role="alert"
               >
                 Pega una dirección válida de eCash, por ejemplo ecash:q...
               </p>

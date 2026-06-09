@@ -256,6 +256,7 @@
               <div class="flex flex-wrap items-center justify-end gap-3">
                 <span
                   id="ui-rmz-status"
+                  role="status"
                   class="space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200"
                   >No verificado</span
                 >
@@ -309,12 +310,20 @@
                       type="text"
                       id="input-alias"
                       placeholder="tunombre.xec"
+                      required
                       autocomplete="off"
+                      spellcheck="false"
+                      inputmode="text"
+                      aria-describedby="alias-error-msg alias-success-msg"
+                      aria-invalid="false"
+                      pattern="^[a-z0-9][a-z0-9-]{1,62}\.xec$"
+                      disabled
                       class="w-full rounded-md border border-emerald-300/30 bg-black/80 px-3 py-2 font-mono text-sm text-emerald-50 placeholder:text-gray-500 caret-emerald-300 shadow-inner outline-none transition focus:border-emerald-300 focus:bg-black focus:ring-1 focus:ring-emerald-300/40"
                     />
                     <button
                       id="btn-verify-alias"
                       type="button"
+                      disabled
                       class="whitespace-nowrap rounded-md border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-emerald-200 transition hover:bg-emerald-300/20 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Verificar
@@ -326,10 +335,12 @@
                   </p>
                   <p
                     id="alias-error-msg"
+                    role="alert"
                     class="mt-2 hidden text-xs italic text-red-400"
                   ></p>
                   <p
                     id="alias-success-msg"
+                    role="status"
                     class="mt-2 hidden text-xs italic text-emerald-400"
                   ></p>
                 </div>
@@ -345,6 +356,7 @@
                 >
                 <span
                   id="ui-telegram-status"
+                  role="status"
                   class="space-mono text-xs text-emerald-200"
                   >Requiere RMZ</span
                 >
@@ -355,6 +367,7 @@
                 <span class="font-semibold text-white">Faucet Tonalli</span>
                 <span
                   id="ui-faucet-status"
+                  role="status"
                   class="space-mono text-xs text-emerald-200"
                   >Limitada</span
                 >
@@ -365,6 +378,7 @@
                 <span class="font-semibold text-gray-300">Asamblea RMZ</span>
                 <span
                   id="ui-voting-status"
+                  role="status"
                   class="space-mono text-xs text-gray-500"
                   >Próximamente</span
                 >
@@ -414,6 +428,7 @@
             </div>
             <p
               id="reputation-status"
+              role="status"
               class="space-mono rounded-md border border-white/10 bg-black/35 px-4 py-2 text-xs text-gray-400"
             >
               Verifica tu alias .xec para cargar tus medallas.

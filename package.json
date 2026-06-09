@@ -13,7 +13,11 @@
     "test:seo": "node ./scripts/validate-seo.mjs",
     "lint": "npm run lint:html && npm run format:check && npm run test:seo",
     "serve": "npx http-server -p 8080 -c-1",
-    "lighthouse": "lhci autorun --config=./lighthouserc.json"
+    "lighthouse": "lhci autorun --config=./lighthouserc.json",
+    "test:onboarding": "node --test scripts/onboarding.test.mjs",
+    "test": "npm run test:onboarding && npm run test:identidad && npm run test:asamblea",
+    "test:identidad": "node --test scripts/identidad.test.mjs",
+    "test:asamblea": "node --test scripts/asamblea.test.mjs"
   },
   "devDependencies": {
     "@lhci/cli": "^0.14.0",

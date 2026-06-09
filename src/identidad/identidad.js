@@ -174,712 +174,873 @@ function formatEvidenceValue(value) {
   return String(value);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.debug("[RMZ Identity] Browser polyfills:", {
-    hasBuffer: typeof globalThis.Buffer !== "undefined",
-    hasGlobal: typeof globalThis.global !== "undefined",
-    hasProcess: typeof globalThis.process !== "undefined",
-  });
+export const ALIAS_PATTERN = /^[a-z0-9][a-z0-9-]{1,62}\.xec$/;
 
-  const ui = {
-    connectButton: document.getElementById("btn-connect"),
-    disconnectButton: document.getElementById("btn-disconnect"),
-    disconnectedState: document.getElementById("state-disconnected"),
-    connectedState: document.getElementById("state-connected"),
-    alias: document.getElementById("ui-alias"),
-    address: document.getElementById("ui-address"),
-    rmzStatus: document.getElementById("ui-rmz-status"),
-    telegramStatus: document.getElementById("ui-telegram-status"),
-    faucetStatus: document.getElementById("ui-faucet-status"),
-    votingStatus: document.getElementById("ui-voting-status"),
-    reputationSection: document.getElementById("reputation-section"),
-    reputationStatus: document.getElementById("reputation-status"),
-    reputationBadges: document.getElementById("reputation-badges"),
-    reputationEvidence: document.getElementById("reputation-evidence"),
-  };
+export function cleanAliasInput(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9.\-\s]/g, "");
+}
 
-  const aliasSetupSection = document.getElementById("alias-setup-section");
-  const inputAlias = document.getElementById("input-alias");
-  const btnVerifyAlias = document.getElementById("btn-verify-alias");
-  const aliasErrorMsg = document.getElementById("alias-error-msg");
-  const aliasSuccessMsg = document.getElementById("alias-success-msg");
+export function validateAlias(value) {
+  const raw = String(value || "");
+  const trimmed = raw.trim();
 
-  if (
-    !ui.connectButton ||
-    !ui.disconnectButton ||
-    !ui.disconnectedState ||
-    !ui.connectedState ||
-    !ui.alias ||
-    !ui.address ||
-    !ui.rmzStatus ||
-    !ui.telegramStatus ||
-    !ui.faucetStatus ||
-    !ui.votingStatus ||
-    !ui.reputationSection ||
-    !ui.reputationStatus ||
-    !ui.reputationBadges ||
-    !ui.reputationEvidence ||
-    !aliasSetupSection ||
-    !inputAlias ||
-    !btnVerifyAlias ||
-    !aliasErrorMsg ||
-    !aliasSuccessMsg
-  ) {
-    console.warn("[RMZ Identity] Missing expected identity UI elements.");
-    return;
+  if (!trimmed) {
+    return { valid: false, normalized: "", reason: "empty" };
   }
 
-  let provider;
-  const modal = new WalletConnectModal({ projectId: PROJECT_ID });
-  const adapter = new ChronikAdapter(CHRONIK_URL);
-  let currentConnectedAddress = "";
-  let reputationRequestId = 0;
+  if (/\s/.test(trimmed)) {
+    return {
+      valid: false,
+      normalized: cleanAliasInput(trimmed),
+      reason: "spaces",
+    };
+  }
 
-  const ensureAliasInputEditable = () => {
-    inputAlias.disabled = false;
-    inputAlias.readOnly = false;
-    inputAlias.removeAttribute("disabled");
-    inputAlias.removeAttribute("readonly");
-    inputAlias.classList.remove("pointer-events-none");
-    aliasSetupSection.classList.remove("pointer-events-none");
-    aliasSetupSection.classList.remove("hidden");
+  if (/[^a-zA-Z0-9.-]/.test(trimmed)) {
+    return {
+      valid: false,
+      normalized: cleanAliasInput(trimmed),
+      reason: "characters",
+    };
+  }
 
-    console.debug("[RMZ Identity] Alias input editable:", {
-      disabled: inputAlias?.disabled,
-      readOnly: inputAlias?.readOnly,
+  const normalized = cleanAliasInput(trimmed);
+
+  if (!normalized || normalized === ".xec") {
+    return { valid: false, normalized, reason: "empty" };
+  }
+
+  if (!normalized.endsWith(".xec")) {
+    return { valid: false, normalized, reason: "suffix" };
+  }
+
+  if (normalized.includes("..")) {
+    return { valid: false, normalized, reason: "dots" };
+  }
+
+  if (normalized.startsWith("-")) {
+    return { valid: false, normalized, reason: "leading-hyphen" };
+  }
+
+  const label = normalized.slice(0, -4);
+
+  if (!label || label.length < 2) {
+    return { valid: false, normalized, reason: "empty" };
+  }
+
+  if (label.endsWith("-")) {
+    return { valid: false, normalized, reason: "trailing-hyphen" };
+  }
+
+  if (label.length > 63 || normalized.length > 67) {
+    return { valid: false, normalized, reason: "length" };
+  }
+
+  if (!ALIAS_PATTERN.test(normalized)) {
+    return { valid: false, normalized, reason: "format" };
+  }
+
+  return { valid: true, normalized };
+}
+
+export function isVerifyAliasDisabled({
+  walletConnected = false,
+  aliasValid = false,
+  verificationInProgress = false,
+} = {}) {
+  return !walletConnected || !aliasValid || verificationInProgress;
+}
+
+export function setAliasMessage(element, message, tone = "status") {
+  element.textContent = message;
+  element.setAttribute("role", tone === "error" ? "alert" : "status");
+  element.classList.toggle("hidden", !message);
+}
+
+export function applyAliasValidation(ui, options = {}) {
+  const cleaned = cleanAliasInput(ui.inputAlias.value);
+
+  if (ui.inputAlias.value !== cleaned) {
+    ui.inputAlias.value = cleaned;
+  }
+
+  const validation = validateAlias(cleaned);
+  const hasValue = cleaned !== "";
+  const isInvalid = hasValue && !validation.valid;
+
+  ui.inputAlias.setAttribute("aria-invalid", isInvalid ? "true" : "false");
+  ui.aliasErrorMsg.classList.toggle("hidden", !isInvalid);
+
+  if (isInvalid && !ui.aliasErrorMsg.textContent) {
+    setAliasMessage(
+      ui.aliasErrorMsg,
+      "Escribe un alias .xec válido, por ejemplo xolosarmy.xec.",
+      "error",
+    );
+  }
+
+  if (!isInvalid) {
+    ui.aliasErrorMsg.textContent = "";
+  }
+
+  ui.btnVerifyAlias.disabled = isVerifyAliasDisabled({
+    walletConnected: options.walletConnected,
+    aliasValid: validation.valid,
+    verificationInProgress: options.verificationInProgress,
+  });
+
+  return validation;
+}
+
+export function resetAliasVerificationUi(ui) {
+  ui.inputAlias.value = "";
+  ui.inputAlias.setAttribute("aria-invalid", "false");
+  setAliasMessage(ui.aliasErrorMsg, "", "error");
+  setAliasMessage(ui.aliasSuccessMsg, "", "status");
+  ui.btnVerifyAlias.disabled = true;
+  ui.btnVerifyAlias.textContent = "Verificar";
+}
+
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    console.debug("[RMZ Identity] Browser polyfills:", {
+      hasBuffer: typeof globalThis.Buffer !== "undefined",
+      hasGlobal: typeof globalThis.global !== "undefined",
+      hasProcess: typeof globalThis.process !== "undefined",
     });
-  };
 
-  const getAliasStorageKey = (address) =>
-    `rmzIdentityAlias:${String(address || "").trim()}`;
-
-  const getSavedAlias = (address) => {
-    try {
-      const saved = localStorage.getItem(getAliasStorageKey(address));
-      if (!saved) return null;
-
-      const parsed = JSON.parse(saved);
-      if (
-        parsed?.alias &&
-        normalizeAddressForCompare(parsed.address) ===
-          normalizeAddressForCompare(address)
-      ) {
-        return parsed;
-      }
-    } catch (error) {
-      console.warn("[RMZ Identity] Unable to read saved alias:", error);
-    }
-
-    return null;
-  };
-
-  const saveVerifiedAlias = (address, alias) => {
-    try {
-      localStorage.setItem(
-        getAliasStorageKey(address),
-        JSON.stringify({
-          alias,
-          address,
-          verifiedAt: new Date().toISOString(),
-        }),
-      );
-    } catch (error) {
-      console.warn("[RMZ Identity] Unable to save verified alias:", error);
-    }
-  };
-
-  const setConnectLoading = (isLoading) => {
-    ui.connectButton.disabled = isLoading;
-    ui.connectButton.textContent = isLoading
-      ? "Conectando..."
-      : "Conectar Tonalli Wallet";
-  };
-
-  const reputationStatusClass = (state) => {
-    const base = "space-mono rounded-md border bg-black/35 px-4 py-2 text-xs";
-    const variants = {
-      empty: "border-white/10 text-gray-400",
-      loading: "border-cyan-500/30 text-cyan-400",
-      loaded: "border-emerald-300/30 text-emerald-100",
-      unavailable: "border-yellow-200/30 text-yellow-100",
-      mismatch: "border-red-200 text-red-400",
+    const ui = {
+      connectButton: document.getElementById("btn-connect"),
+      disconnectButton: document.getElementById("btn-disconnect"),
+      disconnectedState: document.getElementById("state-disconnected"),
+      connectedState: document.getElementById("state-connected"),
+      alias: document.getElementById("ui-alias"),
+      address: document.getElementById("ui-address"),
+      rmzStatus: document.getElementById("ui-rmz-status"),
+      telegramStatus: document.getElementById("ui-telegram-status"),
+      faucetStatus: document.getElementById("ui-faucet-status"),
+      votingStatus: document.getElementById("ui-voting-status"),
+      reputationSection: document.getElementById("reputation-section"),
+      reputationStatus: document.getElementById("reputation-status"),
+      reputationBadges: document.getElementById("reputation-badges"),
+      reputationEvidence: document.getElementById("reputation-evidence"),
     };
 
-    return `${base} ${variants[state] ?? variants.empty}`;
-  };
+    const aliasSetupSection = document.getElementById("alias-setup-section");
+    const inputAlias = document.getElementById("input-alias");
+    const btnVerifyAlias = document.getElementById("btn-verify-alias");
+    const aliasErrorMsg = document.getElementById("alias-error-msg");
+    const aliasSuccessMsg = document.getElementById("alias-success-msg");
 
-  const clearReputationDetails = () => {
-    ui.reputationBadges.replaceChildren();
-    ui.reputationEvidence.replaceChildren();
-    ui.reputationEvidence.classList.add("hidden");
-  };
-
-  const setReputationState = (state, message, options = {}) => {
-    if (options.hidden) {
-      ui.reputationSection.classList.add("hidden");
-    } else {
-      ui.reputationSection.classList.remove("hidden");
-    }
-
-    ui.reputationStatus.className = reputationStatusClass(state);
-    ui.reputationStatus.textContent = message;
-
-    if (options.clear !== false) clearReputationDetails();
-  };
-
-  const resetReputation = (options = {}) => {
-    reputationRequestId += 1;
-    setReputationState(
-      "empty",
-      "Verifica tu alias .xec para cargar tus medallas.",
-      options,
-    );
-  };
-
-  const createEvidenceLink = (href, label) => {
-    const link = document.createElement("a");
-    link.href = href;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.className =
-      "break-all text-cyan-400 transition hover:text-emerald-200";
-    link.textContent = label;
-    return link;
-  };
-
-  const appendEvidenceRow = (container, label, value, href = null) => {
-    const formattedValue = formatEvidenceValue(value);
-    if (formattedValue === null) return;
-
-    const row = document.createElement("p");
-    row.className = "space-mono mt-1 break-all text-xs text-emerald-100";
-
-    const labelNode = document.createElement("span");
-    labelNode.className = "text-gray-500";
-    labelNode.textContent = `${label}: `;
-    row.append(labelNode);
-
-    if (href) {
-      row.append(createEvidenceLink(href, formattedValue));
-    } else {
-      row.append(document.createTextNode(formattedValue));
-    }
-
-    container.append(row);
-  };
-
-  const appendBadgeEvidence = (container, evidence) => {
-    if (!evidence || typeof evidence !== "object") return;
-
-    const evidenceNode = document.createElement("div");
-    evidenceNode.className =
-      "mt-4 border-t border-white/10 pt-3 text-[11px] leading-5";
-
-    const title = document.createElement("p");
-    title.className = "space-mono text-[10px] uppercase text-gray-500";
-    title.textContent = "Evidencia";
-    evidenceNode.append(title);
-
-    for (const [key, value] of Object.entries(evidence)) {
-      if (value === undefined || value === null || value === "") continue;
-      appendEvidenceRow(evidenceNode, key, value);
-    }
-
-    if (evidenceNode.childElementCount > 1) container.append(evidenceNode);
-  };
-
-  const renderReputationBadges = (badges) => {
-    ui.reputationBadges.replaceChildren();
-
-    if (!Array.isArray(badges) || badges.length === 0) {
-      const empty = document.createElement("p");
-      empty.className =
-        "rounded-md border border-white/10 bg-black/35 p-4 text-sm text-gray-400";
-      empty.textContent = "Esta identidad no tiene medallas publicadas.";
-      ui.reputationBadges.append(empty);
+    if (
+      !ui.connectButton ||
+      !ui.disconnectButton ||
+      !ui.disconnectedState ||
+      !ui.connectedState ||
+      !ui.alias ||
+      !ui.address ||
+      !ui.rmzStatus ||
+      !ui.telegramStatus ||
+      !ui.faucetStatus ||
+      !ui.votingStatus ||
+      !ui.reputationSection ||
+      !ui.reputationStatus ||
+      !ui.reputationBadges ||
+      !ui.reputationEvidence ||
+      !aliasSetupSection ||
+      !inputAlias ||
+      !btnVerifyAlias ||
+      !aliasErrorMsg ||
+      !aliasSuccessMsg
+    ) {
+      console.warn("[RMZ Identity] Missing expected identity UI elements.");
       return;
     }
 
-    for (const badge of badges) {
-      const earned = badge?.earned === true;
-      const card = document.createElement("article");
-      card.className = earned
-        ? "rounded-md border border-emerald-300/30 bg-emerald-300/10 p-4 shadow-[0_0_22px_rgba(52,211,153,0.10)]"
-        : "rounded-md border border-white/10 bg-white/[0.03] p-4 opacity-75";
+    let provider;
+    const modal = new WalletConnectModal({ projectId: PROJECT_ID });
+    const adapter = new ChronikAdapter(CHRONIK_URL);
+    let currentConnectedAddress = "";
+    let reputationRequestId = 0;
+    let aliasVerificationInProgress = false;
 
-      const meta = document.createElement("div");
-      meta.className = "flex flex-wrap items-center gap-2";
+    const aliasUi = {
+      inputAlias,
+      btnVerifyAlias,
+      aliasErrorMsg,
+      aliasSuccessMsg,
+    };
 
-      const tier = document.createElement("span");
-      tier.className =
-        "space-mono rounded-sm border border-cyan-500/20 bg-cyan-500/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-cyan-400";
-      tier.textContent =
-        REPUTATION_TIER_LABELS[badge?.tier] ?? badge?.tier ?? "Reputación";
+    const updateAliasVerificationState = () =>
+      applyAliasValidation(aliasUi, {
+        walletConnected:
+          Boolean(currentConnectedAddress) && !inputAlias.disabled,
+        verificationInProgress: aliasVerificationInProgress,
+      });
 
-      const status = document.createElement("span");
-      status.className = earned
-        ? "space-mono rounded-sm border border-emerald-300/30 bg-emerald-300/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-emerald-100"
-        : "space-mono rounded-sm border border-white/10 bg-black/30 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-gray-400";
-      status.textContent = earned ? "Ganada" : "Pendiente";
+    const ensureAliasInputEditable = () => {
+      inputAlias.disabled = false;
+      inputAlias.readOnly = false;
+      inputAlias.removeAttribute("disabled");
+      inputAlias.removeAttribute("readonly");
+      inputAlias.classList.remove("pointer-events-none");
+      aliasSetupSection.classList.remove("pointer-events-none");
+      aliasSetupSection.classList.remove("hidden");
+      updateAliasVerificationState();
 
-      meta.append(tier, status);
+      console.debug("[RMZ Identity] Alias input editable:", {
+        disabled: inputAlias?.disabled,
+        readOnly: inputAlias?.readOnly,
+      });
+    };
 
-      const title = document.createElement("h3");
-      title.className = "mt-4 text-lg font-bold text-white";
-      title.textContent = badge?.label ?? badge?.id ?? "Medalla RMZ";
+    const getAliasStorageKey = (address) =>
+      `rmzIdentityAlias:${String(address || "").trim()}`;
 
-      const description = document.createElement("p");
-      description.className = "mt-2 text-sm leading-6 text-gray-400";
-      description.textContent =
-        badge?.description ?? "Medalla de reputación RMZ.";
+    const getSavedAlias = (address) => {
+      try {
+        const saved = localStorage.getItem(getAliasStorageKey(address));
+        if (!saved) return null;
 
-      card.append(meta, title, description);
-      appendBadgeEvidence(card, badge?.evidence);
-      ui.reputationBadges.append(card);
-    }
-  };
+        const parsed = JSON.parse(saved);
+        if (
+          parsed?.alias &&
+          normalizeAddressForCompare(parsed.address) ===
+            normalizeAddressForCompare(address)
+        ) {
+          return parsed;
+        }
+      } catch (error) {
+        console.warn("[RMZ Identity] Unable to read saved alias:", error);
+      }
 
-  const renderReputationEvidence = (reputation) => {
-    const evidence = reputation?.evidence ?? {};
-    const aliasRecord = evidence.aliasRecord ?? {};
-    const rmz = evidence.rmz ?? {};
-    const assembly = evidence.assembly ?? {};
-    const latestVote =
-      assembly.latestEffectiveVote ??
-      assembly.latestVote ??
-      assembly.vote ??
-      null;
+      return null;
+    };
 
-    ui.reputationEvidence.replaceChildren();
-
-    const title = document.createElement("p");
-    title.className =
-      "space-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-400";
-    title.textContent = "Evidencia compacta";
-    ui.reputationEvidence.append(title);
-
-    appendEvidenceRow(
-      ui.reputationEvidence,
-      "alias txid",
-      aliasRecord.txid,
-      aliasRecord.txid
-        ? `https://explorer.xolosarmy.xyz/tx/${aliasRecord.txid}`
-        : null,
-    );
-    appendEvidenceRow(
-      ui.reputationEvidence,
-      "blockheight",
-      aliasRecord.blockheight ?? aliasRecord.blockHeight,
-    );
-    appendEvidenceRow(
-      ui.reputationEvidence,
-      "RMZ atoms",
-      rmz.atoms ?? reputation?.rmzAtoms,
-    );
-    appendEvidenceRow(
-      ui.reputationEvidence,
-      "latest voteId",
-      latestVote?.voteId,
-      latestVote?.voteId ? ASSEMBLY_VOTES_URL : null,
-    );
-    appendEvidenceRow(
-      ui.reputationEvidence,
-      "latest choiceId",
-      latestVote?.choiceId,
-      latestVote?.choiceId ? ASSEMBLY_RESULTS_URL : null,
-    );
-
-    ui.reputationEvidence.classList.toggle(
-      "hidden",
-      ui.reputationEvidence.childElementCount <= 1,
-    );
-  };
-
-  const loadReputationForAlias = async (alias) => {
-    const verifiedAlias = normalizeVerifiedAlias(alias);
-    const connectedWallet = normalizeAddressForCompare(currentConnectedAddress);
-
-    if (!verifiedAlias || !connectedWallet) {
-      resetReputation();
-      return;
-    }
-
-    const requestId = reputationRequestId + 1;
-    reputationRequestId = requestId;
-    setReputationState("loading", "Cargando reputación RMZ...");
-
-    try {
-      const response = await fetch(
-        `${REPUTATION_API_BASE}/${encodeURIComponent(verifiedAlias)}`,
-        { headers: { Accept: "application/json" } },
-      );
-
-      if (requestId !== reputationRequestId) return;
-
-      if (response.status === 404) {
-        setReputationState(
-          "unavailable",
-          "Esta identidad aún no tiene reputación registrada.",
+    const saveVerifiedAlias = (address, alias) => {
+      try {
+        localStorage.setItem(
+          getAliasStorageKey(address),
+          JSON.stringify({
+            alias,
+            address,
+            verifiedAt: new Date().toISOString(),
+          }),
         );
+      } catch (error) {
+        console.warn("[RMZ Identity] Unable to save verified alias:", error);
+      }
+    };
+
+    const setConnectLoading = (isLoading) => {
+      ui.connectButton.disabled = isLoading;
+      ui.connectButton.textContent = isLoading
+        ? "Conectando..."
+        : "Conectar Tonalli Wallet";
+    };
+
+    const reputationStatusClass = (state) => {
+      const base = "space-mono rounded-md border bg-black/35 px-4 py-2 text-xs";
+      const variants = {
+        empty: "border-white/10 text-gray-400",
+        loading: "border-cyan-500/30 text-cyan-400",
+        loaded: "border-emerald-300/30 text-emerald-100",
+        unavailable: "border-yellow-200/30 text-yellow-100",
+        mismatch: "border-red-200 text-red-400",
+      };
+
+      return `${base} ${variants[state] ?? variants.empty}`;
+    };
+
+    const clearReputationDetails = () => {
+      ui.reputationBadges.replaceChildren();
+      ui.reputationEvidence.replaceChildren();
+      ui.reputationEvidence.classList.add("hidden");
+    };
+
+    const setReputationState = (state, message, options = {}) => {
+      if (options.hidden) {
+        ui.reputationSection.classList.add("hidden");
+      } else {
+        ui.reputationSection.classList.remove("hidden");
+      }
+
+      ui.reputationStatus.className = reputationStatusClass(state);
+      ui.reputationStatus.textContent = message;
+
+      if (options.clear !== false) clearReputationDetails();
+    };
+
+    const resetReputation = (options = {}) => {
+      reputationRequestId += 1;
+      setReputationState(
+        "empty",
+        "Verifica tu alias .xec para cargar tus medallas.",
+        options,
+      );
+    };
+
+    const createEvidenceLink = (href, label) => {
+      const link = document.createElement("a");
+      link.href = href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.className =
+        "break-all text-cyan-400 transition hover:text-emerald-200";
+      link.textContent = label;
+      return link;
+    };
+
+    const appendEvidenceRow = (container, label, value, href = null) => {
+      const formattedValue = formatEvidenceValue(value);
+      if (formattedValue === null) return;
+
+      const row = document.createElement("p");
+      row.className = "space-mono mt-1 break-all text-xs text-emerald-100";
+
+      const labelNode = document.createElement("span");
+      labelNode.className = "text-gray-500";
+      labelNode.textContent = `${label}: `;
+      row.append(labelNode);
+
+      if (href) {
+        row.append(createEvidenceLink(href, formattedValue));
+      } else {
+        row.append(document.createTextNode(formattedValue));
+      }
+
+      container.append(row);
+    };
+
+    const appendBadgeEvidence = (container, evidence) => {
+      if (!evidence || typeof evidence !== "object") return;
+
+      const evidenceNode = document.createElement("div");
+      evidenceNode.className =
+        "mt-4 border-t border-white/10 pt-3 text-[11px] leading-5";
+
+      const title = document.createElement("p");
+      title.className = "space-mono text-[10px] uppercase text-gray-500";
+      title.textContent = "Evidencia";
+      evidenceNode.append(title);
+
+      for (const [key, value] of Object.entries(evidence)) {
+        if (value === undefined || value === null || value === "") continue;
+        appendEvidenceRow(evidenceNode, key, value);
+      }
+
+      if (evidenceNode.childElementCount > 1) container.append(evidenceNode);
+    };
+
+    const renderReputationBadges = (badges) => {
+      ui.reputationBadges.replaceChildren();
+
+      if (!Array.isArray(badges) || badges.length === 0) {
+        const empty = document.createElement("p");
+        empty.className =
+          "rounded-md border border-white/10 bg-black/35 p-4 text-sm text-gray-400";
+        empty.textContent = "Esta identidad no tiene medallas publicadas.";
+        ui.reputationBadges.append(empty);
         return;
       }
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      for (const badge of badges) {
+        const earned = badge?.earned === true;
+        const card = document.createElement("article");
+        card.className = earned
+          ? "rounded-md border border-emerald-300/30 bg-emerald-300/10 p-4 shadow-[0_0_22px_rgba(52,211,153,0.10)]"
+          : "rounded-md border border-white/10 bg-white/[0.03] p-4 opacity-75";
 
-      const reputation = await response.json();
-      const responseAlias = normalizeVerifiedAlias(reputation?.alias);
-      const responseWallet = normalizeAddressForCompare(reputation?.wallet);
+        const meta = document.createElement("div");
+        meta.className = "flex flex-wrap items-center gap-2";
 
-      if (responseAlias !== verifiedAlias) {
+        const tier = document.createElement("span");
+        tier.className =
+          "space-mono rounded-sm border border-cyan-500/20 bg-cyan-500/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-cyan-400";
+        tier.textContent =
+          REPUTATION_TIER_LABELS[badge?.tier] ?? badge?.tier ?? "Reputación";
+
+        const status = document.createElement("span");
+        status.className = earned
+          ? "space-mono rounded-sm border border-emerald-300/30 bg-emerald-300/10 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-emerald-100"
+          : "space-mono rounded-sm border border-white/10 bg-black/30 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-gray-400";
+        status.textContent = earned ? "Ganada" : "Pendiente";
+
+        meta.append(tier, status);
+
+        const title = document.createElement("h3");
+        title.className = "mt-4 text-lg font-bold text-white";
+        title.textContent = badge?.label ?? badge?.id ?? "Medalla RMZ";
+
+        const description = document.createElement("p");
+        description.className = "mt-2 text-sm leading-6 text-gray-400";
+        description.textContent =
+          badge?.description ?? "Medalla de reputación RMZ.";
+
+        card.append(meta, title, description);
+        appendBadgeEvidence(card, badge?.evidence);
+        ui.reputationBadges.append(card);
+      }
+    };
+
+    const renderReputationEvidence = (reputation) => {
+      const evidence = reputation?.evidence ?? {};
+      const aliasRecord = evidence.aliasRecord ?? {};
+      const rmz = evidence.rmz ?? {};
+      const assembly = evidence.assembly ?? {};
+      const latestVote =
+        assembly.latestEffectiveVote ??
+        assembly.latestVote ??
+        assembly.vote ??
+        null;
+
+      ui.reputationEvidence.replaceChildren();
+
+      const title = document.createElement("p");
+      title.className =
+        "space-mono text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-400";
+      title.textContent = "Evidencia compacta";
+      ui.reputationEvidence.append(title);
+
+      appendEvidenceRow(
+        ui.reputationEvidence,
+        "alias txid",
+        aliasRecord.txid,
+        aliasRecord.txid
+          ? `https://explorer.xolosarmy.xyz/tx/${aliasRecord.txid}`
+          : null,
+      );
+      appendEvidenceRow(
+        ui.reputationEvidence,
+        "blockheight",
+        aliasRecord.blockheight ?? aliasRecord.blockHeight,
+      );
+      appendEvidenceRow(
+        ui.reputationEvidence,
+        "RMZ atoms",
+        rmz.atoms ?? reputation?.rmzAtoms,
+      );
+      appendEvidenceRow(
+        ui.reputationEvidence,
+        "latest voteId",
+        latestVote?.voteId,
+        latestVote?.voteId ? ASSEMBLY_VOTES_URL : null,
+      );
+      appendEvidenceRow(
+        ui.reputationEvidence,
+        "latest choiceId",
+        latestVote?.choiceId,
+        latestVote?.choiceId ? ASSEMBLY_RESULTS_URL : null,
+      );
+
+      ui.reputationEvidence.classList.toggle(
+        "hidden",
+        ui.reputationEvidence.childElementCount <= 1,
+      );
+    };
+
+    const loadReputationForAlias = async (alias) => {
+      const verifiedAlias = normalizeVerifiedAlias(alias);
+      const connectedWallet = normalizeAddressForCompare(
+        currentConnectedAddress,
+      );
+
+      if (!verifiedAlias || !connectedWallet) {
+        resetReputation();
+        return;
+      }
+
+      const requestId = reputationRequestId + 1;
+      reputationRequestId = requestId;
+      setReputationState("loading", "Cargando reputación RMZ...");
+
+      try {
+        const response = await fetch(
+          `${REPUTATION_API_BASE}/${encodeURIComponent(verifiedAlias)}`,
+          { headers: { Accept: "application/json" } },
+        );
+
+        if (requestId !== reputationRequestId) return;
+
+        if (response.status === 404) {
+          setReputationState(
+            "unavailable",
+            "Esta identidad aún no tiene reputación registrada.",
+          );
+          return;
+        }
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const reputation = await response.json();
+        const responseAlias = normalizeVerifiedAlias(reputation?.alias);
+        const responseWallet = normalizeAddressForCompare(reputation?.wallet);
+
+        if (responseAlias !== verifiedAlias) {
+          setReputationState(
+            "unavailable",
+            "No se pudo cargar reputation.ecash.mx en este momento.",
+          );
+          return;
+        }
+
+        if (responseWallet !== connectedWallet) {
+          setReputationState(
+            "mismatch",
+            "La reputación no corresponde a la wallet conectada.",
+          );
+          return;
+        }
+
+        setReputationState("loaded", "Reputación cargada.", { clear: false });
+        renderReputationBadges(reputation.badges);
+        renderReputationEvidence(reputation);
+      } catch (error) {
+        if (requestId !== reputationRequestId) return;
+        console.error("[RMZ Identity] Reputation load failed.", error);
         setReputationState(
           "unavailable",
           "No se pudo cargar reputation.ecash.mx en este momento.",
         );
+      }
+    };
+
+    const showDisconnected = () => {
+      ui.connectedState.classList.add("hidden");
+      ui.disconnectedState.classList.remove("hidden");
+      ui.disconnectedState.classList.add("block");
+      ui.alias.textContent = "Wallet desconectada";
+      ui.address.textContent = "ecash:...";
+      ui.rmzStatus.textContent = "No verificado";
+      ui.telegramStatus.textContent = "Requiere RMZ";
+      ui.faucetStatus.textContent = "Limitada";
+      ui.votingStatus.textContent = "Próximamente";
+      currentConnectedAddress = "";
+      resetReputation({ hidden: true });
+      aliasVerificationInProgress = false;
+      resetAliasVerificationUi(aliasUi);
+      aliasSetupSection.classList.add("hidden");
+      inputAlias.disabled = true;
+      inputAlias.readOnly = false;
+      inputAlias.setAttribute("disabled", "");
+      inputAlias.removeAttribute("readonly");
+      setConnectLoading(false);
+    };
+
+    const showConnected = () => {
+      ui.disconnectedState.classList.add("hidden");
+      ui.disconnectedState.classList.remove("block");
+      ui.connectedState.classList.remove("hidden");
+    };
+
+    const clearAliasMessages = () => {
+      setAliasMessage(aliasErrorMsg, "", "error");
+      setAliasMessage(aliasSuccessMsg, "", "status");
+    };
+
+    const showAliasError = (message) => {
+      setAliasMessage(aliasErrorMsg, message, "error");
+      setAliasMessage(aliasSuccessMsg, "", "status");
+      inputAlias.setAttribute("aria-invalid", "true");
+    };
+
+    const showAliasSuccess = (message) => {
+      setAliasMessage(aliasSuccessMsg, message, "status");
+      setAliasMessage(aliasErrorMsg, "", "error");
+      inputAlias.setAttribute("aria-invalid", "false");
+    };
+
+    const resetAliasVerification = () => {
+      aliasVerificationInProgress = false;
+      resetAliasVerificationUi(aliasUi);
+      aliasSetupSection.classList.add("hidden");
+      inputAlias.disabled = true;
+      inputAlias.readOnly = false;
+      inputAlias.setAttribute("disabled", "");
+      inputAlias.removeAttribute("readonly");
+    };
+
+    const applyHolderStatus = (address, status) => {
+      ui.address.textContent = address;
+      ui.votingStatus.textContent = "Próximamente";
+      aliasSetupSection.classList.add("hidden");
+
+      if (status === "holder") {
+        ui.alias.textContent = "Guardián RMZ";
+        ui.rmzStatus.textContent = "Guardián RMZ";
+        ui.telegramStatus.textContent = "Activo";
+        ui.faucetStatus.textContent = "Desbloqueada";
+        resetReputation();
+        ensureAliasInputEditable();
+        btnVerifyAlias.textContent = "Verificar";
         return;
       }
 
-      if (responseWallet !== connectedWallet) {
-        setReputationState(
-          "mismatch",
-          "La reputación no corresponde a la wallet conectada.",
+      if (status === "error") {
+        ui.alias.textContent = "Wallet conectada";
+        ui.rmzStatus.textContent = "Error de red";
+        ui.telegramStatus.textContent = "Requiere RMZ";
+        ui.faucetStatus.textContent = "Limitada";
+        return;
+      }
+
+      resetReputation({ hidden: true });
+      ui.alias.textContent = "Wallet conectada";
+      ui.rmzStatus.textContent = "No verificado";
+      ui.telegramStatus.textContent = "Requiere RMZ";
+      ui.faucetStatus.textContent = "Limitada";
+    };
+
+    const handleAliasVerification = async () => {
+      if (aliasVerificationInProgress) return;
+
+      clearAliasMessages();
+      const validation = updateAliasVerificationState();
+
+      if (!currentConnectedAddress) {
+        showAliasError("Conecta Tonalli Wallet antes de verificar tu alias.");
+        return;
+      }
+
+      if (!validation.valid) {
+        showAliasError(
+          "Escribe un alias .xec válido, por ejemplo xolosarmy.xec.",
         );
         return;
       }
 
-      setReputationState("loaded", "Reputación cargada.", { clear: false });
-      renderReputationBadges(reputation.badges);
-      renderReputationEvidence(reputation);
-    } catch (error) {
-      if (requestId !== reputationRequestId) return;
-      console.error("[RMZ Identity] Reputation load failed.", error);
-      setReputationState(
-        "unavailable",
-        "No se pudo cargar reputation.ecash.mx en este momento.",
-      );
-    }
-  };
+      aliasVerificationInProgress = true;
+      btnVerifyAlias.disabled = true;
+      btnVerifyAlias.textContent = "Verificando...";
+      showAliasSuccess("Verificando...");
 
-  const showDisconnected = () => {
-    ui.connectedState.classList.add("hidden");
-    ui.disconnectedState.classList.remove("hidden");
-    ui.disconnectedState.classList.add("block");
-    ui.alias.textContent = "Wallet desconectada";
-    ui.address.textContent = "ecash:...";
-    ui.rmzStatus.textContent = "No verificado";
-    ui.telegramStatus.textContent = "Requiere RMZ";
-    ui.faucetStatus.textContent = "Limitada";
-    ui.votingStatus.textContent = "Próximamente";
-    currentConnectedAddress = "";
-    resetReputation({ hidden: true });
-    inputAlias.value = "";
-    aliasErrorMsg.textContent = "";
-    aliasErrorMsg.classList.add("hidden");
-    aliasSuccessMsg.textContent = "";
-    aliasSuccessMsg.classList.add("hidden");
-    aliasSetupSection.classList.add("hidden");
-    inputAlias.disabled = false;
-    inputAlias.readOnly = false;
-    inputAlias.removeAttribute("disabled");
-    inputAlias.removeAttribute("readonly");
-    btnVerifyAlias.disabled = false;
-    btnVerifyAlias.textContent = "Verificar";
-    setConnectLoading(false);
-  };
+      try {
+        const resolution = await resolveAlias(validation.normalized, {
+          endpoint: "https://alias.ecash.mx",
+        });
 
-  const showConnected = () => {
-    ui.disconnectedState.classList.add("hidden");
-    ui.disconnectedState.classList.remove("block");
-    ui.connectedState.classList.remove("hidden");
-  };
+        if (resolution === null) {
+          showAliasError("Alias no registrado en eCash.");
+          return;
+        }
 
-  const clearAliasMessages = () => {
-    aliasErrorMsg.textContent = "";
-    aliasErrorMsg.classList.add("hidden");
-    aliasSuccessMsg.textContent = "";
-    aliasSuccessMsg.classList.add("hidden");
-  };
+        if (!resolution?.address) {
+          showAliasError(
+            "No se pudo consultar el servidor de aliases. Intenta de nuevo.",
+          );
+          return;
+        }
 
-  const showAliasError = (message) => {
-    aliasErrorMsg.textContent = message;
-    aliasErrorMsg.classList.remove("hidden");
-    aliasSuccessMsg.textContent = "";
-    aliasSuccessMsg.classList.add("hidden");
-  };
+        const resolvedAddress = normalizeAddressForCompare(resolution.address);
+        const connectedAddress = normalizeAddressForCompare(
+          currentConnectedAddress,
+        );
 
-  const showAliasSuccess = (message) => {
-    aliasSuccessMsg.textContent = message;
-    aliasSuccessMsg.classList.remove("hidden");
-    aliasErrorMsg.textContent = "";
-    aliasErrorMsg.classList.add("hidden");
-  };
+        if (resolvedAddress !== connectedAddress) {
+          showAliasError("Este alias no corresponde a la wallet conectada.");
+          return;
+        }
 
-  const resetAliasVerification = () => {
-    inputAlias.value = "";
-    clearAliasMessages();
-    aliasSetupSection.classList.add("hidden");
-    inputAlias.disabled = false;
-    inputAlias.readOnly = false;
-    inputAlias.removeAttribute("disabled");
-    inputAlias.removeAttribute("readonly");
-    btnVerifyAlias.disabled = false;
-    btnVerifyAlias.textContent = "Verificar";
-  };
-
-  const applyHolderStatus = (address, status) => {
-    ui.address.textContent = address;
-    ui.votingStatus.textContent = "Próximamente";
-    aliasSetupSection.classList.add("hidden");
-
-    if (status === "holder") {
-      ui.alias.textContent = "Guardián RMZ";
-      ui.rmzStatus.textContent = "Guardián RMZ";
-      ui.telegramStatus.textContent = "Activo";
-      ui.faucetStatus.textContent = "Desbloqueada";
-      resetReputation();
-      ensureAliasInputEditable();
-      btnVerifyAlias.disabled = false;
-      btnVerifyAlias.textContent = "Verificar";
-      return;
-    }
-
-    if (status === "error") {
-      ui.alias.textContent = "Wallet conectada";
-      ui.rmzStatus.textContent = "Error de red";
-      ui.telegramStatus.textContent = "Requiere RMZ";
-      ui.faucetStatus.textContent = "Limitada";
-      return;
-    }
-
-    resetReputation({ hidden: true });
-    ui.alias.textContent = "Wallet conectada";
-    ui.rmzStatus.textContent = "No verificado";
-    ui.telegramStatus.textContent = "Requiere RMZ";
-    ui.faucetStatus.textContent = "Limitada";
-  };
-
-  const handleAliasVerification = async () => {
-    const aliasValue = inputAlias.value.trim();
-    clearAliasMessages();
-
-    if (!aliasValue) {
-      showAliasError("Escribe un alias .xec.");
-      return;
-    }
-
-    btnVerifyAlias.disabled = true;
-    btnVerifyAlias.textContent = "Verificando...";
-
-    try {
-      const resolution = await resolveAlias(aliasValue, {
-        endpoint: "https://alias.ecash.mx",
-      });
-
-      if (resolution === null) {
-        showAliasError("Alias no registrado en eCash.");
-        return;
+        const verifiedAlias = validateAlias(resolution.alias).valid
+          ? validateAlias(resolution.alias).normalized
+          : validation.normalized;
+        ui.alias.textContent = verifiedAlias;
+        inputAlias.value = verifiedAlias;
+        saveVerifiedAlias(currentConnectedAddress, verifiedAlias);
+        showAliasSuccess("Alias verificado correctamente.");
+        loadReputationForAlias(verifiedAlias);
+        console.debug("[RMZ Identity] Alias verified.");
+      } catch (error) {
+        console.error("[RMZ Identity] Alias verification failed.", {
+          message: error?.message,
+        });
+        showAliasError(
+          "No se pudo consultar el servidor de aliases. Intenta de nuevo.",
+        );
+      } finally {
+        aliasVerificationInProgress = false;
+        btnVerifyAlias.textContent = "Verificar";
+        updateAliasVerificationState();
       }
+    };
 
-      if (!resolution?.address) {
-        showAliasError("El servidor de alias no devolvió dirección.");
-        return;
+    const getPrimaryWalletAccount = async (session) => {
+      try {
+        const walletAddresses = await provider.request({
+          method: "ecash_getAddresses",
+          params: {},
+        });
+        return (
+          extractFirstWalletAddress(walletAddresses) ??
+          getFirstEcashAccount(session)
+        );
+      } catch (error) {
+        console.debug("[RMZ Identity] ecash_getAddresses failed.", error);
+        return getFirstEcashAccount(session);
       }
+    };
 
-      const resolvedAddress = normalizeAddressForCompare(resolution.address);
-      const connectedAddress = normalizeAddressForCompare(
-        currentConnectedAddress,
-      );
+    const restoreVerifiedAlias = (address) => {
+      const savedAlias = getSavedAlias(address);
+      if (!savedAlias) return;
 
-      if (resolvedAddress !== connectedAddress) {
-        showAliasError("Ese alias no pertenece a la wallet conectada.");
-        return;
-      }
-
-      const verifiedAlias = normalizeVerifiedAlias(resolution.alias);
+      const verifiedAlias = normalizeVerifiedAlias(savedAlias.alias);
       ui.alias.textContent = verifiedAlias;
       inputAlias.value = verifiedAlias;
-      saveVerifiedAlias(currentConnectedAddress, verifiedAlias);
-      showAliasSuccess("Alias verificado. Identidad confirmada.");
+      showAliasSuccess("Alias verificado anteriormente.");
       loadReputationForAlias(verifiedAlias);
-      ensureAliasInputEditable();
-      btnVerifyAlias.disabled = false;
-      btnVerifyAlias.textContent = "Verificar";
-      console.debug("[RMZ Identity] Alias verified:", resolution);
-    } catch (error) {
-      console.error("[RMZ Identity] Alias verification failed.", error);
-      showAliasError(
-        "No se pudo consultar el servidor de aliases. Intenta de nuevo.",
+    };
+
+    const handleAccount = async (rawAccount, options = {}) => {
+      const address = normalizeEcashAddress(normalizeEcashAccount(rawAccount));
+
+      console.debug("[RMZ Identity] WalletConnect account:", rawAccount);
+      console.debug("[RMZ Identity] Normalized eCash address:", address);
+      console.debug(
+        "[RMZ Identity] Account restored:",
+        Boolean(options.restored),
       );
-    } finally {
-      btnVerifyAlias.disabled = false;
-      btnVerifyAlias.textContent = "Verificar";
-    }
-  };
-
-  const getPrimaryWalletAccount = async (session) => {
-    try {
-      const walletAddresses = await provider.request({
-        method: "ecash_getAddresses",
-        params: {},
-      });
-      return (
-        extractFirstWalletAddress(walletAddresses) ??
-        getFirstEcashAccount(session)
+      console.debug(
+        "[RMZ Identity] isValidEcashAddress:",
+        isValidEcashAddress(address),
       );
-    } catch (error) {
-      console.debug("[RMZ Identity] ecash_getAddresses failed.", error);
-      return getFirstEcashAccount(session);
-    }
-  };
 
-  const restoreVerifiedAlias = (address) => {
-    const savedAlias = getSavedAlias(address);
-    if (!savedAlias) return;
+      if (!isValidEcashAddress(address)) {
+        throw new Error(`Invalid eCash address from wallet: ${address}`);
+      }
 
-    const verifiedAlias = normalizeVerifiedAlias(savedAlias.alias);
-    ui.alias.textContent = verifiedAlias;
-    inputAlias.value = verifiedAlias;
-    showAliasSuccess("Alias verificado anteriormente.");
-    loadReputationForAlias(verifiedAlias);
-  };
+      showConnected();
+      resetAliasVerification();
+      resetReputation({ hidden: true });
+      ui.address.textContent = address;
+      ui.alias.textContent = "Verificando RMZ...";
+      ui.rmzStatus.textContent = "Verificando...";
+      ui.telegramStatus.textContent = "Verificando...";
+      ui.faucetStatus.textContent = "Verificando...";
+      ui.votingStatus.textContent = "Próximamente";
 
-  const handleAccount = async (rawAccount, options = {}) => {
-    const address = normalizeEcashAddress(normalizeEcashAccount(rawAccount));
+      const status = await getRMZAccessStatus(address, adapter);
+      currentConnectedAddress = address;
+      applyHolderStatus(address, status);
 
-    console.debug("[RMZ Identity] WalletConnect account:", rawAccount);
-    console.debug("[RMZ Identity] Normalized eCash address:", address);
-    console.debug(
-      "[RMZ Identity] Account restored:",
-      Boolean(options.restored),
-    );
-    console.debug(
-      "[RMZ Identity] isValidEcashAddress:",
-      isValidEcashAddress(address),
-    );
+      if (status === "holder") {
+        restoreVerifiedAlias(address);
+        ensureAliasInputEditable();
+      }
+    };
 
-    if (!isValidEcashAddress(address)) {
-      throw new Error(`Invalid eCash address from wallet: ${address}`);
-    }
-
-    showConnected();
-    resetAliasVerification();
-    resetReputation({ hidden: true });
-    ui.address.textContent = address;
-    ui.alias.textContent = "Verificando RMZ...";
-    ui.rmzStatus.textContent = "Verificando...";
-    ui.telegramStatus.textContent = "Verificando...";
-    ui.faucetStatus.textContent = "Verificando...";
-    ui.votingStatus.textContent = "Próximamente";
-
-    const status = await getRMZAccessStatus(address, adapter);
-    currentConnectedAddress = address;
-    applyHolderStatus(address, status);
-
-    if (status === "holder") {
-      restoreVerifiedAlias(address);
-      ensureAliasInputEditable();
-    }
-  };
-
-  const restoreWalletSession = async () => {
-    console.debug(
-      "[RMZ Identity] Session restored:",
-      Boolean(provider?.session),
-    );
-    if (!provider?.session) return;
-
-    try {
-      console.debug("[RMZ Identity] Restoring WalletConnect session.");
-      const rawAccount = await getPrimaryWalletAccount(provider.session);
-      if (!rawAccount) return;
-      await handleAccount(rawAccount, { restored: true });
-    } catch (error) {
-      console.warn(
-        "[RMZ Identity] Unable to restore WalletConnect session:",
-        error,
+    const restoreWalletSession = async () => {
+      console.debug(
+        "[RMZ Identity] Session restored:",
+        Boolean(provider?.session),
       );
-    }
-  };
-
-  const initializeProvider = async () => {
-    provider = await UniversalProvider.init({
-      projectId: PROJECT_ID,
-      metadata: WALLETCONNECT_METADATA,
-    });
-
-    provider.on("display_uri", (uri) => {
-      modal.openModal({ uri });
-    });
-
-    provider.on("session_delete", showDisconnected);
-    provider.on("disconnect", showDisconnected);
-    provider.on("accountsChanged", async () => {
       if (!provider?.session) return;
+
       try {
+        console.debug("[RMZ Identity] Restoring WalletConnect session.");
         const rawAccount = await getPrimaryWalletAccount(provider.session);
-        if (rawAccount) await handleAccount(rawAccount);
+        if (!rawAccount) return;
+        await handleAccount(rawAccount, { restored: true });
       } catch (error) {
-        console.error("[RMZ Identity] Unable to refresh account.", error);
+        console.warn(
+          "[RMZ Identity] Unable to restore WalletConnect session:",
+          error,
+        );
+      }
+    };
+
+    const initializeProvider = async () => {
+      provider = await UniversalProvider.init({
+        projectId: PROJECT_ID,
+        metadata: WALLETCONNECT_METADATA,
+      });
+
+      provider.on("display_uri", (uri) => {
+        modal.openModal({ uri });
+      });
+
+      provider.on("session_delete", showDisconnected);
+      provider.on("disconnect", showDisconnected);
+      provider.on("accountsChanged", async () => {
+        if (!provider?.session) return;
+        try {
+          const rawAccount = await getPrimaryWalletAccount(provider.session);
+          if (rawAccount) await handleAccount(rawAccount);
+        } catch (error) {
+          console.error("[RMZ Identity] Unable to refresh account.", error);
+          showDisconnected();
+        }
+      });
+
+      await restoreWalletSession();
+    };
+
+    ui.connectButton.addEventListener("click", async () => {
+      setConnectLoading(true);
+
+      try {
+        if (!provider) await initializeProvider();
+
+        const session = await provider.connect({ namespaces: ECASH_NAMESPACE });
+        modal.closeModal();
+
+        if (!session)
+          throw new Error("WalletConnect did not return a session.");
+
+        try {
+          const rawAccount = await getPrimaryWalletAccount(session);
+          if (!rawAccount) {
+            throw new Error("WalletConnect did not return an eCash account.");
+          }
+          await handleAccount(rawAccount);
+        } catch (error) {
+          console.error("[RMZ Identity] Invalid wallet address.", error);
+          alert("La wallet devolvió una dirección eCash inválida.");
+          showDisconnected();
+        }
+      } catch (error) {
+        modal.closeModal();
+        console.error("[RMZ Identity] WalletConnect failed.", error);
+        alert("No se pudo conectar Tonalli Wallet. Intenta de nuevo.");
+        showDisconnected();
+      } finally {
+        setConnectLoading(false);
+      }
+    });
+
+    if (btnVerifyAlias) {
+      btnVerifyAlias.addEventListener("click", handleAliasVerification);
+    }
+
+    inputAlias.addEventListener("input", () => {
+      clearAliasMessages();
+      updateAliasVerificationState();
+    });
+
+    inputAlias.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !btnVerifyAlias.disabled) {
+        handleAliasVerification();
+      }
+    });
+
+    ui.disconnectButton.addEventListener("click", async () => {
+      try {
+        if (provider?.session) {
+          await provider.disconnect();
+        }
+      } catch (error) {
+        console.error("[RMZ Identity] Disconnect failed.", error);
+      } finally {
         showDisconnected();
       }
     });
 
-    await restoreWalletSession();
-  };
-
-  ui.connectButton.addEventListener("click", async () => {
-    setConnectLoading(true);
-
-    try {
-      if (!provider) await initializeProvider();
-
-      const session = await provider.connect({ namespaces: ECASH_NAMESPACE });
-      modal.closeModal();
-
-      if (!session) throw new Error("WalletConnect did not return a session.");
-
-      try {
-        const rawAccount = await getPrimaryWalletAccount(session);
-        if (!rawAccount) {
-          throw new Error("WalletConnect did not return an eCash account.");
-        }
-        await handleAccount(rawAccount);
-      } catch (error) {
-        console.error("[RMZ Identity] Invalid wallet address.", error);
-        alert("La wallet devolvió una dirección eCash inválida.");
-        showDisconnected();
-      }
-    } catch (error) {
-      modal.closeModal();
-      console.error("[RMZ Identity] WalletConnect failed.", error);
-      alert("No se pudo conectar Tonalli Wallet. Intenta de nuevo.");
+    initializeProvider().catch((error) => {
+      console.error("[RMZ Identity] WalletConnect init failed.", error);
       showDisconnected();
-    } finally {
-      setConnectLoading(false);
-    }
+    });
   });
-
-  if (btnVerifyAlias) {
-    btnVerifyAlias.addEventListener("click", handleAliasVerification);
-  }
-
-  inputAlias.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") handleAliasVerification();
-  });
-
-  ui.disconnectButton.addEventListener("click", async () => {
-    try {
-      if (provider?.session) {
-        await provider.disconnect();
-      }
-    } catch (error) {
-      console.error("[RMZ Identity] Disconnect failed.", error);
-    } finally {
-      showDisconnected();
-    }
-  });
-
-  initializeProvider().catch((error) => {
-    console.error("[RMZ Identity] WalletConnect init failed.", error);
-    showDisconnected();
-  });
-});
+}
