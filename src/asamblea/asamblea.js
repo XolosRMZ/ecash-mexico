@@ -77,13 +77,181 @@ function extractFirstWalletAddress(response) {
   return null;
 }
 
-function normalizeAlias(alias) {
-  const value = String(alias || "")
-    .trim()
-    .toLowerCase();
+export const ALIAS_PATTERN = /^[a-z0-9][a-z0-9-]{1,62}\.xec$/;
+export const ALIAS_ERROR_MESSAGE =
+  "Escribe un alias .xec válido, por ejemplo xolosarmy.xec.";
 
-  if (!value) return "";
-  return value.endsWith(".xec") ? value : `${value}.xec`;
+export function cleanAliasInput(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9.\-\s]/g, "");
+}
+
+export function validateAlias(value) {
+  const raw = String(value || "");
+  const trimmed = raw.trim();
+
+  if (!trimmed) {
+    return { valid: false, normalized: "", reason: "empty" };
+  }
+
+  if (/\s/.test(trimmed)) {
+    return {
+      valid: false,
+      normalized: cleanAliasInput(trimmed),
+      reason: "spaces",
+    };
+  }
+
+  if (/[^a-zA-Z0-9.-]/.test(trimmed)) {
+    return {
+      valid: false,
+      normalized: cleanAliasInput(trimmed),
+      reason: "characters",
+    };
+  }
+
+  const normalized = cleanAliasInput(trimmed);
+
+  if (!normalized || normalized === ".xec") {
+    return { valid: false, normalized, reason: "empty" };
+  }
+
+  if (!normalized.endsWith(".xec")) {
+    return { valid: false, normalized, reason: "suffix" };
+  }
+
+  if (normalized.includes("..")) {
+    return { valid: false, normalized, reason: "dots" };
+  }
+
+  if (normalized.startsWith("-")) {
+    return { valid: false, normalized, reason: "leading-hyphen" };
+  }
+
+  const label = normalized.slice(0, -4);
+
+  if (!label || label.length < 2) {
+    return { valid: false, normalized, reason: "empty" };
+  }
+
+  if (label.endsWith("-")) {
+    return { valid: false, normalized, reason: "trailing-hyphen" };
+  }
+
+  if (label.length > 63 || normalized.length > 67) {
+    return { valid: false, normalized, reason: "length" };
+  }
+
+  if (!ALIAS_PATTERN.test(normalized)) {
+    return { valid: false, normalized, reason: "format" };
+  }
+
+  return { valid: true, normalized };
+}
+
+export function isEligibilityButtonDisabled({
+  walletConnected = false,
+  aliasValid = false,
+  checkingEligibility = false,
+} = {}) {
+  return !walletConnected || !aliasValid || checkingEligibility;
+}
+
+export function isVoteButtonDisabled({
+  walletConnected = false,
+  aliasEligible = false,
+  proposalOpen = false,
+  choiceSelected = false,
+  voteInProgress = false,
+} = {}) {
+  return (
+    !walletConnected ||
+    !aliasEligible ||
+    !proposalOpen ||
+    !choiceSelected ||
+    voteInProgress
+  );
+}
+
+export function setAssemblyMessage(element, message, tone = "status") {
+  element.textContent = message;
+  element.setAttribute("role", tone === "error" ? "alert" : "status");
+
+  if (element.classList) {
+    element.classList.toggle("hidden", !message);
+  }
+}
+
+export function applyAliasValidation(ui, options = {}) {
+  const cleaned = cleanAliasInput(ui.inputAlias.value);
+
+  if (ui.inputAlias.value !== cleaned) {
+    ui.inputAlias.value = cleaned;
+  }
+
+  const validation = validateAlias(cleaned);
+  const hasValue = cleaned !== "";
+  const isInvalid = hasValue && !validation.valid;
+
+  ui.inputAlias.setAttribute("aria-invalid", isInvalid ? "true" : "false");
+
+  if (isInvalid) {
+    setAssemblyMessage(ui.aliasErrorMsg, ALIAS_ERROR_MESSAGE, "error");
+  } else {
+    setAssemblyMessage(ui.aliasErrorMsg, "", "error");
+  }
+
+  ui.checkEligibilityButton.disabled = isEligibilityButtonDisabled({
+    walletConnected: options.walletConnected,
+    aliasValid: validation.valid,
+    checkingEligibility: options.checkingEligibility,
+  });
+
+  return validation;
+}
+
+export function resetDisconnectedAssemblyUi(ui) {
+  ui.inputAlias.value = "";
+  ui.inputAlias.setAttribute("aria-invalid", "false");
+  setAssemblyMessage(ui.aliasErrorMsg, "", "error");
+
+  ui.checkEligibilityButton.disabled = true;
+  ui.checkEligibilityButton.textContent = "Verificar";
+
+  if (ui.eligibility) {
+    ui.eligibility.textContent =
+      "Conecta Tonalli Wallet para verificar elegibilidad.";
+    ui.eligibility.setAttribute("role", "status");
+  }
+
+  if (ui.voteButton) {
+    ui.voteButton.disabled = true;
+  }
+
+  if (ui.voteStatus) {
+    ui.voteStatus.textContent =
+      "Selecciona una opción después de verificar tu alias.";
+    ui.voteStatus.setAttribute("role", "status");
+  }
+
+  if (ui.canonicalMessage) {
+    ui.canonicalMessage.textContent = "";
+  }
+
+  if (ui.auditLinks) {
+    ui.auditLinks.replaceChildren();
+    ui.auditLinks.classList.add("hidden");
+  }
+
+  if (ui.choicesList?.querySelectorAll) {
+    for (const input of ui.choicesList.querySelectorAll(
+      'input[name="assembly-choice"]',
+    )) {
+      input.checked = false;
+    }
+  }
 }
 
 function formatDate(value) {
@@ -154,435 +322,550 @@ async function apiRequest(path, options = {}) {
   return payload;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const ui = {
-    connectButton: document.getElementById("btn-connect"),
-    disconnectButton: document.getElementById("btn-disconnect"),
-    walletStatus: document.getElementById("ui-wallet-status"),
-    aliasLabel: document.getElementById("ui-alias"),
-    address: document.getElementById("ui-address"),
-    inputAlias: document.getElementById("input-alias"),
-    checkEligibilityButton: document.getElementById("btn-check-eligibility"),
-    eligibility: document.getElementById("ui-eligibility"),
-    proposalTitle: document.getElementById("proposal-title"),
-    proposalStatus: document.getElementById("proposal-status"),
-    proposalSummary: document.getElementById("proposal-summary"),
-    proposalStart: document.getElementById("proposal-start"),
-    proposalEnd: document.getElementById("proposal-end"),
-    choicesList: document.getElementById("choices-list"),
-    voteButton: document.getElementById("btn-vote"),
-    voteStatus: document.getElementById("ui-vote-status"),
-    messageDetails: document.getElementById("message-details"),
-    canonicalMessage: document.getElementById("canonical-message"),
-    auditLinks: document.getElementById("audit-links"),
-    refreshResultsButton: document.getElementById("btn-refresh-results"),
-    resultsList: document.getElementById("results-list"),
-    effectiveVotes: document.getElementById("effective-votes"),
-    supersededVotes: document.getElementById("superseded-votes"),
-    invalidVotes: document.getElementById("invalid-votes"),
-  };
-
-  if (Object.values(ui).some((element) => !element)) {
-    console.warn("[RMZ Assembly] Missing expected assembly UI elements.");
-    return;
-  }
-
-  let provider;
-  const modal = new WalletConnectModal({ projectId: PROJECT_ID });
-  let currentAddress = "";
-  let currentAlias = "";
-  let proposal = null;
-  let results = null;
-  let eligibility = null;
-  let selectedChoiceId = "";
-  let preparedVote = null;
-  let isBusy = false;
-
-  const setStatus = (message, tone = "neutral") => {
-    const toneClasses = {
-      neutral: "border-white/10 bg-white/[0.03] text-gray-300",
-      success: "border-emerald-300/30 bg-emerald-300/10 text-emerald-100",
-      warning: "border-yellow-200/30 bg-yellow-200/10 text-yellow-100",
-      error: "border-red-300/30 bg-red-400/10 text-red-100",
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const ui = {
+      connectButton: document.getElementById("btn-connect"),
+      disconnectButton: document.getElementById("btn-disconnect"),
+      walletStatus: document.getElementById("ui-wallet-status"),
+      aliasLabel: document.getElementById("ui-alias"),
+      address: document.getElementById("ui-address"),
+      inputAlias: document.getElementById("input-alias"),
+      checkEligibilityButton: document.getElementById("btn-check-eligibility"),
+      aliasErrorMsg: document.getElementById("alias-error-msg"),
+      eligibility: document.getElementById("ui-eligibility"),
+      proposalTitle: document.getElementById("proposal-title"),
+      proposalStatus: document.getElementById("proposal-status"),
+      proposalSummary: document.getElementById("proposal-summary"),
+      proposalStart: document.getElementById("proposal-start"),
+      proposalEnd: document.getElementById("proposal-end"),
+      choicesList: document.getElementById("choices-list"),
+      voteButton: document.getElementById("btn-vote"),
+      voteStatus: document.getElementById("ui-vote-status"),
+      messageDetails: document.getElementById("message-details"),
+      canonicalMessage: document.getElementById("canonical-message"),
+      auditLinks: document.getElementById("audit-links"),
+      refreshResultsButton: document.getElementById("btn-refresh-results"),
+      resultsList: document.getElementById("results-list"),
+      effectiveVotes: document.getElementById("effective-votes"),
+      supersededVotes: document.getElementById("superseded-votes"),
+      invalidVotes: document.getElementById("invalid-votes"),
     };
 
-    ui.voteStatus.className = `mt-4 rounded-md border p-4 text-sm leading-7 ${toneClasses[tone]}`;
-    ui.voteStatus.textContent = message;
-  };
-
-  const setEligibilityMessage = (content, tone = "neutral") => {
-    const toneClasses = {
-      neutral: "border-white/10 bg-white/[0.03] text-gray-300",
-      success: "border-emerald-300/30 bg-emerald-300/10 text-emerald-100",
-      warning: "border-yellow-200/30 bg-yellow-200/10 text-yellow-100",
-      error: "border-red-300/30 bg-red-400/10 text-red-100",
-    };
-
-    ui.eligibility.className = `mt-4 rounded-md border p-4 text-sm leading-7 ${toneClasses[tone]}`;
-    ui.eligibility.replaceChildren();
-
-    if (typeof content === "string") {
-      ui.eligibility.textContent = content;
+    if (Object.values(ui).some((element) => !element)) {
+      console.warn("[RMZ Assembly] Missing expected assembly UI elements.");
       return;
     }
 
-    ui.eligibility.append(content);
-  };
+    let provider;
+    const modal = new WalletConnectModal({ projectId: PROJECT_ID });
+    let currentAddress = "";
+    let currentAlias = "";
+    let proposal = null;
+    let results = null;
+    let eligibility = null;
+    let selectedChoiceId = "";
+    let preparedVote = null;
+    let isBusy = false;
+    let isCheckingEligibility = false;
 
-  const resetVotePreparation = () => {
-    preparedVote = null;
-    ui.messageDetails.classList.add("hidden");
-    ui.messageDetails.removeAttribute("open");
-    ui.canonicalMessage.textContent = "";
-    ui.auditLinks.classList.add("hidden");
-    ui.auditLinks.replaceChildren();
-  };
-
-  const renderVotingEnabledState = () => {
-    const open = isProposalOpen(proposal);
-    const canVote =
-      open &&
-      Boolean(currentAddress) &&
-      Boolean(eligibility?.eligible) &&
-      Boolean(selectedChoiceId) &&
-      !isBusy;
-
-    ui.voteButton.disabled = !canVote;
-
-    if (!open) {
-      ui.voteButton.textContent = "Propuesta cerrada";
-      return;
-    }
-
-    if (isBusy) {
-      ui.voteButton.textContent = "Procesando...";
-      return;
-    }
-
-    ui.voteButton.textContent = "Preparar voto";
-  };
-
-  const setWalletConnected = (address) => {
-    currentAddress = address;
-    ui.walletStatus.textContent = "Conectada";
-    ui.walletStatus.className =
-      "space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200";
-    ui.aliasLabel.textContent = "Alias pendiente";
-    ui.address.textContent = address;
-    ui.connectButton.disabled = true;
-    ui.disconnectButton.disabled = false;
-    ui.inputAlias.disabled = false;
-    ui.checkEligibilityButton.disabled = false;
-    setEligibilityMessage("Wallet conectada. Verifica tu alias .xec.");
-    resetVotePreparation();
-    renderVotingEnabledState();
-  };
-
-  const setWalletDisconnected = () => {
-    currentAddress = "";
-    currentAlias = "";
-    eligibility = null;
-    selectedChoiceId = "";
-    preparedVote = null;
-    ui.walletStatus.textContent = "Desconectada";
-    ui.walletStatus.className =
-      "space-mono rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400";
-    ui.aliasLabel.textContent = "Alias pendiente";
-    ui.address.textContent = "ecash:...";
-    ui.connectButton.disabled = false;
-    ui.connectButton.textContent = "Conectar Tonalli Wallet";
-    ui.disconnectButton.disabled = true;
-    ui.inputAlias.disabled = true;
-    ui.inputAlias.value = "";
-    ui.checkEligibilityButton.disabled = true;
-    ui.checkEligibilityButton.textContent = "Verificar";
-    setEligibilityMessage(
-      "Conecta Tonalli Wallet para verificar elegibilidad.",
-    );
-    resetVotePreparation();
-    renderVotingEnabledState();
-  };
-
-  const renderProposal = () => {
-    if (!proposal) return;
-
-    ui.proposalTitle.textContent = proposal.title ?? PROPOSAL_ID;
-    ui.proposalSummary.textContent = proposal.summary ?? "";
-    ui.proposalStart.textContent = formatDate(proposal.startsAt);
-    ui.proposalEnd.textContent = formatDate(proposal.endsAt);
-    ui.proposalStatus.textContent = proposal.status ?? PROPOSAL_ID;
-    ui.proposalStatus.className = isProposalOpen(proposal)
-      ? "space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200"
-      : "space-mono rounded-full border border-yellow-200/30 bg-yellow-200/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-yellow-200";
-
-    ui.choicesList.replaceChildren();
-
-    for (const choice of proposal.choices ?? []) {
-      const label = document.createElement("label");
-      label.className =
-        "flex cursor-pointer items-center justify-between gap-4 rounded-md border border-white/10 bg-black/30 px-4 py-3 transition hover:border-emerald-300/40";
-
-      const text = document.createElement("span");
-      text.className = "font-semibold text-white";
-      text.textContent = choice.label ?? choice.id;
-
-      const input = document.createElement("input");
-      input.type = "radio";
-      input.name = "assembly-choice";
-      input.value = choice.id;
-      input.className = "h-5 w-5 accent-emerald-300";
-      input.addEventListener("change", () => {
-        selectedChoiceId = choice.id;
-        resetVotePreparation();
-        renderVotingEnabledState();
-        setStatus("Voto seleccionado. Prepara la firma con Tonalli Wallet.");
-      });
-
-      label.append(text, input);
-      ui.choicesList.append(label);
-    }
-
-    if (!isProposalOpen(proposal)) {
-      setStatus("La propuesta no está abierta para votar.", "warning");
-    }
-
-    renderVotingEnabledState();
-  };
-
-  const renderResults = () => {
-    const totals = results?.totals ?? {};
-    const choices =
-      proposal?.choices ?? Object.keys(totals).map((id) => ({ id }));
-    ui.resultsList.replaceChildren();
-
-    for (const choice of choices) {
-      const id = choice.id;
-      const card = document.createElement("div");
-      card.className =
-        "rounded-md border border-emerald-300/20 bg-black/35 p-5";
-
-      const label = document.createElement("span");
-      label.className = "block text-sm font-semibold text-gray-300";
-      label.textContent = choice.label ?? id;
-
-      const total = document.createElement("span");
-      total.className = "space-mono mt-2 block text-3xl text-emerald-200";
-      total.textContent = String(totals[id] ?? 0);
-
-      const key = document.createElement("span");
-      key.className = "space-mono mt-2 block text-[10px] text-gray-500";
-      key.textContent = id;
-
-      card.append(label, total, key);
-      ui.resultsList.append(card);
-    }
-
-    ui.effectiveVotes.textContent = String(results?.effectiveVotes ?? 0);
-    ui.supersededVotes.textContent = String(results?.supersededVotes ?? 0);
-    ui.invalidVotes.textContent = String(results?.invalidVotes ?? 0);
-  };
-
-  const renderEligibility = (payload) => {
-    eligibility = payload;
-    resetVotePreparation();
-
-    const aliasRecord = payload?.aliasRecord ?? payload?.alias ?? null;
-    const aliasStatus =
-      aliasRecord?.status ?? aliasRecord?.aliasStatus ?? payload?.aliasStatus;
-
-    if (payload?.eligible && aliasStatus && aliasStatus !== "confirmed") {
-      eligibility = {
-        ...payload,
-        eligible: false,
-        reason:
-          "Alias no confirmado. La asamblea no acepta aliases pendientes.",
+    const setStatus = (message, tone = "neutral") => {
+      const toneClasses = {
+        neutral: "border-white/10 bg-white/[0.03] text-gray-300",
+        success: "border-emerald-300/30 bg-emerald-300/10 text-emerald-100",
+        warning: "border-yellow-200/30 bg-yellow-200/10 text-yellow-100",
+        error: "border-red-300/30 bg-red-400/10 text-red-100",
       };
-    }
 
-    if (!eligibility?.eligible) {
-      const reason =
-        eligibility?.reason ?? eligibility?.error ?? "No elegible para votar.";
-      ui.aliasLabel.textContent = currentAlias || "Alias no elegible";
-      setEligibilityMessage(reason, "error");
-      setStatus("Alias no elegible. La votación sigue deshabilitada.", "error");
-      renderVotingEnabledState();
-      return;
-    }
+      ui.voteStatus.className = `mt-4 rounded-md border p-4 text-sm leading-7 ${toneClasses[tone]}`;
+      ui.voteStatus.setAttribute("role", tone === "error" ? "alert" : "status");
+      ui.voteStatus.textContent = message;
+    };
 
-    const wrapper = document.createElement("div");
+    const setEligibilityMessage = (content, tone = "neutral") => {
+      const toneClasses = {
+        neutral: "border-white/10 bg-white/[0.03] text-gray-300",
+        success: "border-emerald-300/30 bg-emerald-300/10 text-emerald-100",
+        warning: "border-yellow-200/30 bg-yellow-200/10 text-yellow-100",
+        error: "border-red-300/30 bg-red-400/10 text-red-100",
+      };
 
-    const title = document.createElement("p");
-    title.className = "font-bold text-emerald-100";
-    title.textContent = "Eligible to vote";
-    wrapper.append(title);
+      ui.eligibility.className = `mt-4 rounded-md border p-4 text-sm leading-7 ${toneClasses[tone]}`;
+      ui.eligibility.setAttribute(
+        "role",
+        tone === "error" ? "alert" : "status",
+      );
+      ui.eligibility.replaceChildren();
 
-    const facts = [
-      ["alias", currentAlias],
-      ["txid", aliasRecord?.txid],
-      ["blockheight", aliasRecord?.blockheight ?? aliasRecord?.blockHeight],
-      ["RMZ atoms", payload?.rmzAtoms ?? payload?.rmz?.atoms],
-    ];
+      if (typeof content === "string") {
+        ui.eligibility.textContent = content;
+        return;
+      }
 
-    for (const [label, value] of facts) {
-      if (value === undefined || value === null || value === "") continue;
-      const row = document.createElement("p");
-      row.className = "space-mono mt-1 break-all text-xs text-emerald-100";
-      row.textContent = `${label}: ${value}`;
-      wrapper.append(row);
-    }
+      ui.eligibility.append(content);
+    };
 
-    ui.aliasLabel.textContent = currentAlias;
-    setEligibilityMessage(wrapper, "success");
-    setStatus("Alias elegible. Selecciona una opción para votar.", "success");
-    renderVotingEnabledState();
-  };
+    const resetVotePreparation = () => {
+      preparedVote = null;
+      ui.messageDetails.classList.add("hidden");
+      ui.messageDetails.removeAttribute("open");
+      ui.canonicalMessage.textContent = "";
+      ui.auditLinks.classList.add("hidden");
+      ui.auditLinks.replaceChildren();
+    };
 
-  const renderAuditLinks = () => {
-    const links = [
-      [`${API_BASE}/proposals/${PROPOSAL_ID}/results`, "Resultados públicos"],
-      [`${API_BASE}/proposals/${PROPOSAL_ID}/votes`, "Votos públicos"],
-      [`${API_BASE}/proposals/${PROPOSAL_ID}/audit.jsonl`, "Audit JSONL"],
-    ];
+    const clearChoiceSelection = () => {
+      selectedChoiceId = "";
+      for (const input of ui.choicesList.querySelectorAll(
+        'input[name="assembly-choice"]',
+      )) {
+        input.checked = false;
+      }
+    };
 
-    ui.auditLinks.replaceChildren();
+    const updateEligibilityButtonState = () =>
+      applyAliasValidation(
+        {
+          inputAlias: ui.inputAlias,
+          aliasErrorMsg: ui.aliasErrorMsg,
+          checkEligibilityButton: ui.checkEligibilityButton,
+        },
+        {
+          walletConnected: Boolean(currentAddress),
+          checkingEligibility: isCheckingEligibility,
+        },
+      );
 
-    for (const [href, label] of links) {
-      const link = document.createElement("a");
-      link.href = href;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.className =
-        "space-mono break-all rounded-md border border-white/10 bg-black/35 p-3 text-xs text-emerald-200 transition hover:border-emerald-300/50";
-      link.textContent = `${label}: ${href}`;
-      ui.auditLinks.append(link);
-    }
-
-    ui.auditLinks.classList.remove("hidden");
-  };
-
-  const getPrimaryWalletAccount = async (session) => {
-    try {
-      const walletAddresses = await provider.request({
-        method: "ecash_getAddresses",
-        params: {},
+    const renderVotingEnabledState = () => {
+      const open = isProposalOpen(proposal);
+      ui.voteButton.disabled = isVoteButtonDisabled({
+        walletConnected: Boolean(currentAddress),
+        aliasEligible: Boolean(eligibility?.eligible),
+        proposalOpen: open,
+        choiceSelected: Boolean(selectedChoiceId),
+        voteInProgress: isBusy,
       });
-      return (
-        extractFirstWalletAddress(walletAddresses) ??
-        getFirstEcashAccount(session)
+
+      if (!open) {
+        ui.voteButton.textContent = "Propuesta cerrada";
+        return;
+      }
+
+      if (isBusy) {
+        ui.voteButton.textContent = "Procesando...";
+        return;
+      }
+
+      ui.voteButton.textContent = "Preparar voto";
+    };
+
+    const setWalletConnected = (address) => {
+      currentAddress = address;
+      ui.walletStatus.textContent = "Conectada";
+      ui.walletStatus.className =
+        "space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200";
+      ui.aliasLabel.textContent = "Alias pendiente";
+      ui.address.textContent = address;
+      ui.connectButton.disabled = true;
+      ui.disconnectButton.disabled = false;
+      ui.inputAlias.disabled = false;
+      setEligibilityMessage(
+        "Wallet conectada. Verifica tu alias .xec.",
+        "neutral",
       );
-    } catch (error) {
-      console.debug("[RMZ Assembly] ecash_getAddresses failed.", error);
-      return getFirstEcashAccount(session);
-    }
-  };
+      updateEligibilityButtonState();
+      resetVotePreparation();
+      renderVotingEnabledState();
+    };
 
-  const handleAccount = async (rawAccount) => {
-    const address = normalizeEcashAddress(normalizeEcashAccount(rawAccount));
-
-    if (!isValidEcashAddress(address)) {
-      throw new Error(`Invalid eCash address from wallet: ${address}`);
-    }
-
-    setWalletConnected(address);
-  };
-
-  const restoreWalletSession = async () => {
-    if (!provider?.session) return;
-
-    try {
-      const rawAccount = await getPrimaryWalletAccount(provider.session);
-      if (rawAccount) await handleAccount(rawAccount);
-    } catch (error) {
-      console.warn(
-        "[RMZ Assembly] Unable to restore WalletConnect session:",
-        error,
+    const setWalletDisconnected = () => {
+      currentAddress = "";
+      currentAlias = "";
+      eligibility = null;
+      selectedChoiceId = "";
+      preparedVote = null;
+      ui.walletStatus.textContent = "Desconectada";
+      ui.walletStatus.className =
+        "space-mono rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400";
+      ui.aliasLabel.textContent = "Alias pendiente";
+      ui.address.textContent = "ecash:...";
+      ui.connectButton.disabled = false;
+      ui.connectButton.textContent = "Conectar Tonalli Wallet";
+      ui.disconnectButton.disabled = true;
+      ui.inputAlias.disabled = true;
+      resetDisconnectedAssemblyUi(ui);
+      setEligibilityMessage(
+        "Conecta Tonalli Wallet para verificar elegibilidad.",
+        "neutral",
       );
-    }
-  };
+      clearChoiceSelection();
+      resetVotePreparation();
+      setStatus("Selecciona una opción después de verificar tu alias.");
+      renderVotingEnabledState();
+    };
 
-  const initializeProvider = async () => {
-    provider = await UniversalProvider.init({
-      projectId: PROJECT_ID,
-      metadata: WALLETCONNECT_METADATA,
-    });
+    const renderProposal = () => {
+      if (!proposal) return;
 
-    provider.on("display_uri", (uri) => {
-      modal.openModal({ uri });
-    });
+      ui.proposalTitle.textContent = proposal.title ?? PROPOSAL_ID;
+      ui.proposalSummary.textContent = proposal.summary ?? "";
+      ui.proposalStart.textContent = formatDate(proposal.startsAt);
+      ui.proposalEnd.textContent = formatDate(proposal.endsAt);
+      ui.proposalStatus.textContent = proposal.status ?? PROPOSAL_ID;
+      ui.proposalStatus.className = isProposalOpen(proposal)
+        ? "space-mono rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200"
+        : "space-mono rounded-full border border-yellow-200/30 bg-yellow-200/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-yellow-200";
 
-    provider.on("session_delete", setWalletDisconnected);
-    provider.on("disconnect", setWalletDisconnected);
-    provider.on("accountsChanged", async () => {
+      ui.choicesList.replaceChildren();
+
+      for (const choice of proposal.choices ?? []) {
+        const choiceId = String(choice.id ?? "");
+        if (!choiceId) continue;
+
+        const inputId = `assembly-choice-${choiceId.replace(/[^a-z0-9_-]/gi, "-")}`;
+
+        const label = document.createElement("label");
+        label.className =
+          "flex cursor-pointer items-center justify-between gap-4 rounded-md border border-white/10 bg-black/30 px-4 py-3 transition hover:border-emerald-300/40";
+        label.htmlFor = inputId;
+
+        const text = document.createElement("span");
+        text.className = "font-semibold text-white";
+        text.textContent = choice.label ?? choiceId;
+
+        const input = document.createElement("input");
+        input.id = inputId;
+        input.type = "radio";
+        input.name = "assembly-choice";
+        input.value = choiceId;
+        input.className = "h-5 w-5 accent-emerald-300";
+        input.addEventListener("change", () => {
+          selectedChoiceId = choiceId;
+          resetVotePreparation();
+          renderVotingEnabledState();
+          setStatus("Voto seleccionado. Prepara la firma con Tonalli Wallet.");
+        });
+
+        label.append(text, input);
+        ui.choicesList.append(label);
+      }
+
+      if (!isProposalOpen(proposal)) {
+        setStatus("La propuesta no está abierta para votar.", "warning");
+      }
+
+      renderVotingEnabledState();
+    };
+
+    const renderResults = () => {
+      const totals = results?.totals ?? {};
+      const choices =
+        proposal?.choices ?? Object.keys(totals).map((id) => ({ id }));
+      ui.resultsList.replaceChildren();
+
+      for (const choice of choices) {
+        const id = choice.id;
+        const row = document.createElement("tr");
+        row.className =
+          "rounded-md border border-emerald-300/20 bg-black/35 text-left";
+
+        const label = document.createElement("th");
+        label.scope = "row";
+        label.className =
+          "rounded-l-md border-y border-l border-emerald-300/20 bg-black/35 p-5 text-sm font-semibold text-gray-300";
+        label.textContent = choice.label ?? id;
+
+        const total = document.createElement("td");
+        total.className =
+          "border-y border-emerald-300/20 bg-black/35 p-5 space-mono text-3xl text-emerald-200";
+        total.textContent = String(totals[id] ?? 0);
+
+        const key = document.createElement("td");
+        key.className =
+          "rounded-r-md border-y border-r border-emerald-300/20 bg-black/35 p-5 space-mono text-[10px] text-gray-500";
+        key.textContent = id;
+
+        row.append(label, total, key);
+        ui.resultsList.append(row);
+      }
+
+      ui.effectiveVotes.textContent = String(results?.effectiveVotes ?? 0);
+      ui.supersededVotes.textContent = String(results?.supersededVotes ?? 0);
+      ui.invalidVotes.textContent = String(results?.invalidVotes ?? 0);
+    };
+
+    const getEligibilityFailureMessage = (payload) => {
+      const source = [
+        payload?.reason,
+        payload?.error,
+        payload?.message,
+        payload?.backendMessage,
+        payload?.payload?.reason,
+        payload?.payload?.error,
+        payload?.payload?.message,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      if (
+        payload?.registered === false ||
+        /no registrado|not registered|not found|404/.test(source)
+      ) {
+        return "Alias no registrado en eCash.";
+      }
+
+      if (
+        payload?.walletMatches === false ||
+        payload?.addressMatches === false ||
+        /no corresponde|does not correspond|mismatch|wallet/.test(source)
+      ) {
+        return "Este alias no corresponde a la wallet conectada.";
+      }
+
+      return "Este alias no es elegible para votar en esta Asamblea RMZ.";
+    };
+
+    const renderEligibility = (payload) => {
+      eligibility = payload;
+      resetVotePreparation();
+
+      const aliasRecord = payload?.aliasRecord ?? payload?.alias ?? null;
+      const aliasStatus =
+        aliasRecord?.status ?? aliasRecord?.aliasStatus ?? payload?.aliasStatus;
+
+      if (payload?.eligible && aliasStatus && aliasStatus !== "confirmed") {
+        eligibility = {
+          ...payload,
+          eligible: false,
+          reason:
+            "Alias no confirmado. La asamblea no acepta aliases pendientes.",
+        };
+      }
+
+      if (!eligibility?.eligible) {
+        ui.aliasLabel.textContent = currentAlias || "Alias no elegible";
+        setEligibilityMessage(
+          getEligibilityFailureMessage(eligibility),
+          "error",
+        );
+        setStatus(
+          "Alias no elegible. La votación sigue deshabilitada.",
+          "error",
+        );
+        renderVotingEnabledState();
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+
+      const title = document.createElement("p");
+      title.className = "font-bold text-emerald-100";
+      title.textContent = "Alias elegible para votar en esta Asamblea RMZ.";
+      wrapper.append(title);
+
+      const facts = [
+        ["alias", currentAlias],
+        ["txid", aliasRecord?.txid],
+        ["blockheight", aliasRecord?.blockheight ?? aliasRecord?.blockHeight],
+        ["RMZ atoms", payload?.rmzAtoms ?? payload?.rmz?.atoms],
+      ];
+
+      for (const [label, value] of facts) {
+        if (value === undefined || value === null || value === "") continue;
+        const row = document.createElement("p");
+        row.className = "space-mono mt-1 break-all text-xs text-emerald-100";
+        row.textContent = `${label}: ${value}`;
+        wrapper.append(row);
+      }
+
+      ui.aliasLabel.textContent = currentAlias;
+      setEligibilityMessage(wrapper, "success");
+      setStatus("Alias elegible. Selecciona una opción para votar.", "success");
+      renderVotingEnabledState();
+    };
+
+    const renderAuditLinks = () => {
+      const links = [
+        [`${API_BASE}/proposals/${PROPOSAL_ID}/results`, "Resultados públicos"],
+        [`${API_BASE}/proposals/${PROPOSAL_ID}/votes`, "Votos públicos"],
+        [`${API_BASE}/proposals/${PROPOSAL_ID}/audit.jsonl`, "Audit JSONL"],
+      ];
+
+      ui.auditLinks.replaceChildren();
+
+      for (const [href, label] of links) {
+        const link = document.createElement("a");
+        link.href = href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.className =
+          "space-mono break-all rounded-md border border-white/10 bg-black/35 p-3 text-xs text-emerald-200 transition hover:border-emerald-300/50";
+        link.textContent = `${label}: ${href}`;
+        ui.auditLinks.append(link);
+      }
+
+      ui.auditLinks.classList.remove("hidden");
+    };
+
+    const getPrimaryWalletAccount = async (session) => {
+      try {
+        const walletAddresses = await provider.request({
+          method: "ecash_getAddresses",
+          params: {},
+        });
+        return (
+          extractFirstWalletAddress(walletAddresses) ??
+          getFirstEcashAccount(session)
+        );
+      } catch (error) {
+        console.debug("[RMZ Assembly] ecash_getAddresses failed.", error);
+        return getFirstEcashAccount(session);
+      }
+    };
+
+    const handleAccount = async (rawAccount) => {
+      const address = normalizeEcashAddress(normalizeEcashAccount(rawAccount));
+
+      if (!isValidEcashAddress(address)) {
+        throw new Error(`Invalid eCash address from wallet: ${address}`);
+      }
+
+      setWalletConnected(address);
+    };
+
+    const restoreWalletSession = async () => {
       if (!provider?.session) return;
+
       try {
         const rawAccount = await getPrimaryWalletAccount(provider.session);
         if (rawAccount) await handleAccount(rawAccount);
       } catch (error) {
-        console.error("[RMZ Assembly] Unable to refresh account.", error);
-        setWalletDisconnected();
+        console.warn(
+          "[RMZ Assembly] Unable to restore WalletConnect session:",
+          error,
+        );
       }
-    });
+    };
 
-    await restoreWalletSession();
-  };
+    const initializeProvider = async () => {
+      provider = await UniversalProvider.init({
+        projectId: PROJECT_ID,
+        metadata: WALLETCONNECT_METADATA,
+      });
 
-  const loadProposal = async () => {
-    try {
-      const [proposalPayload, resultsPayload] = await Promise.all([
-        apiRequest(`/proposals/${PROPOSAL_ID}`),
-        apiRequest(`/proposals/${PROPOSAL_ID}/results`),
-      ]);
+      provider.on("display_uri", (uri) => {
+        modal.openModal({ uri });
+      });
 
-      proposal = proposalPayload;
-      results = resultsPayload;
-      renderProposal();
-      renderResults();
-    } catch (error) {
-      console.error("[RMZ Assembly] Proposal load failed.", error);
-      ui.proposalTitle.textContent = "No se pudo cargar la propuesta";
-      ui.proposalSummary.textContent = getBackendError(
-        error,
-        "Error al consultar la asamblea.",
-      );
-      setStatus("No se pudo cargar la propuesta.", "error");
-    }
-  };
+      provider.on("session_delete", setWalletDisconnected);
+      provider.on("disconnect", setWalletDisconnected);
+      provider.on("accountsChanged", async () => {
+        if (!provider?.session) return;
+        try {
+          const rawAccount = await getPrimaryWalletAccount(provider.session);
+          if (rawAccount) await handleAccount(rawAccount);
+        } catch (error) {
+          console.error("[RMZ Assembly] Unable to refresh account.", error);
+          setWalletDisconnected();
+        }
+      });
 
-  const refreshResults = async () => {
-    try {
-      ui.refreshResultsButton.disabled = true;
-      results = await apiRequest(`/proposals/${PROPOSAL_ID}/results`);
-      renderResults();
-    } catch (error) {
-      console.error("[RMZ Assembly] Results refresh failed.", error);
-      setStatus(
-        getBackendError(error, "No se pudieron actualizar resultados."),
-        "error",
-      );
-    } finally {
-      ui.refreshResultsButton.disabled = false;
-    }
-  };
+      await restoreWalletSession();
+    };
 
-  const checkEligibility = async () => {
-    if (!currentAddress) {
-      setEligibilityMessage("Conecta Tonalli Wallet primero.", "warning");
-      return;
-    }
+    const loadProposal = async () => {
+      try {
+        const [proposalPayload, resultsPayload] = await Promise.all([
+          apiRequest(`/proposals/${PROPOSAL_ID}`),
+          apiRequest(`/proposals/${PROPOSAL_ID}/results`),
+        ]);
 
-    currentAlias = normalizeAlias(ui.inputAlias.value);
-    if (!currentAlias) {
-      setEligibilityMessage("Escribe un alias .xec.", "warning");
-      return;
-    }
+        proposal = proposalPayload;
+        results = resultsPayload;
+        renderProposal();
+        renderResults();
+      } catch (error) {
+        console.error("[RMZ Assembly] Proposal load failed.", error);
+        ui.proposalTitle.textContent = "No se pudo cargar la propuesta";
+        ui.proposalSummary.textContent = getBackendError(
+          error,
+          "Error al consultar la asamblea.",
+        );
+        setStatus("No se pudo cargar la propuesta.", "error");
+      }
+    };
 
-    ui.inputAlias.value = currentAlias;
-    ui.checkEligibilityButton.disabled = true;
-    ui.checkEligibilityButton.textContent = "Verificando...";
-    eligibility = null;
-    renderVotingEnabledState();
+    const refreshResults = async () => {
+      try {
+        ui.refreshResultsButton.disabled = true;
+        results = await apiRequest(`/proposals/${PROPOSAL_ID}/results`);
+        renderResults();
+      } catch (error) {
+        console.error("[RMZ Assembly] Results refresh failed.", error);
+        setStatus(
+          getBackendError(error, "No se pudieron actualizar resultados."),
+          "error",
+        );
+      } finally {
+        ui.refreshResultsButton.disabled = false;
+      }
+    };
 
-    try {
+    const checkEligibility = async () => {
+      if (!currentAddress) {
+        setEligibilityMessage("Conecta Tonalli Wallet primero.", "warning");
+        updateEligibilityButtonState();
+        return;
+      }
+
+      const validation = updateEligibilityButtonState();
+
+      if (!validation.valid) {
+        setAssemblyMessage(ui.aliasErrorMsg, ALIAS_ERROR_MESSAGE, "error");
+        ui.inputAlias.setAttribute("aria-invalid", "true");
+        setEligibilityMessage(ALIAS_ERROR_MESSAGE, "error");
+        return;
+      }
+
+      currentAlias = validation.normalized;
+      ui.inputAlias.value = currentAlias;
+      isCheckingEligibility = true;
+      ui.checkEligibilityButton.disabled = true;
+      ui.checkEligibilityButton.textContent = "Verificando...";
+      setEligibilityMessage("Verificando...", "neutral");
+      eligibility = null;
+      renderVotingEnabledState();
+
+      try {
+        const payload = await apiRequest("/eligibility/check", {
+          method: "POST",
+          body: JSON.stringify({
+            alias: currentAlias,
+            wallet: currentAddress,
+          }),
+        });
+        renderEligibility(payload);
+      } catch (error) {
+        console.error("[RMZ Assembly] Eligibility check failed.", error);
+        setEligibilityMessage(getEligibilityFailureMessage(error), "error");
+        setStatus(
+          "Error de elegibilidad. La votación sigue deshabilitada.",
+          "error",
+        );
+      } finally {
+        isCheckingEligibility = false;
+        ui.checkEligibilityButton.textContent = "Verificar";
+        updateEligibilityButtonState();
+        renderVotingEnabledState();
+      }
+    };
+
+    const ensureFreshEligibility = async () => {
+      if (!currentAlias || !currentAddress) {
+        throw new Error("Verifica alias y wallet antes de votar.");
+      }
+
       const payload = await apiRequest("/eligibility/check", {
         method: "POST",
         body: JSON.stringify({
@@ -591,206 +874,191 @@ document.addEventListener("DOMContentLoaded", () => {
         }),
       });
       renderEligibility(payload);
-    } catch (error) {
-      console.error("[RMZ Assembly] Eligibility check failed.", error);
-      setEligibilityMessage(
-        getBackendError(error, "No se pudo verificar elegibilidad."),
-        "error",
-      );
-      setStatus(
-        "Error de elegibilidad. La votación sigue deshabilitada.",
-        "error",
-      );
-    } finally {
-      ui.checkEligibilityButton.disabled = false;
-      ui.checkEligibilityButton.textContent = "Verificar";
-      renderVotingEnabledState();
-    }
-  };
 
-  const ensureFreshEligibility = async () => {
-    if (!currentAlias || !currentAddress) {
-      throw new Error("Verifica alias y wallet antes de votar.");
-    }
-
-    const payload = await apiRequest("/eligibility/check", {
-      method: "POST",
-      body: JSON.stringify({
-        alias: currentAlias,
-        wallet: currentAddress,
-      }),
-    });
-    renderEligibility(payload);
-
-    if (!eligibility?.eligible) {
-      throw new Error(eligibility?.reason ?? "Alias no elegible.");
-    }
-  };
-
-  const signMessage = async (message, challengeId) => {
-    const response = await provider.request({
-      method: "ecash_signMessage",
-      params: {
-        message,
-        challengeId,
-        address: currentAddress,
-      },
-    });
-
-    const result = response?.result ?? response;
-    const signature =
-      typeof result === "string"
-        ? result
-        : (result?.signature ?? result?.sig ?? result?.base64Signature);
-    const publicKey = result?.publicKey ?? result?.publicKeyHex;
-
-    if (!publicKey) {
-      throw new Error(
-        "Tonalli Wallet must return publicKey for Assembly voting.",
-      );
-    }
-
-    return {
-      address: result?.address,
-      publicKey,
-      signature,
-      challengeId: result?.challengeId ?? challengeId,
-    };
-  };
-
-  const prepareAndSubmitVote = async () => {
-    if (!isProposalOpen(proposal)) {
-      setStatus("La propuesta no está abierta para votar.", "warning");
-      return;
-    }
-
-    if (!selectedChoiceId) {
-      setStatus("Selecciona una opción antes de votar.", "warning");
-      return;
-    }
-
-    isBusy = true;
-    resetVotePreparation();
-    renderVotingEnabledState();
-
-    try {
-      setStatus("preparing vote: verificando elegibilidad en backend.");
-      await ensureFreshEligibility();
-
-      setStatus("preparing vote: solicitando mensaje canónico al backend.");
-      preparedVote = await apiRequest("/votes/prepare", {
-        method: "POST",
-        body: JSON.stringify({
-          proposalId: PROPOSAL_ID,
-          alias: currentAlias,
-          wallet: currentAddress,
-          choiceId: selectedChoiceId,
-        }),
-      });
-
-      ui.canonicalMessage.textContent = preparedVote.message;
-      ui.messageDetails.classList.remove("hidden");
-      ui.messageDetails.setAttribute("open", "");
-
-      setStatus(
-        "awaiting wallet signature: confirma la firma en Tonalli Wallet.",
-      );
-      const signed = await signMessage(
-        preparedVote.message,
-        preparedVote.challengeId,
-      );
-
-      if (!signed.signature) {
-        throw new Error("Tonalli Wallet no devolvió signature.");
+      if (!eligibility?.eligible) {
+        throw new Error(eligibility?.reason ?? "Alias no elegible.");
       }
+    };
 
-      setStatus("submitting vote: enviando firma al backend.");
-      const submission = await apiRequest("/votes", {
-        method: "POST",
-        body: JSON.stringify({
-          proposalId: PROPOSAL_ID,
-          voteId: preparedVote.voteId,
-          challengeId: signed.challengeId,
-          alias: currentAlias,
-          wallet: currentAddress,
-          publicKey: signed.publicKey,
-          signature: signed.signature,
-          message: preparedVote.message,
-        }),
+    const signMessage = async (message, challengeId) => {
+      const response = await provider.request({
+        method: "ecash_signMessage",
+        params: {
+          message,
+          challengeId,
+          address: currentAddress,
+        },
       });
 
-      if (submission?.accepted !== true) {
+      const result = response?.result ?? response;
+      const signature =
+        typeof result === "string"
+          ? result
+          : (result?.signature ?? result?.sig ?? result?.base64Signature);
+      const publicKey = result?.publicKey ?? result?.publicKeyHex;
+
+      if (!publicKey) {
         throw new Error(
-          submission?.error ??
-            submission?.reason ??
-            "Voto rechazado por backend.",
+          "Tonalli Wallet must return publicKey for Assembly voting.",
         );
       }
 
-      setStatus(
-        "vote accepted: voto aceptado y publicado para auditoría.",
-        "success",
-      );
-      renderAuditLinks();
-      await refreshResults();
-    } catch (error) {
-      console.error("[RMZ Assembly] Vote flow failed.", error);
-      setStatus(getBackendError(error, "No se pudo enviar el voto."), "error");
-    } finally {
-      isBusy = false;
-      renderVotingEnabledState();
-    }
-  };
+      return {
+        address: result?.address,
+        publicKey,
+        signature,
+        challengeId: result?.challengeId ?? challengeId,
+      };
+    };
 
-  ui.connectButton.addEventListener("click", async () => {
-    ui.connectButton.disabled = true;
-    ui.connectButton.textContent = "Conectando...";
-
-    try {
-      if (!provider) await initializeProvider();
-
-      const session = await provider.connect({ namespaces: ECASH_NAMESPACE });
-      modal.closeModal();
-
-      if (!session) throw new Error("WalletConnect did not return a session.");
-
-      const rawAccount = await getPrimaryWalletAccount(session);
-      if (!rawAccount) {
-        throw new Error("WalletConnect did not return an eCash account.");
+    const prepareAndSubmitVote = async () => {
+      if (!isProposalOpen(proposal)) {
+        setStatus("La propuesta no está abierta para votar.", "warning");
+        return;
       }
 
-      await handleAccount(rawAccount);
-    } catch (error) {
-      modal.closeModal();
-      console.error("[RMZ Assembly] WalletConnect failed.", error);
-      setStatus(
-        "No se pudo conectar Tonalli Wallet. Intenta de nuevo.",
-        "error",
-      );
-      setWalletDisconnected();
-    }
-  });
+      if (!selectedChoiceId) {
+        setStatus("Selecciona una opción antes de votar.", "warning");
+        return;
+      }
 
-  ui.disconnectButton.addEventListener("click", async () => {
-    try {
-      if (provider?.session) await provider.disconnect();
-    } catch (error) {
-      console.error("[RMZ Assembly] Disconnect failed.", error);
-    } finally {
-      setWalletDisconnected();
-    }
-  });
+      isBusy = true;
+      resetVotePreparation();
+      renderVotingEnabledState();
 
-  ui.checkEligibilityButton.addEventListener("click", checkEligibility);
-  ui.inputAlias.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") checkEligibility();
-  });
-  ui.voteButton.addEventListener("click", prepareAndSubmitVote);
-  ui.refreshResultsButton.addEventListener("click", refreshResults);
+      try {
+        setStatus("preparing vote: verificando elegibilidad en backend.");
+        await ensureFreshEligibility();
 
-  setWalletDisconnected();
-  loadProposal();
-  initializeProvider().catch((error) => {
-    console.error("[RMZ Assembly] WalletConnect init failed.", error);
+        setStatus("preparing vote: solicitando mensaje canónico al backend.");
+        preparedVote = await apiRequest("/votes/prepare", {
+          method: "POST",
+          body: JSON.stringify({
+            proposalId: PROPOSAL_ID,
+            alias: currentAlias,
+            wallet: currentAddress,
+            choiceId: selectedChoiceId,
+          }),
+        });
+
+        ui.canonicalMessage.textContent = preparedVote.message;
+        ui.messageDetails.classList.remove("hidden");
+        ui.messageDetails.setAttribute("open", "");
+
+        setStatus(
+          "awaiting wallet signature: confirma la firma en Tonalli Wallet.",
+        );
+        const signed = await signMessage(
+          preparedVote.message,
+          preparedVote.challengeId,
+        );
+
+        if (!signed.signature) {
+          throw new Error("Tonalli Wallet no devolvió signature.");
+        }
+
+        setStatus("submitting vote: enviando firma al backend.");
+        const submission = await apiRequest("/votes", {
+          method: "POST",
+          body: JSON.stringify({
+            proposalId: PROPOSAL_ID,
+            voteId: preparedVote.voteId,
+            challengeId: signed.challengeId,
+            alias: currentAlias,
+            wallet: currentAddress,
+            publicKey: signed.publicKey,
+            signature: signed.signature,
+            message: preparedVote.message,
+          }),
+        });
+
+        if (submission?.accepted !== true) {
+          throw new Error(
+            submission?.error ??
+              submission?.reason ??
+              "Voto rechazado por backend.",
+          );
+        }
+
+        setStatus(
+          "vote accepted: voto aceptado y publicado para auditoría.",
+          "success",
+        );
+        renderAuditLinks();
+        await refreshResults();
+      } catch (error) {
+        console.error("[RMZ Assembly] Vote flow failed.", error);
+        setStatus(
+          getBackendError(error, "No se pudo enviar el voto."),
+          "error",
+        );
+      } finally {
+        isBusy = false;
+        renderVotingEnabledState();
+      }
+    };
+
+    ui.connectButton.addEventListener("click", async () => {
+      ui.connectButton.disabled = true;
+      ui.connectButton.textContent = "Conectando...";
+
+      try {
+        if (!provider) await initializeProvider();
+
+        const session = await provider.connect({ namespaces: ECASH_NAMESPACE });
+        modal.closeModal();
+
+        if (!session)
+          throw new Error("WalletConnect did not return a session.");
+
+        const rawAccount = await getPrimaryWalletAccount(session);
+        if (!rawAccount) {
+          throw new Error("WalletConnect did not return an eCash account.");
+        }
+
+        await handleAccount(rawAccount);
+      } catch (error) {
+        modal.closeModal();
+        console.error("[RMZ Assembly] WalletConnect failed.", error);
+        setStatus(
+          "No se pudo conectar Tonalli Wallet. Intenta de nuevo.",
+          "error",
+        );
+        setWalletDisconnected();
+      }
+    });
+
+    ui.disconnectButton.addEventListener("click", async () => {
+      try {
+        if (provider?.session) await provider.disconnect();
+      } catch (error) {
+        console.error("[RMZ Assembly] Disconnect failed.", error);
+      } finally {
+        setWalletDisconnected();
+      }
+    });
+
+    ui.checkEligibilityButton.addEventListener("click", checkEligibility);
+    ui.inputAlias.addEventListener("input", () => {
+      const validation = updateEligibilityButtonState();
+      currentAlias = validation.valid ? validation.normalized : "";
+      eligibility = null;
+      clearChoiceSelection();
+      resetVotePreparation();
+      renderVotingEnabledState();
+    });
+    ui.inputAlias.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !ui.checkEligibilityButton.disabled) {
+        checkEligibility();
+      }
+    });
+    ui.voteButton.addEventListener("click", prepareAndSubmitVote);
+    ui.refreshResultsButton.addEventListener("click", refreshResults);
+
+    setWalletDisconnected();
+    loadProposal();
+    initializeProvider().catch((error) => {
+      console.error("[RMZ Assembly] WalletConnect init failed.", error);
+    });
   });
-});
+}
