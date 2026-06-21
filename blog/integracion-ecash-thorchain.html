@@ -1,821 +1,385 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-0C5SHBHW2P");
-    </script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      Integración eCash y THORChain: Swaps Descentralizados | eCash México
-    </title>
-    <meta
-      name="description"
-      content="Crónica sobre la propuesta de código para añadir XEC nativo a THORChain, permitiendo intercambios cross-chain directos y sin custodia."
-    />
-    <link
-      rel="canonical"
-      href="https://ecash.mx/blog/integracion-ecash-thorchain.html"
-    />
-    <meta name="robots" content="index, follow" />
-
-    <meta property="og:locale" content="es_MX" />
-    <meta property="og:type" content="article" />
-    <meta property="og:site_name" content="eCash México" />
-    <meta
-      property="og:title"
-      content="Integración eCash y THORChain: Swaps Descentralizados"
-    />
-    <meta
-      property="og:description"
-      content="Crónica sobre la propuesta de código para añadir XEC nativo a THORChain, permitiendo intercambios cross-chain directos y sin custodia."
-    />
-    <meta
-      property="og:url"
-      content="https://ecash.mx/blog/integracion-ecash-thorchain.html"
-    />
-    <meta
-      property="og:image"
-      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
-    />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Integración eCash y THORChain: Swaps Descentralizados"
-    />
-    <meta
-      name="twitter:description"
-      content="Crónica sobre la propuesta de código para añadir XEC nativo a THORChain, permitiendo intercambios cross-chain directos y sin custodia."
-    />
-    <meta
-      name="twitter:image"
-      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
-    />
-    <link rel="stylesheet" href="/assets/css/tailwind.css" />
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Crónica / Análisis] eCash en THORChain - eCash Magazine México</title>
     <style>
-      :root {
-        --bg-main: #05070b;
-        --bg-card: #0d111a;
-        --bg-soft: #111827;
-        --text-main: #f5f7fa;
-        --text-muted: #a7b0c0;
-        --xec-blue: #00a3ff;
-        --xec-cyan: #00e0ff;
-        --gold: #d4af37;
-        --border-soft: rgba(255, 255, 255, 0.08);
-        --shadow-blue: rgba(0, 163, 255, 0.18);
-        --max-width: 980px;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        background:
-          radial-gradient(
-            circle at top left,
-            rgba(0, 163, 255, 0.16),
-            transparent 32%
-          ),
-          radial-gradient(
-            circle at bottom right,
-            rgba(212, 175, 55, 0.12),
-            transparent 30%
-          ),
-          var(--bg-main);
-        color: var(--text-main);
-        font-family:
-          system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-        line-height: 1.7;
-      }
-
-      .article-wrapper {
-        max-width: var(--max-width);
-        margin: 0 auto;
-        padding: 48px 20px 72px;
-      }
-
-      .article-hero {
-        padding: 42px 28px;
-        border: 1px solid var(--border-soft);
-        border-radius: 28px;
-        background:
-          linear-gradient(
-            135deg,
-            rgba(0, 163, 255, 0.12),
-            rgba(212, 175, 55, 0.07)
-          ),
-          rgba(13, 17, 26, 0.92);
-        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-        margin-bottom: 34px;
-      }
-
-      .article-kicker {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--xec-cyan);
-        background: rgba(0, 224, 255, 0.08);
-        border: 1px solid rgba(0, 224, 255, 0.25);
-        padding: 7px 12px;
-        border-radius: 999px;
-        font-size: 0.82rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-bottom: 18px;
-      }
-
-      .article-hero h1 {
-        font-size: clamp(2.1rem, 6vw, 4.5rem);
-        line-height: 1.02;
-        letter-spacing: -0.06em;
-        margin: 0 0 18px;
-      }
-
-      .article-hero h1 span {
-        color: var(--gold);
-      }
-
-      .article-subtitle {
-        color: var(--text-muted);
-        font-size: clamp(1rem, 2vw, 1.22rem);
-        max-width: 760px;
-        margin: 0;
-      }
-
-      .article-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 24px;
-        color: var(--text-muted);
-        font-size: 0.92rem;
-      }
-
-      .article-meta span {
-        border: 1px solid var(--border-soft);
-        background: rgba(255, 255, 255, 0.04);
-        padding: 6px 11px;
-        border-radius: 999px;
-      }
-
-      .video-section {
-        margin: 34px 0 40px;
-        padding: 14px;
-        border-radius: 26px;
-        background: linear-gradient(
-          135deg,
-          rgba(0, 163, 255, 0.16),
-          rgba(212, 175, 55, 0.12)
-        );
-        box-shadow: 0 18px 60px var(--shadow-blue);
-      }
-
-      .video-frame {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        overflow: hidden;
-        border-radius: 20px;
-        background: #000;
-      }
-
-      .video-frame iframe {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-      }
-
-      .article-card {
-        background: rgba(13, 17, 26, 0.88);
-        border: 1px solid var(--border-soft);
-        border-radius: 26px;
-        padding: 34px 28px;
-        box-shadow: 0 20px 70px rgba(0, 0, 0, 0.32);
-      }
-
-      .article-card h2 {
-        font-size: clamp(1.5rem, 3vw, 2.15rem);
-        line-height: 1.15;
-        margin: 42px 0 16px;
-        letter-spacing: -0.035em;
-        color: var(--text-main);
-      }
-
-      .article-card h2:first-child {
-        margin-top: 0;
-      }
-
-      .article-card h3 {
-        font-size: 1.15rem;
-        margin: 28px 0 10px;
-        color: var(--gold);
-        letter-spacing: -0.02em;
-      }
-
-      .article-card p {
-        color: #dce3ee;
-        margin: 0 0 18px;
-        font-size: 1.02rem;
-      }
-
-      .article-card strong {
-        color: #ffffff;
-      }
-
-      .article-card em {
-        color: var(--xec-cyan);
-        font-style: normal;
-        font-weight: 650;
-      }
-
-      .lead-paragraph {
-        font-size: 1.16rem !important;
-        color: #ffffff !important;
-        border-left: 4px solid var(--xec-blue);
-        padding-left: 18px;
-        margin-bottom: 28px !important;
-      }
-
-      .section-label {
-        display: inline-block;
-        color: var(--xec-cyan);
-        font-size: 0.82rem;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        font-weight: 800;
-        margin-bottom: 8px;
-      }
-
-      .highlight-box {
-        margin: 30px 0;
-        padding: 24px;
-        border-radius: 22px;
-        background:
-          linear-gradient(
-            135deg,
-            rgba(0, 163, 255, 0.11),
-            rgba(0, 224, 255, 0.04)
-          ),
-          var(--bg-soft);
-        border: 1px solid rgba(0, 224, 255, 0.18);
-      }
-
-      .highlight-box p:last-child {
-        margin-bottom: 0;
-      }
-
-      .tech-list {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 16px;
-        margin: 26px 0;
-        padding: 0;
-        list-style: none;
-      }
-
-      .tech-list li {
-        padding: 20px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.045);
-        border: 1px solid var(--border-soft);
-      }
-
-      .tech-list strong {
-        display: block;
-        margin-bottom: 6px;
-        color: var(--gold);
-        font-size: 1.04rem;
-      }
-
-      .quote {
-        margin: 34px 0;
-        padding: 28px;
-        border-radius: 24px;
-        background: rgba(212, 175, 55, 0.08);
-        border: 1px solid rgba(212, 175, 55, 0.24);
-        color: #fff6d8;
-        font-size: 1.18rem;
-        line-height: 1.55;
-        font-weight: 650;
-      }
-
-      .closing-box {
-        margin-top: 44px;
-        padding: 28px;
-        border-radius: 24px;
-        background:
-          linear-gradient(
-            135deg,
-            rgba(212, 175, 55, 0.12),
-            rgba(0, 163, 255, 0.1)
-          ),
-          rgba(255, 255, 255, 0.035);
-        border: 1px solid var(--border-soft);
-      }
-
-      .closing-box p:last-child {
-        margin-bottom: 0;
-      }
-
-      .cta-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 28px;
-      }
-
-      .cta-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        border-radius: 999px;
-        padding: 12px 18px;
-        font-weight: 800;
-        color: #041019;
-        background: linear-gradient(135deg, var(--xec-cyan), var(--xec-blue));
-        box-shadow: 0 10px 28px rgba(0, 163, 255, 0.28);
-      }
-
-      .cta-button.secondary {
-        color: var(--text-main);
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.16);
-        box-shadow: none;
-      }
-
-      code {
-        color: var(--xec-cyan);
-        background: rgba(0, 224, 255, 0.09);
-        border: 1px solid rgba(0, 224, 255, 0.16);
-        border-radius: 8px;
-        padding: 2px 6px;
-        font-size: 0.92em;
-      }
-
-      @media (min-width: 760px) {
-        .tech-list {
-          grid-template-columns: 1fr 1fr;
+        /* --- CSS GENERAL DE LA REVISTA --- */
+        :root {
+            --ecash-cyan: #00abe7;
+            --ecash-blue: #003366;
+            --bg-dark: #090909;
+            --bg-panel: #111111;
+            --text-main: #e0e0e0;
+            --text-muted: #aaaaaa;
+            --white: #ffffff;
+            --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-body: 'Georgia', Times, serif; /* Serif para lectura larga */
         }
 
-        .article-hero {
-          padding: 56px 44px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .article-card {
-          padding: 46px 44px;
-        }
-      }
-
-      @media (max-width: 520px) {
-        .article-wrapper {
-          padding: 28px 14px 54px;
-        }
-
-        .article-hero,
-        .article-card {
-          border-radius: 22px;
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.8;
+            font-size: 18px;
+            padding-bottom: 100px;
         }
 
-        .article-hero {
-          padding: 32px 22px;
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        .article-card {
-          padding: 28px 20px;
+        /* --- ESTILOS DE REVISTA (EMG) --- */
+        .emg-article-header {
+            padding: 80px 0 40px 0;
+            text-align: center;
+            border-bottom: 1px solid #222;
+            background: radial-gradient(circle at center, #1a1a1a 0%, var(--bg-dark) 70%);
         }
 
-        .video-section {
-          border-radius: 22px;
-          padding: 10px;
+        .emg-kicker {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--ecash-cyan);
+            letter-spacing: 2px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: block;
         }
 
-        .video-frame {
-          border-radius: 16px;
+        h1.emg-title {
+            font-family: var(--font-heading);
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
         }
-      }
+
+        .emg-bajada {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            color: var(--text-muted);
+            font-weight: 300;
+            max-width: 700px;
+            margin: 0 auto 30px auto;
+            line-height: 1.4;
+        }
+
+        .emg-meta {
+            font-family: var(--font-heading);
+            font-size: 14px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- CONTENIDO DEL ARTÍCULO --- */
+        .emg-article-content {
+            padding: 60px 0;
+        }
+
+        .emg-article-content p {
+            margin-bottom: 25px;
+        }
+
+        .emg-article-content h2 {
+            font-family: var(--font-heading);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--white);
+            margin: 50px 0 20px 0;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .emg-article-content h2::before {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 4px;
+            background-color: var(--ecash-cyan);
+            margin-right: 15px;
+        }
+
+        /* Resumen corto estilo panel */
+        .emg-summary-box {
+            background-color: var(--bg-panel);
+            padding: 30px;
+            border-radius: 4px;
+            border-left: 4px solid var(--ecash-cyan);
+            margin-bottom: 40px;
+            font-family: var(--font-heading);
+            font-size: 17px;
+            color: var(--text-main);
+        }
+
+        .emg-summary-box p {
+            margin-bottom: 15px;
+        }
+        .emg-summary-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .emg-source-microlink {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-style: italic;
+            border-top: 1px solid #222;
+            padding-top: 10px;
+            display: block;
+        }
+
+        .emg-source-microlink a {
+            color: var(--ecash-cyan);
+            text-decoration: none;
+        }
+
+        /* Video Responsive */
+        .emg-video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            overflow: hidden;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid #222;
+        }
+
+        .emg-video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Destacados / Mantras */
+        .emg-pullquote {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ecash-cyan);
+            text-align: center;
+            margin: 50px auto;
+            max-width: 600px;
+            line-height: 1.3;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .emg-pullquote::before, .emg-pullquote::after {
+            content: '"';
+            font-size: 60px;
+            position: absolute;
+            opacity: 0.2;
+            font-family: serif;
+        }
+        
+        .emg-pullquote::before {
+            top: -20px;
+            left: -30px;
+        }
+
+        .emg-pullquote::after {
+            bottom: -40px;
+            right: -30px;
+        }
+
+        /* Sección de cierre estratégica */
+        .emg-strategy-section {
+            background-color: var(--bg-panel);
+            padding: 40px;
+            margin-top: 50px;
+            border-radius: 4px;
+            border: 1px solid #222;
+        }
+
+        .emg-list-roadmap {
+            list-style: none;
+            font-family: var(--font-heading);
+            margin-top: 20px;
+        }
+
+        .emg-list-roadmap li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .emg-list-roadmap li::before {
+            content: '✓';
+            color: var(--ecash-cyan);
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        /* Extracto para compartir */
+        .emg-share-box {
+            background-color: var(--ecash-blue);
+            color: var(--white);
+            padding: 30px;
+            margin-top: 60px;
+            border-radius: 4px;
+            font-family: var(--font-heading);
+            text-align: center;
+        }
+
+        .emg-share-box h3 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .emg-share-text {
+            font-size: 20px;
+            font-weight: 300;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .emg-social-mantra {
+            font-weight: 700;
+            color: var(--ecash-cyan);
+            margin-top: 15px;
+            display: block;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            h1.emg-title {
+                font-size: 32px;
+            }
+            .emg-bajada {
+                font-size: 18px;
+            }
+            .emg-article-content h2 {
+                font-size: 26px;
+            }
+            body {
+                font-size: 17px;
+            }
+            .emg-pullquote {
+                font-size: 20px;
+                margin: 40px auto;
+            }
+        }
     </style>
-  </head>
+</head>
+<body>
 
-  <body>
-    <main class="article-wrapper">
-      <header class="article-hero">
-        <div class="article-kicker">eCash México · xolosArmy Network</div>
-
-        <h1>
-          Crónica de una Transición:<br />
-          <span>El Xoloitzcuintle como Guía en la Era del Código</span>
-        </h1>
-
-        <p class="article-subtitle">
-          Una lectura editorial del Weekly Update de xolosArmy Network: mito,
-          infraestructura soberana, inteligencia artificial, eCash, Tonalli
-          Wallet, Teyolia y la búsqueda de una nueva brújula moral para la
-          civilización digital.
-        </p>
-
-        <div class="article-meta">
-          <span>Crónica editorial</span>
-          <span>eCash / XEC</span>
-          <span>Tonalli Wallet</span>
-          <span>Teyolia</span>
-          <span>THORChain</span>
+    <!-- CABECERA DEL ARTÍCULO (Área de Portada) -->
+    <header class="emg-article-header">
+        <div class="container">
+            <span class="emg-kicker">[Crónica / Análisis]</span>
+            <h1 class="emg-title">eCash en THORChain: del código listo a la liquidez soberana</h1>
+            <p class="emg-bajada">Presentación de la visión detrás de la integración nativa: una ruta para llevar XEC a liquidez descentralizada, sin wrappers, sin custodios y con infraestructura comunitaria.</p>
+            <div class="emg-meta">
+                Por EMG Technical Team | 2026 (Tiempo de Red)
+            </div>
         </div>
-      </header>
+    </header>
 
-      <section
-        class="video-section"
-        aria-label="Video del Weekly Update de xolosArmy Network"
-      >
-        <div class="video-frame">
-          <iframe
-            src="https://www.youtube.com/embed/FmBSmXjjRII"
-            title="Weekly Update de xolosArmy Network"
-            allow="
-              accelerometer;
-              autoplay;
-              clipboard-write;
-              encrypted-media;
-              gyroscope;
-              picture-in-picture;
-              web-share;
-            "
-            allowfullscreen
-          >
-          </iframe>
+    <!-- CUERPO DEL ARTÍCULO -->
+    <main class="emg-article-content">
+        <div class="container">
+
+            <!-- CAJA DE RESUMEN -->
+            <aside class="emg-summary-box">
+                <p>La conversación entre la comunidad de THORChain y Fernando, representante de xolosArmy, marcó un nuevo punto de madurez para la integración de eCash (XEC) en el ecosistema de liquidez cross-chain.</p>
+                <p>El mensaje central fue claro: el código del cliente de cadena para eCash ya fue trabajado y revisado técnicamente; ahora el siguiente reto es económico y comunitario: sembrar la liquidez inicial necesaria para activar un pool nativo XEC/RUNE.</p>
+                <span class="emg-source-microlink">Fuente: <a href="https://www.youtube.com/watch?v=4eO4hWRv4x0" target="_blank">Podcast THORChain #210 - YouTube</a></span>
+            </aside>
+
+            <h2>Del podcast al protocolo</h2>
+            <p>Durante el episodio #210 del podcast de THORChain, la conversación pasó rápidamente de la presentación comunitaria a una pregunta de fondo: ¿qué necesita eCash para tener liquidez soberana fuera de los exchanges centralizados?</p>
+            <p>Fernando explicó que xolosArmy no nació como una empresa tradicional ni como un custodio. Su papel es el de una comunidad constructora alrededor de eCash, enfocada en cultura, wallets, identidad digital, NFTs, infraestructura y herramientas para que XEC pueda usarse como dinero electrónico P2P.</p>
+            <p>Ese punto importa porque la integración con THORChain no se planteó como una simple lista de mercado. La conversación giró alrededor de una idea más profunda: permitir que eCash tenga una ruta de entrada y salida de liquidez sin depender exclusivamente de CEX, KYC o versiones envueltas del activo.</p>
+            
+            <span class="emg-source-microlink" style="margin-top: -10px; margin-bottom: 20px; display: block;">Contexto: <a href="https://twitter.com/THORChain/status/1782417336162521319" target="_blank">Anuncio de la sesión en X (Twitter)</a></span>
+
+            <h2>¿Por qué THORChain?</h2>
+            <p>THORChain es relevante para eCash porque permite intercambios cross-chain desde liquidez nativa. En lugar de depender de tokens envueltos, puentes custodiales o representaciones sintéticas, la tesis discutida en el podcast fue avanzar hacia un escenario donde XEC pueda moverser como XEC.</p>
+            <p>Para usuarios fuera de los grandes mercados o sin acceso cómodo a exchanges centralizados, esto tiene una implicación práctica: la liquidez deja de ser una puerta controlada por terceros y se convierte en infraestructura abierta.</p>
+            <p>La conversación colocó a THORChain como una posible pieza clave para la soberanía de mercado de eCash: un lugar donde el activo pueda encontrar pares de intercambio, profundidad y utilidad sin pedir permiso a intermediarios.</p>
+
+            <h2>eCash: UTXO, Avalanche y finalidad rápida</h2>
+            <p>Fernando también explicó las características técnicas que hacen particular a eCash. XEC es una cadena basada en el modelo UTXO, heredera de la tradición de Bitcoin y Bitcoin Cash, pero con una evolución propia: el uso de Avalanche para finalidad rápida.</p>
+            <p>En términos simples, esto permite que la red avance hacia confirmaciones más ágiles y una experiencia de pago más cercana al dinero electrónico cotidiano. En el podcast, esta idea se conectó con la visión original de dinero P2P: pagos rápidos, baratos y verificables, pero sin renunciar a la arquitectura de una cadena abierta.</p>
+            <p>La conversación también mencionó infraestructura desarrollada alrededor del ecosistema, como Tonalli Wallet, herramientas de identidad, NFTs registrados con IPFS y mecanismos comunitarios de financiamiento como Teyolia.</p>
+
+            <h2>El estado técnico: el cliente de cadena ya está en la mesa</h2>
+            <p>Uno de los momentos más importantes del episodio fue la confirmación del estado técnico. Según lo discutido, el cliente de cadena para eCash ya está listo y fue revisado por StarSquid, una figura técnica relevante dentro del proceso de integración de THORChain.</p>
+            <p>Eso no significa que XEC ya esté operando en THORChain, pero sí marca un cambio de etapa. La integración deja de estar solamente en el terreno de la intención y entra en una fase más concreta: código revisado, coordinación técnica y preparación para el siguiente requisito crítico.</p>
+            
+            <p class="emg-pullquote">Ese requisito es la liquidez.</p>
+
+            <h2>La nueva frontera: sembrar el pool</h2>
+            <p>Después del código viene el mercado. En el podcast se mencionó un objetivo sugerido de alrededor de 50 mil dólares para iniciar la liquidez necesaria del pool. La cifra no debe leerse como promesa de rendimiento ni como garantía de activación inmediata, sino como referencia operativa para dimensionar la fase que sigue.</p>
+            <p>Aquí entra la importancia de campañas comunitarias como Teyolia 2.0. Teyolia no debe entenderse como un “dev grant” ni como una promesa financiera. Su función estratégica es otra: preparar infraestructura y liquidez comunitaria para que, cuando la integración nativa esté lista para producción, exista una base real para activar el mercado XEC/RUNE.</p>
+            <p>La diferencia es importante. No se trata de vender hype. Se trata de organizar capital comunitario, coordinación técnica y narrativa soberana alrededor de una necesidad concreta: liquidez nativa.</p>
+
+            <h2>Sin wrappers: la tesis soberana</h2>
+            <p>Uno de los puntos más fuertes de la conversación fue el rechazo implícito a la dependencia de wrapped tokens. Para xolosArmy, el objetivo no es que eCash tenga una versión representada en otra cadena, sino que XEC exista como activo nativo dentro de una red de liquidez cross-chain.</p>
+            <p>Esa distinción parece técnica, pero es política en el sentido más amplio: define quién controla el activo, dónde vive la liquidez y qué riesgos se aceptan. Un token envuelto puede servir para ciertos casos, pero introduce intermediarios, contratos adicionales, riesgos de custodia o dependencia de puentes. La ruta nativa busca reducir esas capas.</p>
+            
+            <p class="emg-pullquote">Por eso, la integración con THORChain no es solo un asunto de trading. Es una pieza de infraestructura para que eCash sea más útil como dinero soberano.</p>
+
+            <h2>México en la conversación global de eCash</h2>
+            <p>El episodio también tiene una lectura cultural. Que una comunidad mexicana como xolosArmy participe en una conversación técnica con THORChain muestra que la adopción cripto no ocurre únicamente en laboratorios, fondos o exchanges. También ocurre desde comunidades que mezclan código, cultura, diseño, educación, wallets y narrativa.</p>
+
+            <!-- SECCIÓN DE CREADO DE ESTRATEGIA (PANEL) -->
+            <div class="emg-strategy-section">
+                <h3>Lo que sigue (Roadmap Estratégico)</h3>
+                <p>El podcast dejó una ruta clara para el ecosistema:</p>
+                <ul class="emg-list-roadmap">
+                    <li>Mantener la coordinación técnica para que el cliente de eCash avance hacia integración oficial.</li>
+                    <li>Organizar la liquidez inicial necesaria para que el pool pueda existir con profundidad suficiente.</li>
+                    <li>Comunicar con precisión: XEC todavía no está activo, pero la conversación ya pasó del “sería interesante” al “qué falta para hacerlo posible”.</li>
+                </ul>
+                <p style="margin-top: 20px; font-weight: bold; color: var(--white);">El código abre la puerta. La liquidez cruza el umbral. La comunidad decide.</p>
+            </div>
+
+            <!-- VIDEO EMBED -->
+            <div class="emg-video-wrapper">
+                <iframe src="https://www.youtube.com/embed/4eO4hWRv4x0" title="THORChain Podcast #210" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <h2>Cierre</h2>
+            <p>El episodio #210 del podcast de THORChain no fue solo una entrevista. Fue una señal de coordinación entre ecosistemas. Por un lado, THORChain busca expandir su red de activos nativos. Por otro, eCash necesita liquidez soberana para que su tesis de dinero electrónico P2P no dependa únicamente de exchanges centralizados.</p>
+            <p>La integración todavía requiere pasos concretos. No hay que venderla como hecha. Pero el mensaje del podcast fue contundente: eCash ya no está tocando la puerta desde afuera. Está sentado en la mesa técnica.</p>
+
+            <!-- CAJA DE COMPARTIR -->
+            <aside class="emg-share-box">
+                <h3>Extracto EMG</h3>
+                <p class="emg-share-text">"eCash no necesita una versión envuelta de sí mismo. Necesita liquidez nativa, verificable y soberana."</p>
+                <p>El cliente de cadena para XEC está revisado; ahora el reto es sembrar la liquidez inicial.</p>
+                <span class="emg-social-mantra">
+                    XEC es el dinero. <br>
+                    La liquidez es la frontera. <br>
+                    La cultura es la red.
+                </span>
+            </aside>
+
         </div>
-      </section>
-
-      <article class="article-card">
-        <p class="lead-paragraph">
-          El video no se presenta como un anuncio tecnológico convencional. No
-          hay oficinas de cristal, pantallas corporativas ni lenguaje vacío de
-          startup. Hay penumbra, madera, un candelabro antiguo y dos
-          Xoloitzcuintles moviéndose alrededor de Fernando como si custodiaran
-          el mensaje. Desde esa escena, xolosArmy Network presenta algo más que
-          una actualización semanal: presenta una tesis civilizatoria.
-        </p>
-
-        <h2>El Escenario: Entre lo Ancestral y lo Digital</h2>
-
-        <p>
-          El video arranca con una estética que rompe por completo el molde
-          tradicional de los anuncios tecnológicos. Fernando se encuentra en una
-          habitación sumida en la penumbra, iluminada tenuemente por un
-          candelabro antiguo que cuelga del techo y proyecta sombras sobre una
-          pesada mesa de madera. La atmósfera es rústica, casi mística.
-        </p>
-
-        <p>
-          Sin embargo, lo que le da vida a la escena no es solo la voz de
-          Fernando, sino la presencia inquieta de dos perros Xoloitzcuintles
-          desnudos. A lo largo de la grabación, los animales merodean, olfatean
-          y se apoyan sobre él buscando atención, convirtiéndose en los
-          coprotagonistas silenciosos —pero vitales— de la transmisión.
-        </p>
-
-        <p>
-          Con una camiseta negra sencilla y un tono directo, Fernando da la
-          bienvenida a la audiencia al
-          <em>Weekly Update</em> de <strong>xolosArmy Network</strong>. Su
-          objetivo es claro: explicar quiénes son, adónde van y qué buscan
-          lograr.
-        </p>
-
-        <h2>Primer Acto: El Mito como Brújula Moral</h2>
-
-        <p>
-          Fernando no comienza hablando de código, sino de historia y
-          cosmogonía. Introduce a xolosArmy no solo como una iniciativa
-          tecnológica, sino como un puente hacia la mitología mexica. Recuerda
-          cómo, históricamente, el Xoloitzcuintle era considerado un
-          <em>psicopompo</em>: un guía espiritual que ayudaba a los humanos a
-          transitar de la vida terrenal hacia el Mictlán, para luego renacer o
-          reintegrarse al todo.
-        </p>
-
-        <p>
-          La fuerza del discurso está en el paralelismo con el presente.
-          Fernando advierte que la humanidad está atravesando una nueva
-          transición civilizatoria: una era que será inundada por el código, las
-          criptomonedas y la Inteligencia Artificial. En este nuevo abismo
-          digital, xolosArmy propone al Xoloitzcuintle como símbolo, guardián y
-          brújula moral.
-        </p>
-
-        <div class="quote">
-          Del Xoloitzcuintle como guía del Mictlán al Xoloitzcuintle como guía
-          moral en la era del código.
-        </div>
-
-        <p>
-          La idea se extiende hacia la IA. Fernando reconoce que las
-          inteligencias artificiales comienzan a operar como agentes autónomos,
-          capaces de tomar decisiones, ejecutar instrucciones y participar en
-          sistemas sociales y económicos. Para evitar que la humanidad se pierda
-          en esta nueva dimensión, anuncia la creación de una
-          <strong>constitución legible por máquinas</strong>: un marco moral
-          integrado para que las IA puedan trabajar junto a nosotros bajo
-          principios de lealtad, guía y protección, inspirados en el símbolo
-          ancestral del Xolo.
-        </p>
-
-        <h2>Segundo Acto: Forjando las Herramientas</h2>
-
-        <span class="section-label">eCash, Tonalli y arqueología digital</span>
-
-        <p>
-          Para materializar esta filosofía, Fernando detalla el arsenal
-          tecnológico que han construido sobre la red <strong>eCash</strong>,
-          una evolución del linaje Bitcoin enfocada en pagos rápidos, bajo costo
-          de transacción y uso soberano del dinero digital.
-        </p>
-
-        <ul class="tech-list">
-          <li>
-            <strong>Tonalli Wallet</strong>
-            Presenta su billetera soberana. La palabra <em>Tonalli</em> hace
-            referencia a la energía vital, solar, que dota a los humanos de
-            voluntad y asistencia divina. En esta cosmología, la billetera no es
-            solo una herramienta financiera: es una extensión digital de la
-            energía soberana del usuario.
-          </li>
-
-          <li>
-            <strong>Arqueología moderna con NFTs</strong>
-            A través de Tonalli, xolosArmy documenta en la cadena de bloques los
-            linajes de los Xoloitzcuintles de Xolos Ramírez usando tecnología
-            eCash. Estos registros inmutables funcionan como una nueva forma de
-            arqueología digital: escribir en piedra, pero dentro de internet.
-          </li>
-
-          <li>
-            <strong>Mensajería incensurable</strong>
-            Fernando explica una función de comunicación nativa usando
-            <code>OP_RETURN</code>. Los usuarios pueden enviarse mensajes de
-            billetera a billetera de forma resistente a la censura, viviendo
-            enteramente <em>on-chain</em>.
-          </li>
-
-          <li>
-            <strong>Linaje cultural on-chain</strong>
-            La cadena de bloques deja de ser únicamente una herramienta
-            financiera y se convierte en archivo, memoria, testimonio y registro
-            cultural de una comunidad viva.
-          </li>
-        </ul>
-
-        <h2>Tercer Acto: Soberanía Económica y Expansión de la Red</h2>
-
-        <p>
-          El componente económico del ecosistema entra en juego con el
-          <strong>Token RMZ</strong>. Fernando subraya que este token no solo
-          sirve para pagos y participación comunitaria, sino que está incrustado
-          en la narrativa de gobernanza cultural de xolosArmy Network.
-        </p>
-
-        <p>
-          Como ejemplo de infraestructura viva, presenta
-          <strong>Teyolia</strong>, una aplicación de financiamiento colectivo
-          inspirada en el modelo <em>Flipstarter</em>. Aquí, cualquier usuario
-          puede levantar fondos para sus propias causas de manera
-          descentralizada y libre de censura, dentro de un ecosistema donde XEC
-          funciona como base monetaria soberana y RMZ como símbolo comunitario y
-          cultural.
-        </p>
-
-        <div class="highlight-box">
-          <p>
-            <strong>Teyolia</strong> representa una pieza clave de esta visión:
-            financiamiento comunitario, sin custodia, con una lógica alineada al
-            espíritu de Bitcoin y eCash. La comunidad puede coordinar recursos
-            sin depender de intermediarios tradicionales, plataformas
-            centralizadas o permisos externos.
-          </p>
-        </div>
-
-        <h2>Infraestructura: Chronik y THORChain</h2>
-
-        <p>
-          A nivel de infraestructura, Fernando revela el músculo técnico detrás
-          del proyecto. xolosArmy Network no se presenta únicamente como una
-          marca cultural, sino como una red que está construyendo sus propias
-          herramientas, nodos y caminos de integración.
-        </p>
-
-        <ul class="tech-list">
-          <li>
-            <strong>Nodos Chronik</strong>
-            Están operando su propio nodo Chronik, una herramienta que permite
-            indexar y extraer datos de NFTs, linajes, pagos y actividad en la
-            red eCash con gran velocidad. Esto permite experiencias más fluidas,
-            rápidas y soberanas para los usuarios del ecosistema.
-          </li>
-
-          <li>
-            <strong>Integración con THORChain</strong>
-            Uno de los anuncios más técnicos y ambiciosos es la colaboración
-            para llevar eCash de forma nativa a THORChain, un exchange
-            descentralizado de capa 1. El objetivo: permitir swaps nativos de
-            XEC sin puentes, sin custodios y sin tokens envueltos.
-          </li>
-        </ul>
-
-        <p>
-          Fernando menciona que ya se envió una solicitud de fusión, o
-          <em>merge request</em>, al repositorio de THORChain. También explica
-          que han recibido retroalimentación formal de desarrolladores
-          principales, incluyendo comentarios técnicos de <strong>piRK</strong>,
-          y que el código ha sido actualizado conforme avanza la revisión.
-        </p>
-
-        <p>
-          La meta final es poderosa: habilitar intercambios atómicos e
-          instantáneos entre eCash y otros activos nativos, incluyendo rutas
-          hacia monedas enfocadas en privacidad como Monero. Para Fernando, esto
-          es un ganar-ganar para el mundo descentralizado, soberano y sin
-          permisos.
-        </p>
-
-        <h2>Epílogo: El Llamado a la Comunidad</h2>
-
-        <p>
-          Para cerrar la actualización, Fernando aterriza en la realidad
-          operativa del proyecto. Se dirige a la comunidad de xolosArmy y eCash
-          para anunciar que han solicitado una subvención al
-          <strong>GNC, el Global Network Council</strong>.
-        </p>
-
-        <p>
-          Con un tono de honestidad directa, explica que necesitan
-          infraestructura, servidores y compensación monetaria para el trabajo
-          técnico, cultural y comunicativo que el equipo ha estado realizando.
-          La propuesta ya se encuentra bajo revisión formal.
-        </p>
-
-        <div class="closing-box">
-          <p>
-            El video concluye con una síntesis clara: xolosArmy Network no está
-            construyendo únicamente una wallet, una colección NFT, una
-            plataforma de crowdfunding o una integración técnica. Está
-            construyendo una red cultural con infraestructura propia.
-          </p>
-
-          <p>
-            Y en el centro de esa red está el Xoloitzcuintle: antiguo guía del
-            Mictlán, ahora convertido en símbolo de orientación para una
-            humanidad que entra, cada vez más rápido, en la era del código.
-          </p>
-
-          <div class="cta-row">
-            <a
-              class="cta-button"
-              href="https://ecash.mx/"
-              target="_blank"
-              rel="noopener"
-            >
-              Explorar eCash México
-            </a>
-
-            <a
-              class="cta-button secondary"
-              href="https://xolosarmy.xyz/"
-              target="_blank"
-              rel="noopener"
-            >
-              Visitar xolosArmy Network
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <section
-        aria-labelledby="continua-camino-soberano"
-        style="
-          margin-top: 56px;
-          padding-top: 34px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-        "
-      >
-        <h2
-          id="continua-camino-soberano"
-          style="
-            color: #f5f7fa;
-            border-left: 4px solid #00e0ff;
-            padding-left: 16px;
-          "
-        >
-          Continúa tu camino soberano
-        </h2>
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-            margin-top: 22px;
-          "
-        >
-          <a
-            href="chronik-builders-ecash.html"
-            style="
-              display: block;
-              padding: 20px;
-              border: 1px solid rgba(255, 255, 255, 0.12);
-              border-radius: 18px;
-              background: rgba(13, 17, 26, 0.92);
-              color: inherit;
-              text-decoration: none;
-              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
-            "
-          >
-            <strong style="display: block; color: #00e0ff; margin-bottom: 8px"
-              >Infraestructura Chronik</strong
-            >
-            <span
-              style="
-                display: block;
-                color: #a7b0c0;
-                font-size: 0.95rem;
-                line-height: 1.6;
-              "
-              >Profundiza en herramientas para builders de eCash.</span
-            >
-          </a>
-          <a
-            href="comprar-xec-en-mexico.html"
-            style="
-              display: block;
-              padding: 20px;
-              border: 1px solid rgba(255, 255, 255, 0.12);
-              border-radius: 18px;
-              background: rgba(13, 17, 26, 0.92);
-              color: inherit;
-              text-decoration: none;
-              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
-            "
-          >
-            <strong style="display: block; color: #00e0ff; margin-bottom: 8px"
-              >Compra XEC en México</strong
-            >
-            <span
-              style="
-                display: block;
-                color: #a7b0c0;
-                font-size: 0.95rem;
-                line-height: 1.6;
-              "
-              >Aprende rutas de entrada antes de swaps avanzados.</span
-            >
-          </a>
-          <a
-            href="teyolia-crowdfunding-xec.html"
-            style="
-              display: block;
-              padding: 20px;
-              border: 1px solid rgba(255, 255, 255, 0.12);
-              border-radius: 18px;
-              background: rgba(13, 17, 26, 0.92);
-              color: inherit;
-              text-decoration: none;
-              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
-            "
-          >
-            <strong style="display: block; color: #00e0ff; margin-bottom: 8px"
-              >Teyolia Crowdfunding</strong
-            >
-            <span
-              style="
-                display: block;
-                color: #a7b0c0;
-                font-size: 0.95rem;
-                line-height: 1.6;
-              "
-              >Conecta liquidez, coordinación y comunidad soberana.</span
-            >
-          </a>
-        </div>
-      </section>
     </main>
-  </body>
+
+</body>
 </html>
