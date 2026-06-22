@@ -1,27 +1,68 @@
 <!doctype html>
 <html lang="es">
   <head>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-0C5SHBHW2P"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-0C5SHBHW2P");
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cómo usar Xolos Explorer: Guía del Explorador de eCash | eCash México</title>
-    <meta name="description" content="Tutorial completo sobre Xolos Explorer de eCash México. Aprende a buscar bloques, transacciones, direcciones y verificar inscripciones de linaje OP_RETURN." />
-    <link rel="canonical" href="https://ecash.mx/blog/tutorial-xolos-explorer.html" />
+    <title>
+      Cómo usar Xolos Explorer: Guía del Explorador de eCash | eCash México
+    </title>
+    <meta
+      name="description"
+      content="Guía del explorador de bloques de eCash México para consultar transacciones, direcciones, bloques y actividad on-chain de forma clara."
+    />
+    <link
+      rel="canonical"
+      href="https://ecash.mx/blog/ecash-mexico-block-explorer.html"
+    />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph -->
     <meta property="og:locale" content="es_MX" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="eCash México" />
-    <meta property="og:title" content="Cómo usar Xolos Explorer: Guía del Explorador de eCash" />
-    <meta property="og:description" content="Tutorial completo sobre Xolos Explorer de eCash México. Aprende a buscar bloques, transacciones, direcciones y verificar inscripciones de linaje OP_RETURN." />
-    <meta property="og:url" content="https://ecash.mx/blog/tutorial-xolos-explorer.html" />
-    <meta property="og:image" content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg" />
+    <meta
+      property="og:title"
+      content="Cómo usar Xolos Explorer: Guía del Explorador de eCash"
+    />
+    <meta
+      property="og:description"
+      content="Guía del explorador de bloques de eCash México para consultar transacciones, direcciones, bloques y actividad on-chain de forma clara."
+    />
+    <meta
+      property="og:url"
+      content="https://ecash.mx/blog/ecash-mexico-block-explorer.html"
+    />
+    <meta
+      property="og:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Cómo usar Xolos Explorer: Guía del Explorador de eCash" />
-    <meta name="twitter:description" content="Tutorial completo sobre Xolos Explorer de eCash México. Aprende a buscar bloques, transacciones, direcciones y verificar inscripciones de linaje OP_RETURN." />
-    <meta name="twitter:image" content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg" />
+    <meta
+      name="twitter:title"
+      content="Cómo usar Xolos Explorer: Guía del Explorador de eCash"
+    />
+    <meta
+      name="twitter:description"
+      content="Guía del explorador de bloques de eCash México para consultar transacciones, direcciones, bloques y actividad on-chain de forma clara."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ecash.mx/assets/images/og/ecash-mexico-default.jpg"
+    />
 
     <!-- Inline Styles (Tailwind equivalent & Custom themed) -->
     <style>
@@ -43,7 +84,11 @@
       }
 
       body {
-        font-family: 'Lexend', system-ui, -apple-system, sans-serif;
+        font-family:
+          "Lexend",
+          system-ui,
+          -apple-system,
+          sans-serif;
         background-color: var(--deep-obsidian);
         color: var(--text-slate);
         line-height: 1.6;
@@ -51,13 +96,18 @@
       }
 
       .space-mono {
-        font-family: 'Space Mono', ui-monospace, monospace;
+        font-family: "Space Mono", ui-monospace, monospace;
       }
 
       /* Background layouts */
       .bg-hero {
-        background: 
-          radial-gradient(circle at 50% 30%, rgba(0, 171, 231, 0.15) 0%, rgba(0, 30, 98, 0.2) 40%, rgba(5, 7, 10, 1) 80%),
+        background:
+          radial-gradient(
+            circle at 50% 30%,
+            rgba(0, 171, 231, 0.15) 0%,
+            rgba(0, 30, 98, 0.2) 40%,
+            rgba(5, 7, 10, 1) 80%
+          ),
           linear-gradient(135deg, rgba(255, 204, 0, 0.05), transparent 40%),
           url("https://www.transparenttextures.com/patterns/aztec.png");
         border-bottom: 1px solid var(--line-color);
@@ -112,7 +162,8 @@
         transition: color 0.3s;
       }
 
-      .nav-links a:hover, .nav-links a.active {
+      .nav-links a:hover,
+      .nav-links a.active {
         color: var(--cypher-neon);
       }
 
@@ -275,7 +326,7 @@
 
       /* Code block representation */
       .code-display {
-        font-family: 'Space Mono', monospace;
+        font-family: "Space Mono", monospace;
         background-color: #030508;
         border: 1px solid rgba(0, 171, 231, 0.2);
         color: #7dd3fc;
@@ -286,10 +337,17 @@
         margin: 16px 0;
         word-break: break-all;
       }
-      
-      .code-keyword { color: #f43f5e; }
-      .code-string { color: #34d399; }
-      .code-prefix { color: #fbbf24; font-weight: bold; }
+
+      .code-keyword {
+        color: #f43f5e;
+      }
+      .code-string {
+        color: #34d399;
+      }
+      .code-prefix {
+        color: #fbbf24;
+        font-weight: bold;
+      }
 
       /* Sidebar widgets */
       .sidebar-widget {
@@ -332,7 +390,11 @@
 
       /* Bottom Call to Action */
       .action-banner {
-        background: linear-gradient(135deg, var(--temple-blue) 0%, #030712 100%);
+        background: linear-gradient(
+          135deg,
+          var(--temple-blue) 0%,
+          #030712 100%
+        );
         border: 1px solid rgba(0, 171, 231, 0.3);
         border-radius: 20px;
         padding: 40px;
@@ -418,9 +480,14 @@
     <div class="bg-hero">
       <header class="container">
         <div class="kicker space-mono">Tutorial / Infraestructura</div>
-        <h1>Cómo usar Xolos Explorer:<br /><span>El Explorador de Bloques Comunitario</span></h1>
+        <h1>
+          Cómo usar Xolos Explorer:<br /><span
+            >El Explorador de Bloques Comunitario</span
+          >
+        </h1>
         <p class="lead">
-          Aprende a navegar las transacciones de eCash (XEC), consultar saldos de eTokens y auditar registros de linaje inmutables on-chain.
+          Aprende a navegar las transacciones de eCash (XEC), consultar saldos
+          de eTokens y auditar registros de linaje inmutables on-chain.
         </p>
       </header>
     </div>
@@ -428,35 +495,58 @@
     <!-- Main Grid Layout -->
     <div class="container">
       <div class="content-grid">
-        
         <!-- Left Article Content -->
         <main>
           <article class="card card-accent">
             <h2>1. Más allá de un Explorador Técnico</h2>
             <p>
-              En la infraestructura blockchain tradicional, un explorador de bloques es visto como una simple herramienta de depuración o auditoría de hashes fríos. Sin embargo, alineados con la visión soberana de <strong>eCash México</strong>, el desarrollo de <strong>Xolos Explorer</strong> rompe este paradigma.
+              En la infraestructura blockchain tradicional, un explorador de
+              bloques es visto como una simple herramienta de depuración o
+              auditoría de hashes fríos. Sin embargo, alineados con la visión
+              soberana de <strong>eCash México</strong>, el desarrollo de
+              <strong>Xolos Explorer</strong> rompe este paradigma.
             </p>
             <p>
-              Construido utilizando el stack moderno de <strong>React + Vite</strong> y conectado directamente a nuestro endpoint soberano de la <strong>Chronik API</strong> (<code>https://chronik.xolosarmy.xyz</code>), esta interfaz combina la precisión matemática de la red eCash con las capas narrativas y culturales de nuestro Estado Red. No solo buscamos rastrear transacciones, sino dar visibilidad a la memoria digital viva.
+              Construido utilizando el stack moderno de
+              <strong>React + Vite</strong> y conectado directamente a nuestro
+              endpoint soberano de la
+              <strong>Chronik API</strong>
+              (<code>https://chronik.xolosarmy.xyz</code>), esta interfaz
+              combina la precisión matemática de la red eCash con las capas
+              narrativas y culturales de nuestro Estado Red. No solo buscamos
+              rastrear transacciones, sino dar visibilidad a la memoria digital
+              viva.
             </p>
 
             <h3>Características Principales de la Herramienta</h3>
             <div class="feature-grid">
               <div class="feature-box">
                 <strong>⚡ Resolución en Milisegundos</strong>
-                <p style="font-size: 0.9rem; margin-bottom: 0;">Gracias a la indexación directa de Chronik, las consultas de saldos e historiales cargan de forma instantánea.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0">
+                  Gracias a la indexación directa de Chronik, las consultas de
+                  saldos e historiales cargan de forma instantánea.
+                </p>
               </div>
               <div class="feature-box">
                 <strong>🐾 Desgranado de Linaje</strong>
-                <p style="font-size: 0.9rem; margin-bottom: 0;">Módulo exclusivo capaz de interpretar registros nativos estructurados en las salidas de datos del protocolo.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0">
+                  Módulo exclusivo capaz de interpretar registros nativos
+                  estructurados en las salidas de datos del protocolo.
+                </p>
               </div>
               <div class="feature-box">
                 <strong>📦 Gestión de eTokens (NFTs)</strong>
-                <p style="font-size: 0.9rem; margin-bottom: 0;">Fichas integradas con resolución de metadatos IPFS para la visualización directa de colecciones coleccionables.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0">
+                  Fichas integradas con resolución de metadatos IPFS para la
+                  visualización directa de colecciones coleccionables.
+                </p>
               </div>
               <div class="feature-box">
                 <strong>🔒 Auditoría de Integridad</strong>
-                <p style="font-size: 0.9rem; margin-bottom: 0;">Comparación automática entre los hashes documentales guardados en la génesis y la metadata real consultada.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0">
+                  Comparación automática entre los hashes documentales guardados
+                  en la génesis y la metadata real consultada.
+                </p>
               </div>
             </div>
           </article>
@@ -464,41 +554,88 @@
           <article class="card card-accent">
             <h2>2. Anatomía de una Búsqueda Global</h2>
             <p>
-              La barra de búsqueda de Xolos Explorer implementa un motor de detección inteligente en el frontend. No necesitas indicarle al sistema qué estás buscando; el software analiza el formato del string ingresado y redirige automáticamente a la sección correspondiente:
+              La barra de búsqueda de Xolos Explorer implementa un motor de
+              detección inteligente en el frontend. No necesitas indicarle al
+              sistema qué estás buscando; el software analiza el formato del
+              string ingresado y redirige automáticamente a la sección
+              correspondiente:
             </p>
 
             <ul>
-              <li><strong>Altura de Bloque:</strong> Si ingresas únicamente números (ej: <code>9000</code>), el explorador te llevará al índice del bloque, desplegando su tamaño, número de transacciones y marca de tiempo.</li>
-              <li><strong>Dirección eCash:</strong> Cadenas que comienzan con el prefijo oficial <code>ecash:</code>. Te mostrará el balance visible en XEC, la lista de UTXOs activos y tus coleccionables o tokens fungibles separados de forma lógica.</li>
-              <li><strong>Hashes de 64 caracteres:</strong> El sistema resolverá de forma autónoma si el hash corresponde a una transacción (TXID) o a un Token ID específico, mostrándote su árbol genealógico si cumple con los estándares criptográficos del linaje.</li>
+              <li>
+                <strong>Altura de Bloque:</strong> Si ingresas únicamente
+                números (ej: <code>9000</code>), el explorador te llevará al
+                índice del bloque, desplegando su tamaño, número de
+                transacciones y marca de tiempo.
+              </li>
+              <li>
+                <strong>Dirección eCash:</strong> Cadenas que comienzan con el
+                prefijo oficial <code>ecash:</code>. Te mostrará el balance
+                visible en XEC, la lista de UTXOs activos y tus coleccionables o
+                tokens fungibles separados de forma lógica.
+              </li>
+              <li>
+                <strong>Hashes de 64 caracteres:</strong> El sistema resolverá
+                de forma autónoma si el hash corresponde a una transacción
+                (TXID) o a un Token ID específico, mostrándote su árbol
+                genealógico si cumple con los estándares criptográficos del
+                linaje.
+              </li>
             </ul>
           </article>
 
           <article class="card card-gold">
             <h2>3. El Secreto está en el OP_RETURN</h2>
             <p>
-              Uno de los componentes más avanzados de Xolos Explorer es su capacidad para realizar lo que llamamos <em>arqueología moderna</em>. Cuando interactúas con transacciones del ecosistema, el explorador escanea los scripts de salida en busca de la instrucción de script <code>OP_RETURN</code> (representada por el código hex inicial <code>6a</code>).
+              Uno de los componentes más avanzados de Xolos Explorer es su
+              capacidad para realizar lo que llamamos
+              <em>arqueología moderna</em>. Cuando interactúas con transacciones
+              del ecosistema, el explorador escanea los scripts de salida en
+              busca de la instrucción de script
+              <code>OP_RETURN</code> (representada por el código hex inicial
+              <code>6a</code>).
             </p>
             <p>
-              Si el script contiene el prefijo oficial de registro de linaje de xolosArmy, el explorador activa una capa visual de <strong>Ficha Oficial de Linaje</strong>, traduciendo los bytes crudos a un formulario estructurado legible por cualquier persona:
+              Si el script contiene el prefijo oficial de registro de linaje de
+              xolosArmy, el explorador activa una capa visual de
+              <strong>Ficha Oficial de Linaje</strong>, traduciendo los bytes
+              crudos a un formulario estructurado legible por cualquier persona:
             </p>
 
             <div class="code-display">
-              <span class="code-keyword">6a</span><!-- OP_RETURN -->
-              <span class="code-prefix">584f4c4f7c52414d4952455a7c</span><!-- XOLO|RAMIREZ| -->
-              <span class="code-string">4e4f4d4252453d54494b417c4e41433d323032352d31302d3036...</span><!-- NOMBRE=TIKA|NAC=2025-10-06... -->
+              <span class="code-keyword">6a</span
+              ><!-- OP_RETURN -->
+              <span class="code-prefix">584f4c4f7c52414d4952455a7c</span
+              ><!-- XOLO|RAMIREZ| -->
+              <span class="code-string"
+                >4e4f4d4252453d54494b417c4e41433d323032352d31302d3036...</span
+              ><!-- NOMBRE=TIKA|NAC=2025-10-06... -->
             </div>
 
             <p>
-              Al identificar este formato, el software procesa las variables internas y despliega de manera automática los datos biológicos guardados en piedra digital: nombre completo, afijo de criadero, variedad, sexo, color, número de microchip subdermal verificado y enlaces criptográficos directos hacia las fichas individuales de sus progenitores (padre y madre), construyendo un árbol genealógico dinámico en pantalla.
+              Al identificar este formato, el software procesa las variables
+              internas y despliega de manera automática los datos biológicos
+              guardados en piedra digital: nombre completo, afijo de criadero,
+              variedad, sexo, color, número de microchip subdermal verificado y
+              enlaces criptográficos directos hacia las fichas individuales de
+              sus progenitores (padre y madre), construyendo un árbol
+              genealógico dinámico en pantalla.
             </p>
           </article>
 
           <!-- Action Call To Action Banner -->
           <div class="action-banner">
             <h3>¿Listo para auditar la red?</h3>
-            <p style="margin-bottom: 0;">Accede de forma directa a la aplicación del explorador y consulta bloques en tiempo real conectados a nuestro nodo soberano.</p>
-            <a href="https://explorer.xolosarmy.xyz" target="_blank" rel="noopener noreferrer" class="btn-neon">
+            <p style="margin-bottom: 0">
+              Accede de forma directa a la aplicación del explorador y consulta
+              bloques en tiempo real conectados a nuestro nodo soberano.
+            </p>
+            <a
+              href="https://explorer.xolosarmy.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-neon"
+            >
               <i class="fas fa-search-dollar"></i> Ir a Xolos Explorer
             </a>
           </div>
@@ -524,7 +661,6 @@
             </div>
           </div>
         </aside>
-
       </div>
     </div>
 
