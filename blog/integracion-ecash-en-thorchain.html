@@ -97,7 +97,12 @@
           ),
           var(--bg-main);
         color: var(--text-main);
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
         line-height: 1.7;
       }
 
@@ -140,7 +145,7 @@
         font-size: 1.2rem;
         font-style: italic;
       }
-      
+
       .brand span {
         color: var(--xec-cyan);
       }
@@ -165,8 +170,16 @@
       .article-hero::before {
         content: "";
         position: absolute;
-        top: 0; left: 0; width: 100%; height: 4px;
-        background: linear-gradient(90deg, var(--xec-cyan), var(--xec-blue), var(--gold));
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--xec-cyan),
+          var(--xec-blue),
+          var(--gold)
+        );
       }
 
       .article-kicker {
@@ -260,7 +273,9 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
         padding: 25px;
         border-radius: 20px;
-        transition: transform 0.3s, border-color 0.3s;
+        transition:
+          transform 0.3s,
+          border-color 0.3s;
       }
 
       .concept-card:hover {
@@ -284,7 +299,11 @@
         margin: 40px 0;
         padding: 30px;
         border-radius: 20px;
-        background: linear-gradient(135deg, rgba(0, 224, 255, 0.08), transparent);
+        background: linear-gradient(
+          135deg,
+          rgba(0, 224, 255, 0.08),
+          transparent
+        );
         border-left: 4px solid var(--xec-cyan);
         font-size: 1.3rem;
         color: white;
@@ -316,7 +335,9 @@
         letter-spacing: 0.05em;
         text-transform: uppercase;
         box-shadow: 0 10px 25px var(--shadow-cyan);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
 
       .cta-button:hover {
@@ -387,9 +408,7 @@
   <body>
     <main class="article-wrapper">
       <nav class="nav-top">
-        <a href="../index.html" class="brand">
-          eCash<span>México</span>
-        </a>
+        <a href="../index.html" class="brand"> eCash<span>México</span> </a>
         <a href="index.html">← Volver al Blog</a>
       </nav>
 
@@ -398,91 +417,166 @@
 
         <h1>
           Por qué native XEC on THORChain importa para México: <br />
-          <span>swaps sin wrapped tokens, sin custodios y con liquidez real</span>
+          <span
+            >swaps sin wrapped tokens, sin custodios y con liquidez real</span
+          >
         </h1>
 
         <p class="article-subtitle">
-          De nada sirve tener pagos instantáneos si dependemos de exchanges centralizados para convertir valor. Exploramos cómo THORChain y Tonalli Wallet habilitan la verdadera soberanía económica.
+          De nada sirve tener pagos instantáneos si dependemos de exchanges
+          centralizados para convertir valor. Exploramos cómo THORChain y
+          Tonalli Wallet habilitan la verdadera soberanía económica.
         </p>
       </header>
 
       <article class="article-content">
         <p class="lead-paragraph">
-          En México, el acceso a las criptomonedas ha estado dominado por un puñado de exchanges centralizados (CEX). Estas plataformas resuelven la rampa de entrada con dinero fiat, pero imponen un peaje oculto: <strong>el riesgo de custodia y la pérdida de privacidad.</strong> Si queremos que eCash (XEC) funcione como efectivo electrónico peer-to-peer en el día a día, la capacidad de intercambiarlo por otros activos debe ser igual de libre, directa e incensurable.
+          En México, el acceso a las criptomonedas ha estado dominado por un
+          puñado de exchanges centralizados (CEX). Estas plataformas resuelven
+          la rampa de entrada con dinero fiat, pero imponen un peaje oculto:
+          <strong>el riesgo de custodia y la pérdida de privacidad.</strong> Si
+          queremos que eCash (XEC) funcione como efectivo electrónico
+          peer-to-peer en el día a día, la capacidad de intercambiarlo por otros
+          activos debe ser igual de libre, directa e incensurable.
         </p>
 
         <h2>El Problema: La trampa de los Wrapped Tokens y los Custodios</h2>
 
         <p>
-          Imagina que tienes una tienda en México. Decides aceptar XEC usando tu billetera de autocustodia porque los pagos son rápidos (gracias a Avalanche Pre-Consensus) y las comisiones son nulas. Al final de la semana, quieres convertir una parte de esos XEC a Bitcoin (BTC) como reserva de valor, o a una stablecoin (USDC/USDT) para pagar proveedores.
+          Imagina que tienes una tienda en México. Decides aceptar XEC usando tu
+          billetera de autocustodia porque los pagos son rápidos (gracias a
+          Avalanche Pre-Consensus) y las comisiones son nulas. Al final de la
+          semana, quieres convertir una parte de esos XEC a Bitcoin (BTC) como
+          reserva de valor, o a una stablecoin (USDC/USDT) para pagar
+          proveedores.
         </p>
 
         <p>
-          Actualmente, la ruta típica te obliga a enviar tus fondos a un exchange centralizado (como Binance o Bitso), hacer el <em>trading</em> allí, pagar tarifas de retiro, y arriesgarte a bloqueos de cuenta. La alternativa "DeFi" suele involucrar puentes (<em>bridges</em>) y <em>Wrapped Tokens</em> (como wXEC o wBTC) en redes como Ethereum o BSC. 
+          Actualmente, la ruta típica te obliga a enviar tus fondos a un
+          exchange centralizado (como Binance o Bitso), hacer el
+          <em>trading</em> allí, pagar tarifas de retiro, y arriesgarte a
+          bloqueos de cuenta. La alternativa "DeFi" suele involucrar puentes
+          (<em>bridges</em>) y <em>Wrapped Tokens</em> (como wXEC o wBTC) en
+          redes como Ethereum o BSC.
         </p>
 
         <p>
-          Pero un Wrapped Token no es el activo real; es un "pagaré" (IOU) emitido por una entidad que custodia las monedas originales. Si el puente es hackeado o el emisor desaparece, tu token envuelto pasa a valer cero.
+          Pero un Wrapped Token no es el activo real; es un "pagaré" (IOU)
+          emitido por una entidad que custodia las monedas originales. Si el
+          puente es hackeado o el emisor desaparece, tu token envuelto pasa a
+          valer cero.
         </p>
 
         <div class="concept-grid">
           <div class="concept-card">
             <h4>❌ Centralizado (CEX)</h4>
-            <p>Tus llaves privadas las tiene una empresa. Pueden congelar tus fondos, exigir KYC extremo o sufrir insolvencia.</p>
+            <p>
+              Tus llaves privadas las tiene una empresa. Pueden congelar tus
+              fondos, exigir KYC extremo o sufrir insolvencia.
+            </p>
           </div>
           <div class="concept-card">
             <h4>❌ Puentes (Bridges)</h4>
-            <p>Usas tokens sintéticos (Wrapped). El riesgo técnico es altísimo; son el blanco número uno de los hackers en DeFi.</p>
+            <p>
+              Usas tokens sintéticos (Wrapped). El riesgo técnico es altísimo;
+              son el blanco número uno de los hackers en DeFi.
+            </p>
           </div>
           <div class="concept-card">
             <h4>✅ Nativo L1 a L1</h4>
-            <p>Intercambias moneda real por moneda real. Desde tu wallet a otra wallet, sin intermediarios. Esa es la promesa de THORChain.</p>
+            <p>
+              Intercambias moneda real por moneda real. Desde tu wallet a otra
+              wallet, sin intermediarios. Esa es la promesa de THORChain.
+            </p>
           </div>
         </div>
 
         <h2>La Solución: THORChain y la Liquidez de XEC Nativo</h2>
 
         <p>
-          <strong>THORChain</strong> es un protocolo descentralizado de liquidez <em>cross-chain</em>. Su función es permitir el intercambio directo de activos nativos entre diferentes blockchains (Capa 1). En lugar de crear tokens sintéticos, THORChain gestiona bóvedas descentralizadas (<em>Vaults</em>) utilizando un mecanismo de consenso robusto.
+          <strong>THORChain</strong> es un protocolo descentralizado de liquidez
+          <em>cross-chain</em>. Su función es permitir el intercambio directo de
+          activos nativos entre diferentes blockchains (Capa 1). En lugar de
+          crear tokens sintéticos, THORChain gestiona bóvedas descentralizadas
+          (<em>Vaults</em>) utilizando un mecanismo de consenso robusto.
         </p>
 
         <p>
-          La propuesta formal (<em>merge request</em>) para integrar <strong>XEC nativo en THORChain</strong> cambia las reglas del juego. Una vez completada, permitirá a cualquier usuario intercambiar XEC por BTC nativo, ETH nativo o stablecoins reales, directamente desde su propia billetera, sin cuentas, sin permisos y con liquidez profunda.
+          La propuesta formal (<em>merge request</em>) para integrar
+          <strong>XEC nativo en THORChain</strong> cambia las reglas del juego.
+          Una vez completada, permitirá a cualquier usuario intercambiar XEC por
+          BTC nativo, ETH nativo o stablecoins reales, directamente desde su
+          propia billetera, sin cuentas, sin permisos y con liquidez profunda.
         </p>
 
         <div class="quote-box">
-          “La soberanía no termina cuando recibes el pago; se extiende a cómo decides almacenar, convertir y mover ese valor sin pedir permiso.”
+          “La soberanía no termina cuando recibes el pago; se extiende a cómo
+          decides almacenar, convertir y mover ese valor sin pedir permiso.”
         </div>
 
         <h2>Tonalli Wallet: El puente soberano en México</h2>
 
         <p>
-          Tener la infraestructura en THORChain es la mitad de la batalla; la otra mitad es hacerla accesible para el usuario común. Aquí es donde entra la capa de adopción de eCash México: <strong>Tonalli Wallet</strong>.
+          Tener la infraestructura en THORChain es la mitad de la batalla; la
+          otra mitad es hacerla accesible para el usuario común. Aquí es donde
+          entra la capa de adopción de eCash México:
+          <strong>Tonalli Wallet</strong>.
         </p>
 
         <p>
-          Al diseñar Tonalli, el principio número uno ha sido la autocustodia total. Tonalli no guarda tus llaves ni custodia tu dinero. La integración de XEC en ecosistemas de liquidez descentralizada como THORChain significa que, en el futuro, las billeteras soberanas podrán integrar botones de <em>Swap</em> directamente en su interfaz.
+          Al diseñar Tonalli, el principio número uno ha sido la autocustodia
+          total. Tonalli no guarda tus llaves ni custodia tu dinero. La
+          integración de XEC en ecosistemas de liquidez descentralizada como
+          THORChain significa que, en el futuro, las billeteras soberanas podrán
+          integrar botones de <em>Swap</em> directamente en su interfaz.
         </p>
 
         <p>
-          Para el usuario mexicano, la experiencia será invisible a nivel técnico pero revolucionaria a nivel financiero: tienes eCash en tu app, tocas "Intercambiar a BTC", firmas con tu llave privada, y en minutos recibes Bitcoin real en tu dirección, todo mediante contratos inmutables de THORChain.
+          Para el usuario mexicano, la experiencia será invisible a nivel
+          técnico pero revolucionaria a nivel financiero: tienes eCash en tu
+          app, tocas "Intercambiar a BTC", firmas con tu llave privada, y en
+          minutos recibes Bitcoin real en tu dirección, todo mediante contratos
+          inmutables de THORChain.
         </p>
 
         <h2>Pagos, Adopción y el Futuro de la Red</h2>
 
         <p>
-          Para que el efectivo electrónico alcance una adopción masiva en mercados emergentes, debe ser un sistema sin fricciones de entrada y salida. La capacidad de realizar <em>swaps cross-chain</em> descentralizados fortalece directamente la utilidad de eCash como medio de pago:
+          Para que el efectivo electrónico alcance una adopción masiva en
+          mercados emergentes, debe ser un sistema sin fricciones de entrada y
+          salida. La capacidad de realizar
+          <em>swaps cross-chain</em> descentralizados fortalece directamente la
+          utilidad de eCash como medio de pago:
         </p>
 
         <ul>
-          <li><strong>Para los comercios:</strong> Elimina el miedo a la volatilidad, ya que pueden liquidar inmediatamente a stablecoins sin usar un CEX.</li>
-          <li><strong>Para los builders y mineros:</strong> Permite adquirir infraestructura o pagar servidores liquidando fondos rápidamente en entornos DeFi sin censura.</li>
-          <li><strong>Para el ecosistema:</strong> Aumenta el volumen y la liquidez de XEC, atrayendo a proveedores de liquidez (LPs) que ganan rendimientos por aportar a las <em>pools</em> de THORChain.</li>
+          <li>
+            <strong>Para los comercios:</strong> Elimina el miedo a la
+            volatilidad, ya que pueden liquidar inmediatamente a stablecoins sin
+            usar un CEX.
+          </li>
+          <li>
+            <strong>Para los builders y mineros:</strong> Permite adquirir
+            infraestructura o pagar servidores liquidando fondos rápidamente en
+            entornos DeFi sin censura.
+          </li>
+          <li>
+            <strong>Para el ecosistema:</strong> Aumenta el volumen y la
+            liquidez de XEC, atrayendo a proveedores de liquidez (LPs) que ganan
+            rendimientos por aportar a las <em>pools</em> de THORChain.
+          </li>
         </ul>
 
         <div class="cta-box">
           <h3>Un Ecosistema sin Permisos</h3>
-          <p>La combinación de <strong>eCash (protocolo rápido), THORChain (liquidez descentralizada) y Tonalli Wallet (acceso soberano)</strong> forma el tridente perfecto para la adopción real en México.</p>
+          <p>
+            La combinación de
+            <strong
+              >eCash (protocolo rápido), THORChain (liquidez descentralizada) y
+              Tonalli Wallet (acceso soberano)</strong
+            >
+            forma el tridente perfecto para la adopción real en México.
+          </p>
           <a href="./tutorial-tonalli-wallet.html" class="cta-button">
             Descubre Tonalli Wallet
           </a>
@@ -492,13 +586,21 @@
       <section class="related-section">
         <h2 class="related-title">Continúa tu camino soberano</h2>
         <div class="related-grid">
-          <a href="./anuncio-integracion-nativa-xec-thorchain.html" class="related-link">
+          <a
+            href="./anuncio-integracion-nativa-xec-thorchain.html"
+            class="related-link"
+          >
             <strong>Misión Protocolo: eCash y THORChain</strong>
-            <span>Lee el anuncio estratégico oficial sobre esta integración.</span>
+            <span
+              >Lee el anuncio estratégico oficial sobre esta integración.</span
+            >
           </a>
           <a href="./que-es-ecash.html" class="related-link">
             <strong>¿Qué es eCash (XEC)?</strong>
-            <span>Comprende las bases del efectivo electrónico y los pagos P2P.</span>
+            <span
+              >Comprende las bases del efectivo electrónico y los pagos
+              P2P.</span
+            >
           </a>
           <a href="./comprar-xec-en-mexico.html" class="related-link">
             <strong>Adquiriendo eCash en México</strong>
