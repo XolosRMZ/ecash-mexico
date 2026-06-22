@@ -206,11 +206,14 @@ test("identity HTML exposes accessible alias controls", () => {
   );
   assert.match(
     inputTag,
-    /aria-describedby="alias-error-msg alias-success-msg"/,
+    /aria-describedby="alias-helper alias-error-msg alias-success-msg"/,
   );
   assert.match(inputTag, /aria-invalid="false"/);
   assert.match(buttonTag, /type="button"/);
   assert.match(buttonTag, /disabled/);
   assert.match(errorTag, /role="alert"/);
   assert.match(successTag, /role="status"/);
+  assert.match(successTag, /aria-live="polite"/);
+  assert.match(html, /id="alias-helper"/);
+  assert.match(html, /No se solicitará una\s+firma/);
 });

@@ -217,8 +217,9 @@
                 Conecta tu Guardián
               </h2>
               <p class="mx-auto mt-4 max-w-md text-sm leading-7 text-gray-400">
-                Conecta Tonalli Wallet para revelar tu identidad cultural
-                on-chain dentro del ecosistema eCash México.
+                Conecta Tonalli Wallet para comprobar tu acceso RMZ y, si eres
+                holder, verificar que tu alias .xec corresponde a la misma
+                dirección.
               </p>
               <button
                 id="btn-connect"
@@ -230,7 +231,8 @@
               <p
                 class="space-mono mt-4 text-[10px] uppercase tracking-[0.22em] text-gray-500"
               >
-                Conexión read-only por WalletConnect.
+                La conexión consulta dirección y saldo RMZ. No se solicitará una
+                firma ni se moverán fondos.
               </p>
             </div>
           </article>
@@ -314,7 +316,7 @@
                       autocomplete="off"
                       spellcheck="false"
                       inputmode="text"
-                      aria-describedby="alias-error-msg alias-success-msg"
+                      aria-describedby="alias-helper alias-error-msg alias-success-msg"
                       aria-invalid="false"
                       pattern="^[a-z0-9][a-z0-9-]{1,62}\.xec$"
                       disabled
@@ -329,9 +331,13 @@
                       Verificar
                     </button>
                   </div>
-                  <p class="mt-2 text-[11px] text-gray-500">
-                    Escribe tu alias eCash. Verificaremos que resuelva a la
-                    misma dirección conectada con Tonalli Wallet.
+                  <p
+                    id="alias-helper"
+                    class="mt-2 text-[11px] leading-5 text-gray-500"
+                  >
+                    Escribe tu alias eCash. Consultaremos alias.ecash.mx para
+                    comprobar que resuelva a la misma dirección conectada. No se
+                    solicitará una firma.
                   </p>
                   <p
                     id="alias-error-msg"
@@ -341,6 +347,7 @@
                   <p
                     id="alias-success-msg"
                     role="status"
+                    aria-live="polite"
                     class="mt-2 hidden text-xs italic text-emerald-400"
                   ></p>
                 </div>

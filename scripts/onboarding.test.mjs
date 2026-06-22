@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -156,4 +157,28 @@ test("setStatus uses alert role only for errors", () => {
   setStatus(element, "Listo");
   assert.equal(element.textContent, "Listo");
   assert.equal(element.attrs.role, "status");
+});
+
+test("onboarding prioritizes the claim task and folds technical health details", () => {
+  const html = readFileSync(
+    new URL("../onboarding/index.html", import.meta.url),
+    "utf8",
+  );
+  const inputTag =
+    html.match(/<input[\s\S]*?id="input-address"[\s\S]*?>/)?.[0] ?? "";
+
+  assert.ok(html.indexOf("Qué necesitas") < html.indexOf('id="claim-form"'));
+  assert.ok(html.indexOf("Qué recibirás") < html.indexOf('id="claim-form"'));
+  assert.ok(
+    html.indexOf('id="claim-form"') < html.indexOf('id="service-details"'),
+  );
+  assert.match(
+    html,
+    /<details[\s\S]*?id="service-details"[\s\S]*?Estado técnico del servicio[\s\S]*?id="health-grid"/,
+  );
+  assert.match(
+    inputTag,
+    /aria-describedby="address-helper privacy-note address-message"/,
+  );
+  assert.match(html, /id="privacy-note"/);
 });

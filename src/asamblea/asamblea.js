@@ -175,6 +175,45 @@ export function isVoteButtonDisabled({
   );
 }
 
+export function buildVoteReviewSummary({
+  proposal,
+  choiceId,
+  alias,
+  wallet,
+  preparedVote,
+} = {}) {
+  const choice = proposal?.choices?.find(
+    (candidate) => String(candidate?.id ?? "") === String(choiceId ?? ""),
+  );
+
+  return {
+    proposal: proposal?.title ?? proposal?.id ?? PROPOSAL_ID,
+    choice: choice?.label ?? choice?.id ?? String(choiceId ?? ""),
+    alias: String(alias ?? ""),
+    wallet: String(wallet ?? ""),
+    signing:
+      "El mensaje canónico preparado por el backend para esta propuesta, opción, alias y wallet.",
+    publishing:
+      "El voto firmado, su alias, wallet, clave pública y datos de auditoría. No se publica una transacción on-chain.",
+    canonicalMessage: String(preparedVote?.message ?? ""),
+  };
+}
+
+export function canOpenVoteReviewDialog({ preparedVote, choiceId } = {}) {
+  return Boolean(preparedVote?.message && choiceId);
+}
+
+export function isSignatureCancellationError(error) {
+  const code = error?.code ?? error?.data?.code;
+  const message = String(error?.message ?? error?.reason ?? "").toLowerCase();
+
+  return (
+    code === 4001 ||
+    code === "4001" ||
+    /cancel|cancelad|reject|rechaz|declin|denied/.test(message)
+  );
+}
+
 export function setAssemblyMessage(element, message, tone = "status") {
   element.textContent = message;
   element.setAttribute("role", tone === "error" ? "alert" : "status");
@@ -342,9 +381,19 @@ if (typeof document !== "undefined") {
       choicesList: document.getElementById("choices-list"),
       voteButton: document.getElementById("btn-vote"),
       voteStatus: document.getElementById("ui-vote-status"),
-      messageDetails: document.getElementById("message-details"),
-      canonicalMessage: document.getElementById("canonical-message"),
       auditLinks: document.getElementById("audit-links"),
+      voteReviewDialog: document.getElementById("vote-review-dialog"),
+      voteReviewProposal: document.getElementById("vote-review-proposal"),
+      voteReviewChoice: document.getElementById("vote-review-choice"),
+      voteReviewAlias: document.getElementById("vote-review-alias"),
+      voteReviewWallet: document.getElementById("vote-review-wallet"),
+      voteReviewSigning: document.getElementById("vote-review-signing"),
+      voteReviewPublishing: document.getElementById("vote-review-publishing"),
+      voteReviewCanonicalMessage: document.getElementById(
+        "vote-review-canonical-message",
+      ),
+      cancelVoteReviewButton: document.getElementById("btn-cancel-vote-review"),
+      submitSignedVoteButton: document.getElementById("btn-submit-signed-vote"),
       refreshResultsButton: document.getElementById("btn-refresh-results"),
       resultsList: document.getElementById("results-list"),
       effectiveVotes: document.getElementById("effective-votes"),
@@ -407,9 +456,8 @@ if (typeof document !== "undefined") {
 
     const resetVotePreparation = () => {
       preparedVote = null;
-      ui.messageDetails.classList.add("hidden");
-      ui.messageDetails.removeAttribute("open");
-      ui.canonicalMessage.textContent = "";
+      if (ui.voteReviewDialog.open) ui.voteReviewDialog.close();
+      ui.voteReviewCanonicalMessage.textContent = "";
       ui.auditLinks.classList.add("hidden");
       ui.auditLinks.replaceChildren();
     };
@@ -456,7 +504,7 @@ if (typeof document !== "undefined") {
         return;
       }
 
-      ui.voteButton.textContent = "Preparar voto";
+      ui.voteButton.textContent = "Revisar y firmar";
     };
 
     const setWalletConnected = (address) => {
@@ -543,7 +591,7 @@ if (typeof document !== "undefined") {
           selectedChoiceId = choiceId;
           resetVotePreparation();
           renderVotingEnabledState();
-          setStatus("Voto seleccionado. Prepara la firma con Tonalli Wallet.");
+          setStatus("Opción seleccionada. Revisa el voto antes de firmar.");
         });
 
         label.append(text, input);
@@ -911,7 +959,38 @@ if (typeof document !== "undefined") {
       };
     };
 
-    const prepareAndSubmitVote = async () => {
+    const openVoteReviewDialog = (voteDraft) => {
+      if (
+        !canOpenVoteReviewDialog({
+          preparedVote: voteDraft,
+          choiceId: selectedChoiceId,
+        })
+      ) {
+        setStatus("Selecciona una opción antes de revisar el voto.", "warning");
+        return false;
+      }
+
+      const summary = buildVoteReviewSummary({
+        proposal,
+        choiceId: selectedChoiceId,
+        alias: currentAlias,
+        wallet: currentAddress,
+        preparedVote: voteDraft,
+      });
+
+      ui.voteReviewProposal.textContent = summary.proposal;
+      ui.voteReviewChoice.textContent = summary.choice;
+      ui.voteReviewAlias.textContent = summary.alias;
+      ui.voteReviewWallet.textContent = summary.wallet;
+      ui.voteReviewSigning.textContent = summary.signing;
+      ui.voteReviewPublishing.textContent = summary.publishing;
+      ui.voteReviewCanonicalMessage.textContent = summary.canonicalMessage;
+      ui.submitSignedVoteButton.disabled = false;
+      ui.voteReviewDialog.showModal();
+      return true;
+    };
+
+    const prepareVoteDraft = async () => {
       if (!isProposalOpen(proposal)) {
         setStatus("La propuesta no está abierta para votar.", "warning");
         return;
@@ -927,10 +1006,9 @@ if (typeof document !== "undefined") {
       renderVotingEnabledState();
 
       try {
-        setStatus("preparing vote: verificando elegibilidad en backend.");
+        setStatus("Preparando voto");
         await ensureFreshEligibility();
 
-        setStatus("preparing vote: solicitando mensaje canónico al backend.");
         preparedVote = await apiRequest("/votes/prepare", {
           method: "POST",
           body: JSON.stringify({
@@ -941,34 +1019,49 @@ if (typeof document !== "undefined") {
           }),
         });
 
-        ui.canonicalMessage.textContent = preparedVote.message;
-        ui.messageDetails.classList.remove("hidden");
-        ui.messageDetails.setAttribute("open", "");
-
+        if (!openVoteReviewDialog(preparedVote)) {
+          isBusy = false;
+          renderVotingEnabledState();
+        }
+      } catch (error) {
+        console.error("[RMZ Assembly] Vote preparation failed.", error);
         setStatus(
-          "awaiting wallet signature: confirma la firma en Tonalli Wallet.",
+          getBackendError(error, "No se pudo preparar el voto."),
+          "error",
         );
+        isBusy = false;
+        renderVotingEnabledState();
+      }
+    };
+
+    const submitSignedVote = async (voteDraft) => {
+      if (!voteDraft?.message || !ui.voteReviewDialog.open) return;
+
+      ui.submitSignedVoteButton.disabled = true;
+      setStatus("Esperando firma en Tonalli Wallet");
+
+      try {
         const signed = await signMessage(
-          preparedVote.message,
-          preparedVote.challengeId,
+          voteDraft.message,
+          voteDraft.challengeId,
         );
 
         if (!signed.signature) {
           throw new Error("Tonalli Wallet no devolvió signature.");
         }
 
-        setStatus("submitting vote: enviando firma al backend.");
+        setStatus("Enviando voto");
         const submission = await apiRequest("/votes", {
           method: "POST",
           body: JSON.stringify({
             proposalId: PROPOSAL_ID,
-            voteId: preparedVote.voteId,
+            voteId: voteDraft.voteId,
             challengeId: signed.challengeId,
             alias: currentAlias,
             wallet: currentAddress,
             publicKey: signed.publicKey,
             signature: signed.signature,
-            message: preparedVote.message,
+            message: voteDraft.message,
           }),
         });
 
@@ -980,22 +1073,38 @@ if (typeof document !== "undefined") {
           );
         }
 
-        setStatus(
-          "vote accepted: voto aceptado y publicado para auditoría.",
-          "success",
-        );
+        ui.voteReviewDialog.close();
+        setStatus("Voto aceptado y publicado para auditoría", "success");
         renderAuditLinks();
         await refreshResults();
       } catch (error) {
         console.error("[RMZ Assembly] Vote flow failed.", error);
-        setStatus(
-          getBackendError(error, "No se pudo enviar el voto."),
-          "error",
-        );
+        if (isSignatureCancellationError(error)) {
+          setStatus(
+            "Firma cancelada. Puedes revisar y volver a intentar.",
+            "warning",
+          );
+        } else {
+          setStatus(
+            getBackendError(error, "No se pudo enviar el voto."),
+            "error",
+          );
+        }
       } finally {
         isBusy = false;
+        ui.submitSignedVoteButton.disabled = false;
         renderVotingEnabledState();
       }
+    };
+
+    const cancelVoteReview = () => {
+      if (ui.voteReviewDialog.open) ui.voteReviewDialog.close();
+      isBusy = false;
+      setStatus(
+        "Firma cancelada. Puedes revisar y volver a intentar.",
+        "warning",
+      );
+      renderVotingEnabledState();
     };
 
     ui.connectButton.addEventListener("click", async () => {
@@ -1052,7 +1161,15 @@ if (typeof document !== "undefined") {
         checkEligibility();
       }
     });
-    ui.voteButton.addEventListener("click", prepareAndSubmitVote);
+    ui.voteButton.addEventListener("click", prepareVoteDraft);
+    ui.submitSignedVoteButton.addEventListener("click", () => {
+      submitSignedVote(preparedVote);
+    });
+    ui.cancelVoteReviewButton.addEventListener("click", cancelVoteReview);
+    ui.voteReviewDialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      cancelVoteReview();
+    });
     ui.refreshResultsButton.addEventListener("click", refreshResults);
 
     setWalletDisconnected();

@@ -5,8 +5,11 @@ import test from "node:test";
 import {
   ALIAS_ERROR_MESSAGE,
   applyAliasValidation,
+  buildVoteReviewSummary,
+  canOpenVoteReviewDialog,
   cleanAliasInput,
   isEligibilityButtonDisabled,
+  isSignatureCancellationError,
   isVoteButtonDisabled,
   resetDisconnectedAssemblyUi,
   setAssemblyMessage,
@@ -225,6 +228,67 @@ test("vote button requires wallet, eligible alias, open proposal, choice, and id
   );
 });
 
+test("buildVoteReviewSummary presents the exact choice and canonical message", () => {
+  assert.deepEqual(
+    buildVoteReviewSummary({
+      proposal: {
+        id: "rmz-b3-001",
+        title: "Propuesta cultural",
+        choices: [
+          { id: "yes", label: "A favor" },
+          { id: "no", label: "En contra" },
+        ],
+      },
+      choiceId: "yes",
+      alias: "xolosarmy.xec",
+      wallet: "ecash:qexample",
+      preparedVote: { message: "canonical vote message" },
+    }),
+    {
+      proposal: "Propuesta cultural",
+      choice: "A favor",
+      alias: "xolosarmy.xec",
+      wallet: "ecash:qexample",
+      signing:
+        "El mensaje canónico preparado por el backend para esta propuesta, opción, alias y wallet.",
+      publishing:
+        "El voto firmado, su alias, wallet, clave pública y datos de auditoría. No se publica una transacción on-chain.",
+      canonicalMessage: "canonical vote message",
+    },
+  );
+});
+
+test("vote review dialog cannot open without a selected choice", () => {
+  assert.equal(
+    canOpenVoteReviewDialog({
+      preparedVote: { message: "canonical vote message" },
+      choiceId: "",
+    }),
+    false,
+  );
+  assert.equal(
+    canOpenVoteReviewDialog({
+      preparedVote: { message: "canonical vote message" },
+      choiceId: "yes",
+    }),
+    true,
+  );
+});
+
+test("signature rejection and cancellation are recognized", () => {
+  assert.equal(isSignatureCancellationError({ code: 4001 }), true);
+  assert.equal(
+    isSignatureCancellationError({
+      message: "User rejected the signing request",
+    }),
+    true,
+  );
+  assert.equal(
+    isSignatureCancellationError({ message: "Backend unavailable" }),
+    false,
+  );
+});
+
 test("disconnect reset clears alias, messages, selected choice, canonical message, and states", () => {
   const radios = [{ checked: true }, { checked: false }];
   const ui = {
@@ -297,6 +361,13 @@ test("assembly HTML exposes accessible alias and status controls", () => {
   assert.match(buttonTag, /disabled/);
   assert.match(errorTag, /role="alert"/);
   assert.match(statusTag, /role="status"/);
+  assert.equal(html.includes("Preparar voto"), false);
+  assert.match(html, /id="btn-vote"[\s\S]*?Revisar y firmar/);
+  assert.match(
+    html,
+    /<dialog[\s\S]*?id="vote-review-dialog"[\s\S]*?aria-labelledby="vote-review-title"/,
+  );
+  assert.match(html, /Firmar y enviar voto/);
 });
 
 test("assembly source avoids unsafe HTML assignment for dynamic content", () => {

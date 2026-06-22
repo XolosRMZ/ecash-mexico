@@ -717,7 +717,7 @@ if (typeof document !== "undefined") {
       ui.rmzStatus.textContent = "No verificado";
       ui.telegramStatus.textContent = "Requiere RMZ";
       ui.faucetStatus.textContent = "Limitada";
-      ui.votingStatus.textContent = "Próximamente";
+      ui.votingStatus.textContent = "Requiere alias verificado";
       currentConnectedAddress = "";
       resetReputation({ hidden: true });
       aliasVerificationInProgress = false;
@@ -765,7 +765,7 @@ if (typeof document !== "undefined") {
 
     const applyHolderStatus = (address, status) => {
       ui.address.textContent = address;
-      ui.votingStatus.textContent = "Próximamente";
+      ui.votingStatus.textContent = "Requiere alias verificado";
       aliasSetupSection.classList.add("hidden");
 
       if (status === "holder") {
@@ -851,6 +851,7 @@ if (typeof document !== "undefined") {
         inputAlias.value = verifiedAlias;
         saveVerifiedAlias(currentConnectedAddress, verifiedAlias);
         showAliasSuccess("Alias verificado correctamente.");
+        ui.votingStatus.textContent = "Disponible";
         loadReputationForAlias(verifiedAlias);
         console.debug("[RMZ Identity] Alias verified.");
       } catch (error) {
@@ -891,6 +892,7 @@ if (typeof document !== "undefined") {
       ui.alias.textContent = verifiedAlias;
       inputAlias.value = verifiedAlias;
       showAliasSuccess("Alias verificado anteriormente.");
+      ui.votingStatus.textContent = "Disponible";
       loadReputationForAlias(verifiedAlias);
     };
 
@@ -920,7 +922,7 @@ if (typeof document !== "undefined") {
       ui.rmzStatus.textContent = "Verificando...";
       ui.telegramStatus.textContent = "Verificando...";
       ui.faucetStatus.textContent = "Verificando...";
-      ui.votingStatus.textContent = "Próximamente";
+      ui.votingStatus.textContent = "Requiere alias verificado";
 
       const status = await getRMZAccessStatus(address, adapter);
       currentConnectedAddress = address;

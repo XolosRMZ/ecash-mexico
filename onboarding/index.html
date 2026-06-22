@@ -323,10 +323,10 @@
                 <p
                   class="space-mono text-[10px] font-bold uppercase tracking-[0.24em] text-cyan-300"
                 >
-                  Starter Pack API
+                  Reclamo guiado
                 </p>
                 <h2 class="mt-2 text-2xl font-bold text-white">
-                  Reclamar chispa inicial
+                  Pega tu dirección
                 </h2>
               </div>
               <span
@@ -336,67 +336,30 @@
               >
             </div>
 
-            <div
-              id="health-grid"
-              class="grid gap-3 border-b border-white/10 pb-6 sm:grid-cols-2"
-            >
-              <div class="rounded-md border border-white/10 bg-black/25 p-4">
-                <span
-                  class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
-                  >Starter Pack habilitado</span
-                >
-                <span
-                  id="health-enabled"
-                  class="mt-2 block text-lg font-bold text-white"
-                  >...</span
-                >
-              </div>
-              <div class="rounded-md border border-white/10 bg-black/25 p-4">
-                <span
-                  class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
-                  >Modo prueba</span
-                >
-                <span
-                  id="health-dry-run"
-                  class="mt-2 block text-lg font-bold text-white"
-                  >...</span
-                >
-              </div>
-              <div class="rounded-md border border-white/10 bg-black/25 p-4">
-                <span
-                  class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
-                  >Turnstile habilitado</span
-                >
-                <span
-                  id="health-turnstile"
-                  class="mt-2 block text-lg font-bold text-white"
-                  >...</span
-                >
-              </div>
-              <div class="rounded-md border border-white/10 bg-black/25 p-4">
-                <span
-                  class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
-                  >Días de espera</span
-                >
-                <span
-                  id="health-cooldown"
-                  class="mt-2 block text-lg font-bold text-white"
-                  >...</span
-                >
-              </div>
-              <div
-                class="rounded-md border border-emerald-300/20 bg-emerald-300/10 p-4 sm:col-span-2"
+            <div class="grid gap-3 sm:grid-cols-2">
+              <section
+                class="rounded-md border border-white/10 bg-black/25 p-4"
+                aria-labelledby="requirements-title"
               >
-                <span
-                  class="space-mono block text-[10px] uppercase tracking-[0.18em] text-emerald-200"
-                  >Montos Starter Pack</span
-                >
-                <span
-                  id="health-amounts"
-                  class="mt-2 block text-sm leading-7 text-emerald-50"
-                  >Consultando montos...</span
-                >
-              </div>
+                <h3 id="requirements-title" class="font-bold text-white">
+                  Qué necesitas
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-gray-400">
+                  Una dirección eCash de Tonalli Wallet. No necesitas compartir
+                  tu nombre ni tu correo.
+                </p>
+              </section>
+              <section
+                class="rounded-md border border-emerald-300/20 bg-emerald-300/10 p-4"
+                aria-labelledby="rewards-title"
+              >
+                <h3 id="rewards-title" class="font-bold text-emerald-100">
+                  Qué recibirás
+                </h3>
+                <p class="mt-2 text-sm leading-6 text-gray-300">
+                  XEC para comenzar y la señal RMZ publicada por el servicio.
+                </p>
+              </section>
             </div>
 
             <form id="claim-form" class="mt-6">
@@ -413,12 +376,22 @@
                 inputmode="text"
                 autocomplete="off"
                 spellcheck="false"
-                aria-describedby="address-message"
+                aria-describedby="address-helper privacy-note address-message"
                 aria-invalid="false"
                 pattern="^(ecash:)?[qp][a-z0-9]{41}$"
                 placeholder="ecash:q..."
                 class="w-full rounded-md border border-emerald-300/30 bg-black/80 px-3 py-3 font-mono text-sm text-emerald-50 placeholder:text-gray-500 caret-emerald-300 shadow-inner outline-none transition focus:border-emerald-300 focus:bg-black focus:ring-1 focus:ring-emerald-300/40"
               />
+              <p
+                id="address-helper"
+                class="mt-2 text-sm leading-6 text-gray-400"
+              >
+                Pega una dirección eCash donde quieras recibir el Starter Pack.
+              </p>
+              <p id="privacy-note" class="mt-2 text-xs leading-6 text-gray-500">
+                Enviaremos tu dirección al backend del Starter Pack y, si
+                aplica, un token anti-bot. No pedimos nombre ni email.
+              </p>
               <p
                 id="address-message"
                 class="mt-2 hidden text-xs italic text-red-300"
@@ -450,6 +423,74 @@
             >
               Pega tu dirección eCash para iniciar.
             </div>
+
+            <details
+              id="service-details"
+              class="mt-6 rounded-md border border-white/10 bg-black/25 p-4"
+            >
+              <summary class="cursor-pointer text-sm font-bold text-gray-300">
+                Estado técnico del servicio
+              </summary>
+              <div id="health-grid" class="mt-4 grid gap-3 sm:grid-cols-2">
+                <div class="rounded-md border border-white/10 bg-black/25 p-4">
+                  <span
+                    class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
+                    >Starter Pack habilitado</span
+                  >
+                  <span
+                    id="health-enabled"
+                    class="mt-2 block text-lg font-bold text-white"
+                    >...</span
+                  >
+                </div>
+                <div class="rounded-md border border-white/10 bg-black/25 p-4">
+                  <span
+                    class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
+                    >Modo prueba</span
+                  >
+                  <span
+                    id="health-dry-run"
+                    class="mt-2 block text-lg font-bold text-white"
+                    >...</span
+                  >
+                </div>
+                <div class="rounded-md border border-white/10 bg-black/25 p-4">
+                  <span
+                    class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
+                    >Turnstile habilitado</span
+                  >
+                  <span
+                    id="health-turnstile"
+                    class="mt-2 block text-lg font-bold text-white"
+                    >...</span
+                  >
+                </div>
+                <div class="rounded-md border border-white/10 bg-black/25 p-4">
+                  <span
+                    class="space-mono block text-[10px] uppercase tracking-[0.18em] text-gray-500"
+                    >Días de espera</span
+                  >
+                  <span
+                    id="health-cooldown"
+                    class="mt-2 block text-lg font-bold text-white"
+                    >...</span
+                  >
+                </div>
+                <div
+                  class="rounded-md border border-emerald-300/20 bg-emerald-300/10 p-4 sm:col-span-2"
+                >
+                  <span
+                    class="space-mono block text-[10px] uppercase tracking-[0.18em] text-emerald-200"
+                    >Montos Starter Pack</span
+                  >
+                  <span
+                    id="health-amounts"
+                    class="mt-2 block text-sm leading-7 text-emerald-50"
+                    >Consultando montos...</span
+                  >
+                </div>
+              </div>
+            </details>
 
             <section
               id="success-card"
