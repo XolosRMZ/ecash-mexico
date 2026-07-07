@@ -291,6 +291,49 @@
         font-size: 0.9rem;
       }
 
+      .steps-list {
+        display: grid;
+        gap: 16px;
+        list-style: none;
+        margin-bottom: 20px;
+      }
+
+      .steps-list li {
+        background-color: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--line-color);
+        border-radius: 12px;
+        margin-bottom: 0;
+        padding: 18px;
+      }
+
+      .steps-list li::before {
+        content: none;
+      }
+
+      .steps-list strong {
+        color: #ffffff;
+      }
+
+      .faq-list {
+        display: grid;
+        gap: 16px;
+      }
+
+      .faq-item {
+        background-color: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--line-color);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .faq-item h3 {
+        margin-top: 0;
+      }
+
+      .faq-item p:last-child {
+        margin-bottom: 0;
+      }
+
       /* Feature Box Blocks */
       .feature-grid {
         display: grid;
@@ -500,22 +543,18 @@
           <article class="card card-accent">
             <h2>1. Más allá de un Explorador Técnico</h2>
             <p>
-              En la infraestructura blockchain tradicional, un explorador de
-              bloques es visto como una simple herramienta de depuración o
-              auditoría de hashes fríos. Sin embargo, alineados con la visión
-              soberana de <strong>eCash México</strong>, el desarrollo de
-              <strong>Xolos Explorer</strong> rompe este paradigma.
+              Un <strong>eCash explorer</strong> permite leer la actividad
+              pública de la red sin trabajar directamente con datos técnicos.
+              <strong>Xolos Explorer</strong> reúne consultas de transacciones,
+              direcciones y bloques, además de información relacionada con
+              eTokens, en vistas fáciles de navegar.
             </p>
             <p>
-              Construido utilizando el stack moderno de
-              <strong>React + Vite</strong> y conectado directamente a nuestro
-              endpoint soberano de la
-              <strong>Chronik API</strong>
-              (<code>https://chronik.xolosarmy.xyz</code>), esta interfaz
-              combina la precisión matemática de la red eCash con las capas
-              narrativas y culturales de nuestro Estado Red. No solo buscamos
-              rastrear transacciones, sino dar visibilidad a la memoria digital
-              viva.
+              Para obtener esa información, la aplicación consulta
+              <strong>Chronik</strong>, el indexador de eCash, y presenta sus
+              resultados en una interfaz construida con React y Vite. Así se
+              puede verificar actividad on-chain y explorar registros públicos
+              desde un solo punto.
             </p>
 
             <h3>Características Principales de la Herramienta</h3>
@@ -623,6 +662,72 @@
             </p>
           </article>
 
+          <article class="card card-accent">
+            <h2>4. Cómo consultar una transacción XEC paso a paso</h2>
+            <ol class="steps-list">
+              <li>
+                <strong>1. Copia el TXID o la dirección.</strong> Usa el
+                identificador de la transacción o una dirección con prefijo
+                <code>ecash:</code>.
+              </li>
+              <li>
+                <strong>2. Pégalo en Xolos Explorer.</strong> Introduce el dato
+                en la barra de búsqueda y selecciona <em>Buscar</em>.
+              </li>
+              <li>
+                <strong>3. Revisa los datos de la dirección.</strong> Si
+                buscaste una dirección, consulta el balance visible, sus UTXOs,
+                eTokens y el historial reciente.
+              </li>
+              <li>
+                <strong>4. Comprueba el detalle de la transacción.</strong>
+                Revisa sus entradas, salidas y el bloque asociado. El campo de
+                bloque muestra una altura cuando está confirmada o
+                <em>Mempool</em> mientras espera confirmación.
+              </li>
+            </ol>
+          </article>
+
+          <article class="card card-gold">
+            <h2>Preguntas frecuentes sobre Xolos Explorer</h2>
+            <div class="faq-list">
+              <section class="faq-item">
+                <h3>¿Qué se puede buscar?</h3>
+                <p>
+                  Puedes buscar una altura de bloque, una dirección
+                  <code>ecash:</code> o un hash de 64 caracteres. Cuando recibe
+                  un hash, el explorador intenta resolverlo como transacción,
+                  bloque o eToken.
+                </p>
+              </section>
+              <section class="faq-item">
+                <h3>¿Por qué carga rápidamente?</h3>
+                <p>
+                  Porque consulta Chronik, un indexador diseñado para servir
+                  datos de la red eCash a aplicaciones. El tiempo final también
+                  depende de la conexión y de la disponibilidad del servicio.
+                </p>
+              </section>
+              <section class="faq-item">
+                <h3>¿Cómo se interpreta un OP_RETURN?</h3>
+                <p>
+                  Xolos Explorer detecta salidas OP_RETURN y, cuando reconoce el
+                  formato de registro de linaje compatible, presenta sus campos
+                  en una vista legible. Los datos no reconocidos pueden
+                  revisarse en su representación técnica.
+                </p>
+              </section>
+              <section class="faq-item">
+                <h3>¿Hace falta conectar una wallet?</h3>
+                <p>
+                  No. Las consultas usan información pública de la blockchain y
+                  no requieren conectar una wallet. Nunca compartas tu frase
+                  semilla con un explorador, sitio web o persona.
+                </p>
+              </section>
+            </div>
+          </article>
+
           <!-- Action Call To Action Banner -->
           <div class="action-banner">
             <h3>¿Listo para auditar la red?</h3>
@@ -657,6 +762,9 @@
               </a>
               <a href="./teyolia-crowdfunding-xec.html">
                 <span>🌱</span> Teyolia Crowdfunding
+              </a>
+              <a href="./pagos-con-ecash.html">
+                <span>⚡</span> Pagos rápidos con eCash
               </a>
             </div>
           </div>
